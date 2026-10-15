@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vaca Muerta desde el satélite</title>
+<meta name="description" content="La actividad de Vaca Muerta vista desde Sentinel-2, antes de que aparezca en el padrón de pozos.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono&display=swap">
+<style>
+:root{--bg:#0e1b25;--ink:#f2f2f2;--muted:#8fa3b0;--rule:#22333f;--acento:#f2b134;--azul:#26c6da;--panel:#15242f}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",system-ui,sans-serif;line-height:1.5}
+main{max-width:980px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:2rem;margin:0 0 4px;letter-spacing:-.01em}
+h2{font-size:1.25rem;margin:40px 0 8px;color:var(--acento)}
+p,li{max-width:68ch}
+.sub{color:var(--muted);margin:0 0 24px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:20px 0}
+.kpi{background:var(--panel);border-radius:8px;padding:14px 16px}
+.kpi b{display:block;font-size:1.7rem;font-variant-numeric:tabular-nums;color:var(--acento)}
+.kpi span{color:var(--muted);font-size:.9rem}
+figure{margin:16px 0}figure img{width:100%;height:auto;border-radius:6px}figcaption{color:var(--muted);font-size:.85rem}
+.tabla{overflow-x:auto;margin:12px 0}table{border-collapse:collapse;width:100%;font-size:.9rem;font-variant-numeric:tabular-nums}
+th,td{padding:6px 10px;border-bottom:1px solid var(--rule);text-align:right;white-space:nowrap}th:first-child,td:first-child{text-align:left}
+th{color:var(--muted);font-weight:600}
+a{color:var(--azul)}
+.nota{color:var(--muted);font-size:.9rem}
+footer{margin-top:48px;color:var(--muted);font-size:.85rem;border-top:1px solid var(--rule);padding-top:16px}
+</style>
+</head>
+<body>
+<main>
+<h1>Vaca Muerta desde el satélite</h1>
+<p class="sub">Una imagen gratis de Sentinel-2 por mes desde 2020 sobre cinco áreas de la cuenca Neuquina, contra los pozos del Capítulo IV de la Secretaría de Energía. ¿Se ve la actividad antes de que la registre el padrón?</p>
+<div class="kpis">
+  <div class="kpi"><b>73 %</b><span>de las locaciones vistas sin pozo al lado recibió un pozo después (1 % en puntos al azar)</span></div>
+  <div class="kpi"><b>9,5 meses</b><span>antes de la primera producción, la locación ya se ve</span></div>
+  <div class="kpi"><b>167 de 177</b><span>locaciones nuevas detectadas en cinco áreas, 2020-2026</span></div>
+  <div class="kpi"><b>22</b><span>obras reales en octubre de 2026 sin pozo en ningún registro público</span></div>
+</div>
+
+<h2>La locación se ve, y el pozo cae encima</h2>
+<figure><img src="figures/antes_despues.png" alt="Loma Campana en 2020 y 2026 con los pozos del padrón"><figcaption>A 10 metros, cada locación es un rectángulo claro sobre el monte. Las bocas de pozo del padrón caen encima.</figcaption></figure>
+
+<h2>Aparece de golpe, y la perforación llega después</h2>
+<figure><img src="figures/series_locaciones.png" alt="Contraste de seis locaciones mes a mes"></figure>
+<figure><img src="figures/adelanto.png" alt="Adelanto sobre la perforación y la producción"><figcaption>El satélite adelanta poco la perforación, porque el operador desmonta poco antes de traer el equipo. Adelanta casi un año la producción.</figcaption></figure>
+
+<h2>A ciegas, con prueba hacia atrás</h2>
+<figure><img src="figures/prueba_hacia_atras.png" alt="Qué fracción recibió un pozo"><figcaption>Sin mirar el padrón, el detector busca cada parche de meseta que se aclara de golpe. En el mes en que vio la obra no había pozo perforado al lado; en el 73 % de las locaciones llegó uno, con dos meses de espera mediana.</figcaption></figure>
+<p>De 28 locaciones vistas desde julio de 2025 que hoy no tienen pozo registrado, en octubre de 2026 12 tienen equipos trabajando, 8 están construidas, 2 son instalaciones con actividad, 1 es dudosa y 5 son falsas (pueblo, valle o barda). El padrón carga los pozos nuevos con unos seis meses de demora: la confirmación llega a comienzos de 2027.</p>
+
+<h2>Cómo</h2>
+<ul>
+  <li>Sentinel-2 L2A, una escena por mes con menos del 3 % de nube sobre la ventana, 82 escenas por zona.</li>
+  <li>Contraste de cada locación contra el monte vecino; el detector a ciegas compara cada píxel con su vecindario de un kilómetro.</li>
+  <li>Pozos, fechas de perforación y primera producción del Capítulo IV.</li>
+  <li>Código, tests y notebooks: <a href="https://github.com/dpinero14/locaciones-lab">github.com/dpinero14/locaciones-lab</a>.</li>
+</ul>
+<footer>locaciones-lab · Sur Analytics · Copernicus Sentinel-2 (ESA) · Secretaría de Energía, Capítulo IV</footer>
+</main>
+</body>
+</html>

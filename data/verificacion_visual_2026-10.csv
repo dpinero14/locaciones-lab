@@ -1,0 +1,29 @@
+zona,mes,area_ha,verificacion_visual_oct2026
+loma_campana_este,2025-08-15,4.32,"locación construida, sin equipo todavía"
+loma_campana_oeste,2025-09-15,6.5200000000000005,instalación o locación con actividad
+loma_campana_oeste,2025-10-15,2.0,"falsa (pueblo, valle o barda)"
+norte_lac_bdp_bandurria,2025-10-15,3.28,"locación construida, sin equipo todavía"
+norte_lac_bdp_bandurria,2025-10-15,2.72,instalación o locación con actividad
+fortin_de_piedra,2025-11-15,2.28,"falsa (pueblo, valle o barda)"
+fortin_de_piedra,2025-11-15,3.3200000000000003,"locación construida, sin equipo todavía"
+loma_campana_oeste,2025-12-15,1.72,con equipos trabajando
+loma_campana_este,2025-12-15,1.8,"locación construida, sin equipo todavía"
+fortin_de_piedra,2026-01-15,1.12,"locación construida, sin equipo todavía"
+norte_lac_bdp_bandurria,2026-02-15,2.4,con equipos trabajando
+loma_campana_oeste,2026-03-15,4.6000000000000005,con equipos trabajando
+norte_lac_bdp_bandurria,2026-04-15,1.6,con equipos trabajando
+loma_campana_oeste,2026-05-15,4.76,con equipos trabajando
+loma_campana_este,2026-05-15,1.16,"locación construida, sin equipo todavía"
+loma_campana_este,2026-05-15,2.96,con equipos trabajando
+norte_lac_bdp_bandurria,2026-05-15,3.16,con equipos trabajando
+norte_lac_bdp_bandurria,2026-05-15,2.68,con equipos trabajando
+loma_campana_este,2026-06-15,2.96,con equipos trabajando
+norte_lac_bdp_bandurria,2026-06-15,3.3200000000000003,con equipos trabajando
+norte_lac_bdp_bandurria,2026-06-15,3.08,con equipos trabajando
+loma_campana_este,2026-06-15,1.2,"falsa (pueblo, valle o barda)"
+loma_campana_este,2026-06-15,2.16,con equipos trabajando
+loma_campana_oeste,2026-06-15,1.04,"falsa (pueblo, valle o barda)"
+norte_lac_bdp_bandurria,2026-06-15,1.0,dudosa
+fortin_de_piedra,2026-06-15,1.88,"locación construida, sin equipo todavía"
+loma_campana_este,2026-07-15,1.12,"falsa (pueblo, valle o barda)"
+loma_campana_oeste,2026-07-15,3.24,"locación construida, sin equipo todavía"

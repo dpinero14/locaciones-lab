@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vaca Muerta desde el satélite</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+:root{--bg:#ece6d8;--panel:#f9f6ee;--ink:#17212b;--muted:#5d6974;--rule:#d6cdb9;--acento:#0b6b7a;--pozo:#d02e7f;--infra:#17212b;--gris:#8a8f94;--acento2:#7b2cbf;--mapa:#19d3ff}
+*{box-sizing:border-box}html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:"Segoe UI",system-ui,sans-serif;font-size:14px}
+:root{--izq:330px;--der:340px}body.sin-izq{--izq:0px}body.sin-der{--der:0px}
+#app{display:grid;grid-template-columns:var(--izq) 1fr var(--der);height:100%;transition:grid-template-columns .3s ease}
+#panel,#demanda{min-width:0;transition:padding .3s}body.sin-izq #panel{padding-left:0;padding-right:0;overflow:hidden;border:0}body.sin-der #demanda{padding-left:0;padding-right:0;overflow:hidden;border:0}
+.tog{position:absolute;top:14px;z-index:1100;width:26px;height:38px;padding:0;border-radius:4px;background:var(--panel);color:var(--acento);border:1px solid var(--rule);font-size:18px;line-height:1;box-shadow:0 1px 6px rgba(0,0,0,.25);transition:left .3s,right .3s}
+#tog_izq{left:calc(var(--izq) + 10px)}.leaflet-top.leaflet-left .leaflet-control{margin-top:62px}#tog_der{right:calc(var(--der) + 10px)}.tog:hover{background:var(--acento);color:#fff}
+#panel{background:var(--bg);border-right:1px solid var(--rule);overflow-y:auto;padding:16px 16px 24px}
+#map{height:100%;background:#2b2a26}
+h1{font-size:17px;margin:0 0 2px}.sub{color:var(--muted);font-size:12px;margin:0 0 14px}
+h2{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--acento);margin:18px 0 8px;font-weight:600}
+.capa{display:flex;align-items:center;gap:8px;padding:5px 0;cursor:pointer}
+.capa input{accent-color:var(--acento)}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex:none}
+.sq{width:10px;height:10px;display:inline-block;flex:none;border:2px solid}
+.ln{width:18px;height:0;border-top:3px solid;display:inline-block;flex:none}
+.n{margin-left:auto;color:var(--muted);font-family:"Cascadia Mono",Consolas,monospace;font-size:12px}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.kpi{background:var(--panel);border:1px solid var(--rule);border-left:4px solid var(--acento);border-radius:4px;padding:8px 10px}
+.kpi b{display:block;font-size:22px;color:var(--acento);font-variant-numeric:tabular-nums}.kpi.r b{color:var(--pozo)}.kpi.r{border-left-color:var(--pozo)}
+.kpi span{color:var(--muted);font-size:11px}
+#tiempo{position:absolute;left:calc(var(--izq) + 20px);right:calc(var(--der) + 20px);transition:left .3s,right .3s;bottom:18px;z-index:1000;background:rgba(249,246,238,.95);box-shadow:0 2px 12px rgba(0,0,0,.25);border:1px solid var(--rule);border-radius:8px;padding:10px 14px;display:flex;gap:12px;align-items:center}
+#tiempo input[type=range]{flex:1;accent-color:var(--acento)}
+#mes{font-family:"Cascadia Mono",Consolas,monospace;font-size:15px;min-width:92px}
+button{background:var(--acento);color:#fff;border:0;border-radius:5px;padding:6px 12px;font-weight:600;cursor:pointer;font-family:inherit}
+button.ghost{background:transparent;color:var(--ink);border:1px solid var(--rule)}
+.leaflet-popup-content-wrapper{background:var(--panel);color:var(--ink);border-radius:4px;border-left:4px solid var(--acento);font-family:"Segoe UI",sans-serif;font-size:13px}
+.leaflet-popup-tip{background:var(--panel)}.leaflet-popup-content b{color:var(--acento)}.leaflet-popup-content .r{color:var(--pozo)}
+.leaflet-container{font-family:inherit}
+.nota{color:var(--muted);font-size:11px;line-height:1.45;margin-top:14px}
+.tag{display:inline-block;font-family:"Cascadia Mono",Consolas,monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#fff;background:var(--ink);padding:2px 6px;border-radius:3px;margin-left:6px;vertical-align:middle}
+#demanda{background:var(--bg);border-left:1px solid var(--rule);overflow-y:auto;padding:16px}
+.anios{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 12px}
+.anios button{background:var(--panel);color:var(--ink);border:1px solid var(--rule);padding:5px 9px;font-weight:500;font-family:"Cascadia Mono",Consolas,monospace;font-size:12px}
+.anios button.on{background:var(--acento);color:#fff;border-color:var(--acento)}
+.anios button.p{border-color:var(--acento2);color:var(--acento2)}.anios button.p.on{background:var(--acento2);color:#fff}
+select{width:100%;background:var(--panel);color:var(--ink);border:1px solid var(--rule);border-radius:5px;padding:6px 8px;font-family:inherit;font-size:13px}
+.fila{display:flex;justify-content:space-between;align-items:baseline;padding:7px 0;border-bottom:1px solid var(--rule)}
+.fila span{color:var(--muted);font-size:12px}.fila b{font-size:19px;font-variant-numeric:tabular-nums;font-weight:600}
+.fila.dos b{font-size:15px}.fila .piso{color:var(--acento)}.fila .ritmo{color:var(--acento2);margin-left:10px}
+svg text{font-family:"Cascadia Mono",Consolas,monospace;font-size:9px;fill:var(--muted)}
+.sup{color:var(--muted);font-size:11px;line-height:1.45;margin-top:12px}
+.tabs{display:flex;gap:6px;margin-bottom:10px}.tab{background:transparent;color:var(--muted);border:1px solid var(--rule);padding:6px 12px}.tab.on{background:var(--acento);color:#fff;border-color:var(--acento)}
+.precios{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}.precios label{font-size:10px;color:var(--muted);display:grid;gap:3px}
+.precios input{width:100%;background:var(--panel);color:var(--ink);border:1px solid var(--rule);border-radius:4px;padding:5px 6px;font-family:"Cascadia Mono",Consolas,monospace;font-size:12px}
+.anios button.esc.on{background:var(--acento);color:#fff;border-color:var(--acento)}.anios button.esc.p.on{background:var(--acento2);border-color:var(--acento2);color:#fff}
+.tabla{overflow-x:auto}#fin_tabla{border-collapse:collapse;width:100%;font-size:10px;font-variant-numeric:tabular-nums}#fin_tabla th,#fin_tabla td{padding:3px 3px;border-bottom:1px solid var(--rule);text-align:right;white-space:nowrap}#fin_tabla th:first-child,#fin_tabla td:first-child{text-align:left}#fin_tabla th{color:var(--muted);font-weight:500}#fin_tabla tr.tot td{font-weight:600;color:var(--acento)}
+.calorbar{width:18px;height:10px;flex:none;border-radius:2px;background:linear-gradient(90deg,#0b6b7a,#7b2cbf)}
+#graf{display:none;position:fixed;left:var(--izq);right:var(--der);top:0;bottom:0;z-index:1400;background:rgba(23,33,43,.45);align-items:center;justify-content:center}
+#graf .caja{background:var(--panel);border-radius:6px;padding:16px 18px;width:min(960px,94%);box-shadow:0 8px 30px rgba(0,0,0,.35);border-top:4px solid var(--acento)}
+#graf h3{margin:0 0 8px;font-size:15px}#graf svg{width:100%;height:auto;display:block}#graf svg text{font-size:11px}#graf svg text.v{fill:var(--ink);font-weight:600;font-size:10px}
+#graf .pie{display:flex;justify-content:space-between;align-items:flex-end;gap:12px}#graf .pie .sup{margin-top:8px}
+.fila.clic{cursor:pointer}.fila.clic span:first-child{border-bottom:1px dotted var(--acento)}.fila.clic:hover{background:rgba(11,107,122,.07)}
+.fila.clic:hover span:first-child::after{content:" · ver gráfico";color:var(--acento);border:0}
+.vent{padding:6px 0;border-bottom:1px solid var(--rule);cursor:pointer}.vent b{font-weight:600;font-size:13px}.vent .det{color:var(--muted);font-size:11px;margin-top:2px;line-height:1.35}
+.vent.on b{color:var(--acento)}.vent .n{float:right;color:var(--acento);font-family:"Cascadia Mono",Consolas,monospace;font-size:12px}
+.barrido{transform-box:view-box;transform-origin:50% 50%;animation:girar 7s linear infinite}@keyframes girar{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div id="app">
+<div id="panel">
+  <h1>Vaca Muerta desde el satélite <span class="tag" id="tag">privado</span></h1>
+  <p class="sub">La actividad vista mes a mes, antes de que aparezca en el padrón. Sur Analytics.</p>
+  <div class="kpis">
+    <div class="kpi"><b id="k_vistas">0</b><span>Locaciones vistas hasta el mes elegido</span></div>
+    <div class="kpi r"><b id="k_sinpozo">0</b><span>De ellas, sin pozo registrado todavía</span></div>
+  </div>
+  <h2>Satélite</h2>
+  <label class="capa"><input type="checkbox" id="c_img" checked><span class="sq" style="border-color:var(--gris)"></span>Imagen Sentinel-2 del año elegido<span class="n" id="n_img"></span></label>
+  <label class="capa"><input type="checkbox" id="c_loc" checked><span class="sq" style="border-color:var(--acento)"></span>Locaciones nuevas detectadas<span class="n" id="n_loc"></span></label>
+  <label class="capa"><input type="checkbox" id="c_otras"><span class="sq" style="border-color:var(--gris)"></span>Otras obras detectadas (caminos, plantas)<span class="n" id="n_otras"></span></label>
+  <h2>Padrón oficial</h2>
+  <label class="capa"><input type="checkbox" id="c_calor"><span class="calorbar"></span>Calor: producción (azul) vs exploración (violeta)</label>
+  <div class="nota" id="calor_nota" style="margin:0 0 6px 28px;display:none"></div>
+  <label class="capa"><input type="checkbox" id="c_pozos" checked><span class="dot" style="background:var(--pozo)"></span>Pozos con fecha de perforación<span class="n" id="n_pozos"></span></label>
+  <label class="capa"><input type="checkbox" id="c_todos"><span class="dot" style="background:#9c7f8c"></span>Mostrar también los pozos posteriores al mes<span class="n"></span></label>
+  <h2>Infraestructura</h2>
+  <label class="capa"><input type="checkbox" id="c_gas" checked><span class="ln" style="border-color:var(--infra)"></span>Gasoductos troncales (ENARGAS)<span class="n" id="n_gas"></span></label>
+  <label class="capa"><input type="checkbox" id="c_comp" checked><span class="dot" style="background:var(--infra)"></span>Plantas compresoras<span class="n" id="n_comp"></span></label>
+  <label class="capa"><input type="checkbox" id="c_arena"><span class="ln" style="border-color:var(--acento2)"></span>La ruta de la arena (arena-lab)<span class="n"></span></label>
+  <h2>Ventanas (radar)</h2>
+  <div id="zonas"></div>
+  <p class="nota">Locaciones: detector a ciegas sobre Sentinel-2, una escena limpia por mes (locaciones-lab). Pozos: Capítulo IV, Secretaría de Energía; el padrón carga los pozos nuevos con unos seis meses de demora. Gasoductos y compresoras: ENARGAS. Fondo fuera de las ventanas: Esri World Imagery.</p>
+</div>
+<div id="map"></div>
+<div id="demanda">
+  <div class="tabs"><button class="tab on" data-t="demanda">Demanda</button><button class="tab" data-t="finanzas">Finanzas</button></div>
+  <div id="sec_demanda">
+  <select id="ambito"></select>
+  <div class="anios" id="anios"></div>
+  <div id="titulo_anio" style="font-weight:600;margin-bottom:4px"></div>
+  <div id="kpis"></div>
+  <h2>Arena por año, miles de t</h2>
+  <svg id="grafico" width="308" height="130"></svg>
+  <p class="sup" id="supuestos"></p>
+  </div>
+  <div id="sec_finanzas" style="display:none">
+    <div class="precios"><label>Brent, US$/bbl <input type="number" id="p_bbl" value="60" step="1"></label><label>Gas, US$/MMBtu <input type="number" id="p_gas" value="3.5" step="0.1"></label><label>Capex por pozo, MUS$ <input type="number" id="p_capex" value="13.5" step="0.5"></label></div>
+    <div class="anios" style="margin-top:6px"><button class="esc on" data-e="piso">Piso</button><button class="esc p" data-e="ritmo">Si sigue el ritmo</button></div>
+    <div id="fin_kpis"></div>
+    <h2>Producción nueva de los pozos que vienen, miles de bbl/d</h2>
+    <svg id="fin_grafico" width="308" height="120"></svg>
+    <h2>Por operadora</h2>
+    <div class="tabla"><table id="fin_tabla"></table></div>
+    <p class="sup" id="fin_sup"></p>
+  </div>
+</div>
+</div>
+<button class="tog" id="tog_izq" title="ocultar o mostrar el panel de capas">‹</button><button class="tog" id="tog_der" title="ocultar o mostrar demanda y finanzas">›</button>
+<div id="graf"><div class="caja"><h3></h3><svg></svg><div class="pie"><p class="sup"></p><button class="ghost cerrar">Cerrar</button></div></div></div>
+<div id="tiempo">
+  <button id="play">▶</button>
+  <span id="mes">2026-10</span>
+  <input type="range" id="slider" min="0" max="81" value="81" step="1">
+  <button class="ghost" id="hoy">Hoy</button>
+</div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+let DEM=null,ambito="__ventanas__",anioSel="2027";
+const nf=n=>Math.round(n).toLocaleString("es-AR");
+function datosAmbito(){return ambito==="__cuenca__"?DEM.cuenca:DEM.zonas[ambito];}
+function tablero(){
+  if(!DEM)return;const d=datosAmbito();const K=document.getElementById("kpis");
+  document.querySelectorAll("#anios button").forEach(b=>b.classList.toggle("on",b.dataset.a===anioSel));
+  const filas=[["pozos","Pozos fracturados"],["etapas","Etapas de fractura"],["arena_kt","Arena, miles de t"],["agua_hm3","Agua, hm³"],["camiones_arena","Camiones de arena (28 t)"]];
+  if(anioSel==="2027"){
+    if(!d.proy2027){K.innerHTML='<p class="sup">La proyección usa las locaciones vistas por el satélite: elegí las ventanas o una zona.</p>';document.getElementById("titulo_anio").textContent="";return;}
+    const p=d.proy2027;
+    document.getElementById("titulo_anio").innerHTML=`2027, proyección: <span class="piso">piso</span> y <span class="ritmo">si sigue el ritmo</span>`;
+    K.innerHTML=`<div class="fila"><span>Locaciones vistas sin pozo todavía</span><b class="piso">${p.locaciones_sin_pozo}</b></div>
+      <div class="fila"><span>Locaciones nuevas en los últimos 12 meses</span><b class="ritmo">${p.locaciones_ultimos_12_meses}</b></div>
+      <div class="fila"><span>Sin pozo hace más de ${DEM.supuestos.validez_meses} meses, no se cuentan</span><b style="color:var(--muted)">${p.locaciones_sin_pozo_viejas}</b></div>`+
+      filas.concat([["equipos_fractura","Equipos de fractura ocupados"]]).map(([k,r])=>`<div class="fila dos clic" data-k="${k}"><span>${r}</span><span><b class="piso">${nf(p.piso[k])}</b><b class="ritmo">${nf(p.ritmo[k])}</b></span></div>`).join("");
+  }else{
+    const a=d.anios[anioSel];document.getElementById("titulo_anio").textContent=anioSel+(anioSel==="2026"?" (hasta lo cargado)":"");
+    K.innerHTML=filas.map(([k,r])=>`<div class="fila clic" data-k="${k}"><span>${r}</span><b>${nf(a[k])}</b></div>`).join("")+(a.locaciones_vistas!==undefined?`<div class="fila clic" data-k="locaciones_vistas"><span>Locaciones nuevas vistas por el satélite</span><b class="piso">${a.locaciones_vistas}</b></div>`:"");
+  }
+  // gráfico de arena por año
+  const svg=document.getElementById("grafico");const years=Object.keys(d.anios);const vals=years.map(y=>d.anios[y].arena_kt);
+  const extra=d.proy2027?[["piso",d.proy2027.piso.arena_kt],["ritmo",d.proy2027.ritmo.arena_kt]]:[];
+  const max=Math.max(...vals,...extra.map(e=>e[1]),1);const n=years.length+extra.length;const w=300/n;let h="";
+  years.forEach((y,i)=>{const v=vals[i];const hh=v/max*95;h+=`<rect x="${i*w+2}" y="${110-hh}" width="${w-4}" height="${hh}" fill="${y===anioSel?"#0b6b7a":"#c4bba6"}"/><text x="${i*w+w/2}" y="124" text-anchor="middle">${y.slice(2)}</text>`;});
+  extra.forEach(([k,v],j)=>{const i=years.length+j;const hh=v/max*95;h+=`<rect x="${i*w+2}" y="${110-hh}" width="${w-4}" height="${hh}" fill="${k==="piso"?"#0b6b7a":"#7b2cbf"}" opacity="${anioSel==="2027"?1:.5}"/><text x="${i*w+w/2}" y="124" text-anchor="middle">27${k==="piso"?"p":"r"}</text>`;});
+  svg.innerHTML=h;
+  const su=DEM.supuestos;const pp=d.por_pozo;
+  document.getElementById("supuestos").innerHTML=`Pozos, etapas, arena y agua: Adjunto IV de fracturas por pozo, Secretaría de Energía (Vaca Muerta, por año de inicio de fractura; 2026 hasta lo cargado). Proyección 2027: ${su.pozos_por_locacion} pozos por locación (mediana desde 2021) × ${nf(pp.arena_t)} t de arena, ${nf(pp.agua_m3)} m³ de agua y ${pp.etapas} etapas por pozo (mediana 2025-26 en el ámbito, ${pp.n} pozos); de la locación visible a la fractura, ${su.meses_locacion_a_fractura} meses; ${su.t_camion} t por camión; ${su.etapas_equipo_mes} etapas por equipo y mes. <b>Piso</b>: solo las locaciones vistas sin pozo en los últimos ${su.validez_meses} meses; las más viejas sin pozo se descartan (padrón incompleto o falso positivo). <b>Ritmo</b>: más las que aparecerían si sigue el ritmo del último año. Recursos humanos: pendiente, sin fuente abierta.`;
+}
+const GRAF=document.getElementById("graf");
+function cerrarGraf(){GRAF.style.display="none";}
+function abrirGraf(titulo,nota){GRAF.style.display="flex";GRAF.querySelector("h3").textContent=titulo;GRAF.querySelector(".sup").innerHTML=nota;return GRAF.querySelector("svg");}
+function barras(svg,cats,vals,fmt){
+  const W=760,H=340,L=64,B=40,T=30;svg.setAttribute("viewBox",`0 0 ${W} ${H}`);const max=Math.max(...vals.map(x=>x?x.v:0),1e-9);const n=cats.length;const w=(W-L-10)/n;let h="";
+  for(let i=0;i<=4;i++){const y=T+(H-T-B)*(1-i/4);h+=`<line x1="${L}" x2="${W-10}" y1="${y}" y2="${y}" stroke="#d6cdb9"/><text x="${L-6}" y="${y+3}" text-anchor="end">${fmt(max*i/4)}</text>`;}
+  vals.forEach((x,i)=>{if(!x)return;const hh=x.v/max*(H-T-B);h+=`<rect x="${L+i*w+w*.15}" y="${H-B-hh}" width="${w*.7}" height="${hh}" fill="${x.color}" rx="2"/><text x="${L+i*w+w/2}" y="${H-B-hh-5}" text-anchor="middle" class="v">${fmt(x.v)}</text>`;});
+  cats.forEach((c,i)=>h+=`<text x="${L+i*w+w/2}" y="${H-B+16}" text-anchor="middle">${c}</text>`);
+  svg.innerHTML=h;}
+function lineas(svg,labels,series,fmt,hoy){
+  const W=760,H=340,L=64,B=40,T=34;svg.setAttribute("viewBox",`0 0 ${W} ${H}`);const max=Math.max(...series.flatMap(s=>s.vals.filter(v=>v!=null)),1e-9);const n=labels.length;const X=i=>L+(W-L-10)*i/(n-1);const Y=v=>T+(H-T-B)*(1-v/max);let h="";
+  for(let i=0;i<=4;i++){const y=T+(H-T-B)*(1-i/4);h+=`<line x1="${L}" x2="${W-10}" y1="${y}" y2="${y}" stroke="#d6cdb9"/><text x="${L-6}" y="${y+3}" text-anchor="end">${fmt(max*i/4)}</text>`;}
+  labels.forEach((m,i)=>{if(m.endsWith("-01"))h+=`<line x1="${X(i)}" x2="${X(i)}" y1="${T}" y2="${H-B}" stroke="#e6dfcf"/><text x="${X(i)}" y="${H-B+16}" text-anchor="middle">${m.slice(0,4)}</text>`;});
+  const hi=labels.indexOf(hoy);if(hi>=0)h+=`<line x1="${X(hi)}" x2="${X(hi)}" y1="${T}" y2="${H-B}" stroke="#17212b" stroke-dasharray="3 3"/><text x="${X(hi)+4}" y="${T+10}">hoy</text>`;
+  series.forEach(s=>{const pts=s.vals.map((v,i)=>v==null?null:`${X(i)},${Y(v)}`).filter(Boolean).join(" ");h+=`<polyline fill="none" stroke="${s.color}" stroke-width="${s.ancho||2}" ${s.dash?'stroke-dasharray="6 4"':""} points="${pts}"/>`;});
+  let lx=L+8;series.forEach(s=>{h+=`<line x1="${lx}" x2="${lx+18}" y1="${T-14}" y2="${T-14}" stroke="${s.color}" stroke-width="3" ${s.dash?'stroke-dasharray="6 4"':""}/><text x="${lx+22}" y="${T-10}">${s.nombre}</text>`;lx+=s.nombre.length*6.3+44;});
+  svg.innerHTML=h;}
+const ETQ={pozos:"Pozos fracturados",etapas:"Etapas de fractura",arena_kt:"Arena, miles de t",agua_hm3:"Agua, hm³",camiones_arena:"Camiones de arena (28 t)",equipos_fractura:"Equipos de fractura ocupados",locaciones_vistas:"Locaciones nuevas vistas por el satélite"};
+function grafDemanda(k){const d=datosAmbito();if(!d||!ETQ[k])return;const years=Object.keys(d.anios);const val=(a,kk)=>kk==="equipos_fractura"?a.etapas/12/DEM.supuestos.etapas_equipo_mes:a[kk];
+  const cats=years.map(y=>y.slice(2)),vals=years.map(y=>{const v=val(d.anios[y],k);return v==null?null:{v,color:y==="2026"?"#7fa6ad":"#0b6b7a"}});
+  if(d.proy2027&&k!=="locaciones_vistas"){cats.push("27 piso","27 ritmo");vals.push({v:d.proy2027.piso[k],color:"#0b6b7a"},{v:d.proy2027.ritmo[k],color:"#7b2cbf"});}
+  else if(d.proy2027){cats.push("Últ. 12 m");vals.push({v:d.proy2027.locaciones_ultimos_12_meses,color:"#7b2cbf"});}
+  const svg=abrirGraf(`${ETQ[k]} · ${d.nombre}`,`Histórico por año de inicio de fractura (Adjunto IV, Secretaría de Energía); 2026 hasta lo cargado, en gris azulado. 2027: <b>piso</b>, las locaciones vistas sin pozo × ${DEM.supuestos.pozos_por_locacion} pozos; <b>ritmo</b>, más las locaciones nuevas del último año.`);
+  barras(svg,cats,vals,v=>k==="agua_hm3"||k==="equipos_fractura"?(Math.round(v*10)/10).toLocaleString("es-AR"):nf(v));}
+function grafFin(k){if(!FIN)return;const pb=+document.getElementById("p_bbl").value,pg=+document.getElementById("p_gas").value,capex=+document.getElementById("p_capex").value;
+  const H=FIN.historia_anual,years=Object.keys(H);const tot=(esc,c)=>FIN.meses.map((_,i)=>Object.values(FIN.operadoras).reduce((a,v)=>a+v[esc][c][i],0));
+  const i27=FIN.meses.map((m,i)=>m.startsWith("2027")?i:-1).filter(i=>i>=0);const prom=arr=>i27.reduce((a,i)=>a+arr[i],0)/i27.length;
+  const P=tot("piso","pet_m3d"),R=tot("ritmo","pet_m3d"),Pg=tot("piso","gas_m3d"),Rg=tot("ritmo","gas_m3d");
+  const fact=(pet,gas)=>(pet*M3_BBL*365*pb+gas*365*MMBTU_M3*pg)/1e6;const gris=y=>y==="2026"?"#7fa6ad":"#0b6b7a";const np=e=>FIN.nuevos_por_anio[e]["2027"]||0;
+  if(k==="pozos"){barras(abrirGraf("Pozos que entran en producción por año · ventanas","Histórico: pozos con primera producción en el año (Capítulo IV); 2026 hasta lo cargado. 2027: los que arrancan ese año según el <b>piso</b> (locaciones vistas sin pozo) y el <b>ritmo</b> (más las locaciones nuevas del último año)."),
+    years.map(y=>y.slice(2)).concat(["27 piso","27 ritmo"]),years.map(y=>({v:H[y].pozos_nuevos,color:gris(y)})).concat([{v:np("piso"),color:"#0b6b7a"},{v:np("ritmo"),color:"#7b2cbf"}]),nf);return;}
+  if(k==="bbl"){const hm=FIN.historia_mensual,nh=hm.length;const labels=hm.map(x=>x.m).concat(FIN.meses);const hist=hm.map(x=>x.pet*M3_BBL/1000).concat(FIN.meses.map(()=>null));
+    const u=hm[nh-1].pet*M3_BBL/1000;const mk=arr=>hm.map((_,i)=>i===nh-1?u:null).concat(arr.map((v,i)=>(FIN.base_pet_m3d[i]+v)*M3_BBL/1000));
+    lineas(abrirGraf("Producción de petróleo de las ventanas, miles de bbl/d",`Histórico: Capítulo IV, suma de las ventanas. Proyección: los pozos de hoy declinan según la curva tipo por edad (<b>base</b>, declino terminal ${(FIN.declino_terminal_mensual.pet*100).toFixed(1).replace(".",",")} % mensual), más los pozos que vienen según el piso y el ritmo. El KPI de arriba cuenta solo la producción nueva.`),
+      labels,[{nombre:"Histórico",color:"#0b6b7a",ancho:2.5,vals:hist},{nombre:"Base, pozos de hoy",color:"#8a8f94",vals:mk(FIN.meses.map(()=>0)),dash:1},{nombre:"Base + piso",color:"#0b6b7a",vals:mk(P),dash:1},{nombre:"Base + ritmo",color:"#7b2cbf",vals:mk(R),dash:1}],v=>nf(v),FIN.ultimo_mes_produccion);return;}
+  const cats=years.map(y=>y.slice(2)).concat(["27 piso","27 ritmo"]);
+  if(k==="cap"){barras(abrirGraf(`Capex por año a ${capex} MUS$ por pozo, MUS$`,"Pozos que entran en producción en el año × capex por pozo. No incluye instalaciones, exploración ni midstream. 2027 según piso y ritmo."),
+    cats,years.map(y=>({v:H[y].pozos_nuevos*capex,color:gris(y)})).concat([{v:np("piso")*capex,color:"#0b6b7a"},{v:np("ritmo")*capex,color:"#7b2cbf"}]),nf);return;}
+  const f=k==="reg"?REGALIA:1;const b27p=prom(FIN.base_pet_m3d)+prom(P),b27r=prom(FIN.base_pet_m3d)+prom(R),g27p=prom(FIN.base_gas_m3d)+prom(Pg),g27r=prom(FIN.base_gas_m3d)+prom(Rg);
+  barras(abrirGraf((k==="reg"?"Regalías 12 % por año, MUS$":"Facturación por año de las ventanas, MUS$")+` · Brent ${pb}, gas ${pg}`,"Producción media del año × el precio elegido, constante para todos los años (no es el precio histórico). 2027: la base de los pozos de hoy más los que vienen; el KPI de arriba cuenta solo los pozos que vienen."),
+    cats,years.map(y=>({v:fact(H[y].pet_m3d,H[y].gas_m3d)*f,color:gris(y)})).concat([{v:fact(b27p,g27p)*f,color:"#0b6b7a"},{v:fact(b27r,g27r)*f,color:"#7b2cbf"}]),nf);}
+function plegar(lado){const b=document.body,cl="sin-"+lado;b.classList.toggle(cl);const t=document.getElementById("tog_"+lado);const off=b.classList.contains(cl);t.textContent=lado==="izq"?(off?"›":"‹"):(off?"‹":"›");setTimeout(()=>map.invalidateSize(),330);}
+document.getElementById("tog_izq").onclick=()=>plegar("izq");document.getElementById("tog_der").onclick=()=>plegar("der");
+document.getElementById("kpis").addEventListener("click",e=>{const f=e.target.closest(".fila.clic");if(f)grafDemanda(f.dataset.k);});
+document.getElementById("fin_kpis").addEventListener("click",e=>{const f=e.target.closest(".fila.clic");if(f)grafFin(f.dataset.k);});
+GRAF.querySelector(".cerrar").onclick=cerrarGraf;GRAF.addEventListener("click",e=>{if(e.target===GRAF)cerrarGraf();});
+let FIN=null,escen="piso";
+const M3_BBL=6.29,MMBTU_M3=0.0353,REGALIA=0.12;
+function finanzas(){
+  if(!FIN)return;const pb=+document.getElementById("p_bbl").value,pg=+document.getElementById("p_gas").value,capex=+document.getElementById("p_capex").value;
+  document.querySelectorAll("#sec_finanzas .esc").forEach(b=>b.classList.toggle("on",b.dataset.e===escen));
+  const i27=FIN.meses.map((m,i)=>m.startsWith("2027")?i:-1).filter(i=>i>=0);
+  const filas=[];let T={activos:0,hoy:0,sinpozo:0,viejas:0,pozos:0,bbl:0,gas:0,fact:0,reg:0,cap:0};
+  for(const [op,v] of Object.entries(FIN.operadoras)){const e=v[escen];
+    const bbl=i27.reduce((a,i)=>a+e.pet_m3d[i],0)/i27.length*M3_BBL;const gas=i27.reduce((a,i)=>a+e.gas_m3d[i],0)/i27.length;
+    const fact=(bbl*365*pb+gas*365*MMBTU_M3*pg)/1e6;const f={op,activos:v.pozos_activos,hoy:v.pet_m3d_hoy*M3_BBL,sinpozo:v.locaciones_sin_pozo,viejas:v.locaciones_sin_pozo_viejas,pozos:e.pozos,bbl,gas,fact,reg:fact*REGALIA,cap:e.pozos*capex};
+    filas.push(f);for(const k in T)T[k]+=f[k];}
+  filas.sort((a,b)=>b.bbl-a.bbl);
+  const k=document.getElementById("fin_kpis");
+  k.innerHTML=`<div class="fila"><span>Pozos que vienen (${escen==="piso"?"locaciones ya vistas sin pozo":"más el ritmo del último año"})</span><b>${nf(T.pozos)}</b></div>
+   <div class="fila"><span>Producción nueva media 2027, bbl/d</span><b>${nf(T.bbl)}</b></div>
+   <div class="fila"><span>Hoy producen en las ventanas, bbl/d</span><b style="color:var(--muted)">${nf(T.hoy)}</b></div>
+   <div class="fila"><span>Facturación 2027 de esos pozos, MUS$</span><b>${nf(T.fact)}</b></div>
+   <div class="fila"><span>Regalías 12 % para la provincia, MUS$</span><b>${nf(T.reg)}</b></div>
+   <div class="fila"><span>Capex implícito ya decidido, MUS$</span><b>${nf(T.cap)}</b></div>
+   <div class="fila"><span>Sin pozo hace más de ${FIN.supuestos.validez_meses} meses, no se cuentan</span><b style="color:var(--muted)">${nf(T.viejas)}</b></div>`;
+  [...k.querySelectorAll(".fila")].forEach((f,i)=>{const ks=["pozos","bbl","bbl","fact","reg","cap",null][i];if(ks){f.classList.add("clic");f.dataset.k=ks;}});
+  const tb=document.getElementById("fin_tabla");
+  tb.innerHTML=`<tr><th>Operadora</th><th>Bbl/d hoy</th><th>Loc.</th><th>Pozos</th><th>Bbl/d 2027</th><th>MUS$ 2027</th></tr>`+
+    filas.map(f=>`<tr><td>${f.op}</td><td>${nf(f.hoy)}</td><td>${f.sinpozo}</td><td>${nf(f.pozos)}</td><td>${nf(f.bbl)}</td><td>${nf(f.fact)}</td></tr>`).join("")+
+    `<tr class="tot"><td>Total</td><td>${nf(T.hoy)}</td><td>${T.sinpozo}</td><td>${nf(T.pozos)}</td><td>${nf(T.bbl)}</td><td>${nf(T.fact)}</td></tr>`;
+  const tot=esc=>FIN.meses.map((_,i)=>Object.values(FIN.operadoras).reduce((a,v)=>a+v[esc].pet_m3d[i],0)*M3_BBL/1000);
+  const P=tot("piso"),R=tot("ritmo");const max=Math.max(...R,1);const n=P.length;const w=300/n;
+  let h="";const path=(arr,c)=>`<polyline fill="none" stroke="${c}" stroke-width="2" points="${arr.map((v,i)=>`${i*w+w/2},${105-v/max*90}`).join(" ")}"/>`;
+  h+=path(R,"#7b2cbf")+path(P,"#0b6b7a");
+  FIN.meses.forEach((m,i)=>{if(m.endsWith("-01"))h+=`<text x="${i*w+w/2}" y="117" text-anchor="middle">${m.slice(0,4)}</text><line x1="${i*w+w/2}" x2="${i*w+w/2}" y1="8" y2="105" stroke="#d6cdb9"/>`;});
+  h+=`<text x="4" y="12">${nf(max)} mil bbl/d</text>`;
+  document.getElementById("fin_grafico").innerHTML=h;
+  const c=FIN.curva_pet_m3d;
+  document.getElementById("fin_sup").innerHTML=`Cada locación vista se atribuye a la operadora del pozo más cercano a menos de 2 km. Pozos que vienen: ${FIN.supuestos.pozos_por_locacion} por locación. Cada pozo produce según la curva tipo de las ventanas (${FIN.n_curva} pozos con primera producción 2023-2025): ${nf(c[0]*M3_BBL)} bbl/d el primer mes, pico de ${nf(Math.max(...c)*M3_BBL)} en el mes ${c.indexOf(Math.max(...c))+1}, ${nf(c[12]*M3_BBL)} al año. Arranca ${FIN.supuestos.meses_a_produccion} meses después de verse la locación. Facturación a boca de pozo con el precio elegido; regalías ${REGALIA*100} %. Solo cuentan las locaciones vistas sin pozo en los últimos ${FIN.supuestos.validez_meses} meses (las más viejas: padrón incompleto o falso positivo). Las atrasadas, que ya deberían producir, se reparten en los 12 meses desde ${FIN.meses[0]}; por el atraso del padrón algunas pueden estar ya fracturadas. "loc.": locaciones sin pozo que cuentan. Producción actual: Capítulo IV, ${FIN.ultimo_mes_produccion}.`;
+}
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("on",x===b));document.getElementById("sec_demanda").style.display=b.dataset.t==="demanda"?"":"none";document.getElementById("sec_finanzas").style.display=b.dataset.t==="finanzas"?"":"none";finanzas();});
+document.querySelectorAll("#sec_finanzas .esc").forEach(b=>b.onclick=()=>{escen=b.dataset.e;finanzas();});
+["p_bbl","p_gas","p_capex"].forEach(id=>document.getElementById(id).addEventListener("input",finanzas));
+fetch("data/finanzas.json").then(r=>r.json()).then(j=>{FIN=j;finanzas();});
+function elegirAnio(a){anioSel=a;tablero();if(typeof meses!=="undefined"&&meses.length){const obj=a==="2027"?meses[meses.length-1]:(a+"-12"<=meses[meses.length-1]?a+"-12":meses[meses.length-1]);idx=Math.max(0,meses.indexOf(obj));document.getElementById("slider").value=idx;dibujar();}}
+fetch("data/demanda.json").then(r=>r.json()).then(j=>{DEM=j;const sel=document.getElementById("ambito");
+  sel.innerHTML=`<option value="__ventanas__">${j.zonas.__ventanas__.nombre}</option>`+Object.keys(j.zonas).filter(z=>z!=="__ventanas__").map(z=>`<option value="${z}">${j.zonas[z].nombre}</option>`).join("")+`<option value="__cuenca__">${j.cuenca.nombre}</option>`;
+  sel.onchange=()=>{ambito=sel.value;tablero();};
+  const A=document.getElementById("anios");A.innerHTML=Object.keys(j.cuenca.anios).map(a=>`<button data-a="${a}">${a}</button>`).join("")+`<button data-a="2027" class="p">2027 →</button>`;
+  A.querySelectorAll("button").forEach(b=>b.onclick=()=>elegirAnio(b.dataset.a));
+  tablero();});
+</script>
+<script>
+const MENTA="#19d3ff",ROSA="#ff3d9a",CIAN="#f9f6ee",GRIS="#8a8f94",AMARILLO="#7b2cbf";
+const map=L.map("map",{zoomControl:true,preferCanvas:true}).setView([-38.33,-68.72],12);
+L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{maxZoom:18,attribution:"Esri World Imagery · Copernicus Sentinel-2 · Secretaría de Energía · ENARGAS"}).addTo(map);
+let CFG,LOC,POZ,meses=[],idx=0,overlayLayers={},playing=null;
+const PUBLICO=true;
+const g={img:L.layerGroup().addTo(map),loc:L.layerGroup().addTo(map),otras:L.layerGroup(),pozos:L.layerGroup().addTo(map),gas:L.layerGroup().addTo(map),comp:L.layerGroup().addTo(map),arena:L.layerGroup(),zonas:L.layerGroup().addTo(map)};
+const fmt=d=>d?d:"—";
+function estadoTxt(p){
+  if(p.estado==="llego_despues")return `<span class="r">Llegó un pozo</span> a los ${p.espera_meses} meses (perforación ${fmt(p.drill_cercano)})`;
+  if(p.estado==="ya_perforado")return "Ya había un pozo perforado al lado";
+  return `<b>Sin pozo registrado</b> a menos de 150 m (el más cercano a ${Math.round(p.pozo_a_m)} m)`;
+}
+function dibujar(){
+  const mes=meses[idx];document.getElementById("mes").textContent=mes;
+  const anio=mes.slice(0,4);
+  g.loc.clearLayers();g.otras.clearLayers();g.pozos.clearLayers();
+  let vistas=0,sinpozo=0,otras=0;
+  for(const f of LOC.features){const p=f.properties;if(p.mes_txt>mes)continue;if(PUBLICO&&p.estado==="sin_pozo")continue;
+    const [lon,lat]=f.geometry.coordinates;const lado=Math.max(60,Math.sqrt(p.area_ha*1e4))/2;
+    const b=L.latLngBounds([lat-lado/111000,lon-lado/(111000*Math.cos(lat*Math.PI/180))],[lat+lado/111000,lon+lado/(111000*Math.cos(lat*Math.PI/180))]);
+    const nuevo=(parseInt(mes.slice(0,4))*12+parseInt(mes.slice(5)))-(parseInt(p.mes_txt.slice(0,4))*12+parseInt(p.mes_txt.slice(5)))<3;
+    const pop=`<b>${p.tipo==="locacion"?"Locación nueva":"Obra detectada"}</b> · ${p.zona.replaceAll("_"," ")}<br>Vista por el satélite en <b>${p.mes_txt}</b> · ${p.area_ha} ha<br>${estadoTxt(p)}${p.verificacion_visual_oct2026&&!PUBLICO?`<br>en octubre 2026: <b>${p.verificacion_visual_oct2026}</b>`:""}`;
+    const lejos=map.getZoom()<14;
+    if(p.tipo==="locacion"){vistas++;if(p.estado==="sin_pozo")sinpozo++;
+      (lejos?L.circleMarker([lat,lon],{radius:nuevo?7:5,color:MENTA,weight:2,fillColor:MENTA,fillOpacity:p.estado==="sin_pozo"?.9:.15})
+            :L.rectangle(b,{color:MENTA,weight:nuevo?3:1.5,fill:p.estado==="sin_pozo",fillColor:MENTA,fillOpacity:.25})).bindPopup(pop).addTo(g.loc);}
+    else{otras++;(lejos?L.circleMarker([lat,lon],{radius:3,color:GRIS,weight:1,fillOpacity:0}):L.rectangle(b,{color:GRIS,weight:1,fill:false,dashArray:"3 3"})).bindPopup(pop).addTo(g.otras);}
+  }
+  const todos=document.getElementById("c_todos").checked;let np=0;
+  for(const f of POZ.features){const p=f.properties;if(!p.perforacion)continue;const antes=p.perforacion.slice(0,7)<=mes;if(!antes&&!todos)continue;np++;
+    const [lon,lat]=f.geometry.coordinates;
+    const lejos=map.getZoom()<14;
+    L.circleMarker([lat,lon],{radius:lejos?(antes?2:1.5):(antes?4:3),color:antes?ROSA:"#9c7f8c",fillColor:antes?ROSA:"#9c7f8c",fillOpacity:lejos?.55:.9,weight:lejos?0:1})
+      .bindPopup(`<b class="r">${p.sigla}</b> · ${p.empresa}<br>${p.area} · ${p.yacimiento}<br>${p.recurso} · ${p.tipo_pozo}<br>inicio de perforación <b>${fmt(p.perforacion)}</b>`).addTo(g.pozos);}
+  document.getElementById("k_vistas").textContent=vistas;document.getElementById("k_sinpozo").textContent=sinpozo;
+  document.getElementById("n_loc").textContent=vistas;document.getElementById("n_otras").textContent=otras;document.getElementById("n_pozos").textContent=np;
+  // imagen del año: la escena más cercana al año elegido en cada ventana
+  g.img.clearLayers();let nimg=0;
+  for(const z in CFG.overlays){const ov=CFG.overlays[z];if(!ov.length)continue;
+    let mejor=ov[0];for(const o of ov){if(Math.abs(parseInt(o.mes.slice(0,4))-parseInt(anio))<=Math.abs(parseInt(mejor.mes.slice(0,4))-parseInt(anio)))mejor=o;}
+    L.imageOverlay(mejor.img,mejor.bounds,{opacity:1,interactive:false}).addTo(g.img);nimg++;}
+  document.getElementById("n_img").textContent=nimg;
+}
+function toggle(id,layer){document.getElementById(id).addEventListener("change",e=>{e.target.checked?layer.addTo(map):map.removeLayer(layer);});}
+Promise.all(["data/config.json","data/locaciones.geojson","data/pozos.geojson","data/gasoductos.geojson","data/compresoras.geojson","data/ruta_arena.geojson","data/calor.json"].map(u=>fetch(u).then(r=>r.ok?r.json():null))).then(([cfg,loc,poz,gas,comp,arena,calor])=>{
+  CFG=cfg;LOC=loc;POZ=poz;meses=cfg.meses;idx=meses.length-1;
+  const s=document.getElementById("slider");s.max=meses.length-1;s.value=idx;
+  L.geoJSON(gas,{style:f=>({color:CIAN,weight:f.properties.subtipo==="Troncal"?2.5:1.2,opacity:.85}),onEachFeature:(f,l)=>l.bindPopup(`<b>${f.properties.gasoducto}</b><br>${f.properties.tramo||""}<br>${f.properties.licenciataria} · ${f.properties.subtipo||""}`)}).addTo(g.gas);
+  document.getElementById("n_gas").textContent=gas.features.length;
+  for(const f of comp.features){const [lon,lat]=f.geometry.coordinates;L.circleMarker([lat,lon],{radius:5,color:"#17212b",fillColor:CIAN,fillOpacity:1,weight:2}).bindPopup(`<b>${f.properties.nombre}</b><br>${f.properties.gasoducto}<br>${f.properties.licenciataria}`).addTo(g.comp);}
+  document.getElementById("n_comp").textContent=comp.features.length;
+  if(arena)L.geoJSON(arena,{style:{color:AMARILLO,weight:3,dashArray:"6 4"}}).bindPopup("La ruta de la arena: Ibicuy a Añelo, 1.461 km (arena-lab)").addTo(g.arena);
+  const zdiv=document.getElementById("zonas");const RAD={};
+  const corto=n=>({"YPF S.A.":"YPF","VISTA ENERGY ARGENTINA SAU":"Vista","PLUSPETROL S.A.":"Pluspetrol","SHELL ARGENTINA S.A.":"Shell","PAMPA ENERGIA S.A.":"Pampa","PHOENIX GLOBAL RESOURCES S.A.":"Phoenix","PAN AMERICAN ENERGY SL":"PAE","TECPETROL S.A.":"Tecpetrol","TOTAL AUSTRAL S.A.":"Total","GEOPARK ARGENTINA S.A.":"GeoPark","CHEVRON ARGENTINA S.R.L.":"Chevron","EXXONMOBIL EXPLORATION ARGENTINA S.R.L.":"ExxonMobil","CAPEX S.A.":"Capex"}[n]||(n||"").split(" ")[0]);
+  for(const z in cfg.zonas){const b=cfg.zonas[z].bbox;const la=(b[1]+b[3])/2,lo=(b[0]+b[2])/2;const dx=(b[2]-b[0])*111320*Math.cos(la*Math.PI/180),dy=(b[3]-b[1])*111320;const r=Math.hypot(dx,dy)/2;
+    const ring=L.circle([la,lo],{radius:r,color:"#19d3ff",weight:1.2,fill:false,opacity:.7,dashArray:"2 6"}).addTo(g.zonas);
+    const dla=r/111320,dlo=r/(111320*Math.cos(la*Math.PI/180));const bounds=[[la-dla,lo-dlo],[la+dla,lo+dlo]];
+    const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");svg.setAttribute("viewBox","0 0 100 100");
+    svg.innerHTML=`<defs><linearGradient id="gz_${z}" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#19d3ff" stop-opacity="0"/><stop offset="1" stop-color="#19d3ff" stop-opacity=".55"/></linearGradient></defs><path class="barrido" d="M50 50 L50 2 A48 48 0 0 1 70.3 6.5 Z" fill="url(#gz_${z})"/><circle cx="50" cy="50" r="1.2" fill="#19d3ff"/>`;
+    L.svgOverlay(svg,bounds,{interactive:false}).addTo(g.zonas);
+    const nl=cfg.zonas[z].n_locaciones,sp=cfg.zonas[z].n_sin_pozo;
+    const pz=poz.features.filter(f=>{const c=f.geometry.coordinates;return c[0]>=b[0]&&c[0]<=b[2]&&c[1]>=b[1]&&c[1]<=b[3]});
+    const cnt={};pz.forEach(f=>{const e=corto(f.properties.empresa);cnt[e]=(cnt[e]||0)+1;});const ops=Object.entries(cnt).sort((x,y)=>y[1]-x[1]).slice(0,2).map(x=>x[0]).join(", ");
+    const cz=calor&&calor.zonas[z];
+    const a=document.createElement("div");a.className="vent";a.innerHTML=`<b>${cfg.zonas[z].nombre}</b><span class="n">${nl}</span><div class="det">${nl} locaciones vistas${sp?`, ${sp} sin pozo`:""} · ${nf(pz.length)} pozos${cz?` · ${nf(cz.boed)} boe/d`:""}<br>${ops}</div>`;
+    a.onclick=()=>{map.fitBounds(bounds);document.querySelectorAll(".vent").forEach(v=>v.classList.toggle("on",v===a));for(const k in RAD)RAD[k].setStyle(k===z?{weight:3,opacity:1,dashArray:null}:{weight:1.2,opacity:.7,dashArray:"2 6"});};
+    RAD[z]=ring;zdiv.appendChild(a);}
+  g.calor=L.layerGroup();toggle("c_calor",g.calor);document.getElementById("c_calor").addEventListener("change",e=>{document.getElementById("calor_nota").style.display=e.target.checked?"":"none";});if(calor){L.imageOverlay(calor.img,calor.bounds,{opacity:.7,interactive:false}).addTo(g.calor);document.getElementById("calor_nota").innerHTML=`${nf(calor.n.productores)} pozos producen ${nf(calor.n.boed)} boe/d (${calor.mes}); ${calor.n.exploracion} pozos de exploración, en estudio o nuevos sin producir. Padrón y Capítulo IV.`;}toggle("c_img",g.img);toggle("c_loc",g.loc);toggle("c_otras",g.otras);toggle("c_pozos",g.pozos);toggle("c_gas",g.gas);toggle("c_comp",g.comp);toggle("c_arena",g.arena);
+  document.getElementById("c_todos").addEventListener("change",dibujar);
+  map.on("zoomend",dibujar);
+  s.addEventListener("input",e=>{idx=parseInt(e.target.value);dibujar();});
+  document.getElementById("hoy").onclick=()=>{idx=meses.length-1;s.value=idx;dibujar();};
+  document.getElementById("play").onclick=function(){if(playing){clearInterval(playing);playing=null;this.textContent="▶";return;}
+    if(idx>=meses.length-1)idx=0;this.textContent="❚❚";playing=setInterval(()=>{idx++;if(idx>=meses.length){clearInterval(playing);playing=null;document.getElementById("play").textContent="▶";idx=meses.length-1;}s.value=idx;dibujar();},450);};
+  if(PUBLICO){document.getElementById("tag").textContent="avance";document.querySelector(".kpi.r").style.display="none";}
+  dibujar();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,103 @@
+{
+ "bounds": [
+  [
+   -38.93,
+   -69.48
+  ],
+  [
+   -37.89,
+   -68.10000000000001
+  ]
+ ],
+ "img": "img/calor.png",
+ "mes": "2026-08",
+ "colores": {
+  "produccion": "#0b6b7a",
+  "exploracion": "#7b2cbf"
+ },
+ "n": {
+  "productores": 3543,
+  "boed": 1192115,
+  "exploracion": 108,
+  "exploracion_clasif": 76,
+  "en_estudio": 11,
+  "nuevos_sin_producir": 23
+ },
+ "zonas": {
+  "loma_campana_oeste": {
+   "boed": 73871,
+   "productores": 210,
+   "exploracion": 2
+  },
+  "norte_lac_bdp_bandurria": {
+   "boed": 139818,
+   "productores": 393,
+   "exploracion": 6
+  },
+  "loma_campana_este": {
+   "boed": 92845,
+   "productores": 438,
+   "exploracion": 6
+  },
+  "fortin_de_piedra": {
+   "boed": 116182,
+   "productores": 165,
+   "exploracion": 3
+  },
+  "norte_este": {
+   "boed": 59442,
+   "productores": 168,
+   "exploracion": 6
+  },
+  "norte_norte": {
+   "boed": 47501,
+   "productores": 162,
+   "exploracion": 9
+  },
+  "norte_noreste": {
+   "boed": 16919,
+   "productores": 45,
+   "exploracion": 6
+  },
+  "aguada_pichana_oeste": {
+   "boed": 110351,
+   "productores": 118,
+   "exploracion": 2
+  },
+  "aguada_pichana_este": {
+   "boed": 78963,
+   "productores": 333,
+   "exploracion": 2
+  },
+  "sierras_blancas": {
+   "boed": 52967,
+   "productores": 166,
+   "exploracion": 8
+  },
+  "loma_la_lata_sur": {
+   "boed": 53699,
+   "productores": 70,
+   "exploracion": 3
+  },
+  "aguada_del_chanar": {
+   "boed": 15064,
+   "productores": 52,
+   "exploracion": 5
+  },
+  "rincon_del_mangrullo": {
+   "boed": 92170,
+   "productores": 158,
+   "exploracion": 2
+  },
+  "ypf_sur_este": {
+   "boed": 28323,
+   "productores": 187,
+   "exploracion": 0
+  },
+  "aguada_pichana_norte": {
+   "boed": 35745,
+   "productores": 39,
+   "exploracion": 0
+  }
+ }
+}

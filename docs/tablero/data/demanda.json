@@ -1,0 +1,1615 @@
+{
+ "ultimo_mes_satelite": "2026-07",
+ "supuestos": {
+  "pozos_por_locacion": 3.0,
+  "t_camion": 28.0,
+  "etapas_equipo_mes": 230.0,
+  "meses_locacion_a_fractura": 7,
+  "validez_meses": 24
+ },
+ "zonas": {
+  "aguada_del_chanar": {
+   "nombre": "Aguada del Chañar (PAE)",
+   "anios": {
+    "2019": {
+     "pozos": 2,
+     "etapas": 67,
+     "arena_kt": 18.5,
+     "agua_hm3": 0.11,
+     "camiones_arena": 660,
+     "locaciones_vistas": 0
+    },
+    "2020": {
+     "pozos": 1,
+     "etapas": 36,
+     "arena_kt": 10.9,
+     "agua_hm3": 0.04,
+     "camiones_arena": 389,
+     "locaciones_vistas": 0
+    },
+    "2021": {
+     "pozos": 0,
+     "etapas": 0,
+     "arena_kt": 0.0,
+     "agua_hm3": 0.0,
+     "camiones_arena": 0,
+     "locaciones_vistas": 0
+    },
+    "2022": {
+     "pozos": 7,
+     "etapas": 297,
+     "arena_kt": 56.6,
+     "agua_hm3": 0.45,
+     "camiones_arena": 2019,
+     "locaciones_vistas": 0
+    },
+    "2023": {
+     "pozos": 3,
+     "etapas": 147,
+     "arena_kt": 27.5,
+     "agua_hm3": 0.23,
+     "camiones_arena": 981,
+     "locaciones_vistas": 0
+    },
+    "2024": {
+     "pozos": 8,
+     "etapas": 424,
+     "arena_kt": 90.3,
+     "agua_hm3": 0.66,
+     "camiones_arena": 3225,
+     "locaciones_vistas": 16
+    },
+    "2025": {
+     "pozos": 8,
+     "etapas": 388,
+     "arena_kt": 102.1,
+     "agua_hm3": 0.69,
+     "camiones_arena": 3646,
+     "locaciones_vistas": 15
+    },
+    "2026": {
+     "pozos": 4,
+     "etapas": 226,
+     "arena_kt": 65.6,
+     "agua_hm3": 0.44,
+     "camiones_arena": 2344,
+     "locaciones_vistas": 0
+    }
+   },
+   "por_pozo": {
+    "arena_t": 12088.0,
+    "agua_m3": 91452.0,
+    "etapas": 54.0,
+    "n": 20
+   },
+   "proy2027": {
+    "locaciones_sin_pozo": 29,
+    "locaciones_sin_pozo_viejas": 0,
+    "locaciones_ultimos_12_meses": 9,
+    "piso": {
+     "pozos": 87,
+     "etapas": 4698,
+     "arena_kt": 1051.7,
+     "agua_hm3": 7.96,
+     "camiones_arena": 37559,
+     "equipos_fractura": 1.7
+    },
+    "ritmo": {
+     "pozos": 114,
+     "etapas": 6156,
+     "arena_kt": 1378.0,
+     "agua_hm3": 10.43,
+     "camiones_arena": 49215,
+     "equipos_fractura": 2.2
+    }
+   }
+  },
+  "aguada_pichana_este": {
+   "nombre": "Aguada Pichana este (Pluspetrol, YPF)",
+   "anios": {
+    "2019": {
+     "pozos": 3,
+     "etapas": 91,
+     "arena_kt": 19.7,
+     "agua_hm3": 0.15,
+     "camiones_arena": 705,
+     "locaciones_vistas": 0
+    },
+    "2020": {
+     "pozos": 6,
+     "etapas": 179,
+     "arena_kt": 38.4,
+     "agua_hm3": 0.31,
+     "camiones_arena": 1371,
+     "locaciones_vistas": 0
+    },
+    "2021": {
+     "pozos": 4,
+     "etapas": 146,
+     "arena_kt": 34.6,
+     "agua_hm3": 0.21,
+     "camiones_arena": 1235,
+     "locaciones_vistas": 3
+    },
+    "2022": {
+     "pozos": 6,
+     "etapas": 228,
+     "arena_kt": 49.6,
+     "agua_hm3": 0.36,
+     "camiones_arena": 1772,
+     "locaciones_vistas": 2
+    },
+    "2023": {
+     "pozos": 9,
+     "etapas": 360,
+     "arena_kt": 81.3,
+     "agua_hm3": 0.62,
+     "camiones_arena": 2905,
+     "locaciones_vistas": 4
+    },
+    "2024": {
+     "pozos": 19,
+     "etapas": 946,
+     "arena_kt": 219.5,
+     "agua_hm3": 1.86,
+     "camiones_arena": 7839,
+     "locaciones_vistas": 6
+    },
+    "2025": {
+     "pozos": 20,
+     "etapas": 976,
+     "arena_kt": 231.2,
+     "agua_hm3": 1.7,
+     "camiones_arena": 8258,
+     "locaciones_vistas": 6
+    },
+    "2026": {
+     "pozos": 18,
+     "etapas": 933,
+     "arena_kt": 210.2,
+     "agua_hm3": 1.57,
+     "camiones_arena": 7508,
+     "locaciones_vistas": 4
+    }
+   },
+   "por_pozo": {
+    "arena_t": 11555.0,
+    "agua_m3": 85067.0,
+    "etapas": 49.0,
+    "n": 38
+   },
+   "proy2027": {
+    "locaciones_sin_pozo": 6,
+    "locaciones_sin_pozo_viejas": 5,
+    "locaciones_ultimos_12_meses": 8,
+    "piso": {
+     "pozos": 18,
+     "etapas": 882,
+     "arena_kt": 208.0,
+     "agua_hm3": 1.53,
+     "camiones_arena": 7428,
+     "equipos_fractura": 0.3
+    },
+    "ritmo": {
+     "pozos": 42,
+     "etapas": 2058,
+     "arena_kt": 485.3,
+     "agua_hm3": 3.57,
+     "camiones_arena": 17332,
+     "equipos_fractura": 0.7
+    }
+   }
+  },
+  "aguada_pichana_norte": {
+   "nombre": "Aguada Pichana norte (YPF, Pampa)",
+   "anios": {
+    "2019": {
+     "pozos": 0,
+     "etapas": 0,
+     "arena_kt": 0.0,
+     "agua_hm3": 0.0,
+     "camiones_arena": 0,
+     "locaciones_vistas": 0
+    },
+    "2020": {
+     "pozos": 0,
+     "etapas": 0,
+     "arena_kt": 0.0,
+     "agua_hm3": 0.0,
+     "camiones_arena": 0,
+     "locaciones_vistas": 0
+    },
+    "2021": {
+     "pozos": 7,
+     "etapas": 245,
+     "arena_kt": 58.3,
+     "agua_hm3": 0.35,
+     "camiones_arena": 2081,
+     "locaciones_vistas": 1
+    },
+    "2022": {
+     "pozos": 7,
+     "etapas": 230,
+     "arena_kt": 54.3,
+     "agua_hm3": 0.38,
+     "camiones_arena": 1938,
+     "locaciones_vistas": 3
+    },
+    "2023": {
+     "pozos": 11,
+     "etapas": 422,
+     "arena_kt": 92.7,
+     "agua_hm3": 0.56,
+     "camiones_arena": 3309,
+     "locaciones_vistas": 2
+    },
+    "2024": {
+     "pozos": 0,
+     "etapas": 0,
+     "arena_kt": 0.0,
+     "agua_hm3": 0.0,
+     "camiones_arena": 0,
+     "locaciones_vistas": 0
+    },
+    "2025": {
+     "pozos": 4,
+     "etapas": 172,
+     "arena_kt": 34.5,
+     "agua_hm3": 0.25,
+     "camiones_arena": 1231,
+     "locaciones_vistas": 0
+    },
+    "2026": {
+     "pozos": 12,
+     "etapas": 435,
+     "arena_kt": 97.5,
+     "agua_hm3": 0.61,
+     "camiones_arena": 3483,
+     "locaciones_vistas": 0
+    }
+   },
+   "por_pozo": {
+    "arena_t": 8636.0,
+    "agua_m3": 60811.0,
+    "etapas": 40.0,
+    "n": 16
+   },
+   "proy2027": {
+    "locaciones_sin_pozo": 0,
+    "locaciones_sin_pozo_viejas": 1,
+    "locaciones_ultimos_12_meses": 0,
+    "piso": {
+     "pozos": 0,
+     "etapas": 0,
+     "arena_kt": 0.0,
+     "agua_hm3": 0.0,
+     "camiones_arena": 0,
+     "equipos_fractura": 0.0
+    },
+    "ritmo": {
+     "pozos": 0,
+     "etapas": 0,
+     "arena_kt": 0.0,
+     "agua_hm3": 0.0,
+     "camiones_arena": 0,
+     "equipos_fractura": 0.0
+    }
+   }
+  },
+  "aguada_pichana_oeste": {
+   "nombre": "Aguada Pichana oeste (Total, Pluspetrol)",
+   "anios": {
+    "2019": {
+     "pozos": 13,
+     "etapas": 360,
+     "arena_kt": 82.3,
+     "agua_hm3": 0.6,
+     "camiones_arena": 2937,
+     "locaciones_vistas": 0
+    },
+    "2020": {
+     "pozos": 0,
+     "etapas": 0,
+     "arena_kt": 0.0,
+     "agua_hm3": 0.0,
+     "camiones_arena": 0,
+     "locaciones_vistas": 0
+    },
+    "2021": {
+     "pozos": 13,
+     "etapas": 480,
+     "arena_kt": 115.7,
+     "agua_hm3": 0.85,
+     "camiones_arena": 4130,
+     "locaciones_vistas": 4
+    },
+    "2022": {
+     "pozos": 17,
+     "etapas": 776,
+     "arena_kt": 165.6,
+     "agua_hm3": 1.16,
+     "camiones_arena": 5913,
+     "locaciones_vistas": 9
+    },
+    "2023": {
+     "pozos": 20,
+     "etapas": 970,
+     "arena_kt": 211.3,
+     "agua_hm3": 1.58,
+     "camiones_arena": 7546,
+     "locaciones_vistas": 9
+    },
+    "2024": {
+     "pozos": 13,
+     "etapas": 645,
+     "arena_kt": 139.4,
+     "agua_hm3": 1.12,
+     "camiones_arena": 4978,
+     "locaciones_vistas": 6
+    },
+    "2025": {
+     "pozos": 12,
+     "etapas": 644,
+     "arena_kt": 145.6,
+     "agua_hm3": 1.17,
+     "camiones_arena": 5199,
+     "locaciones_vistas": 4
+    },
+    "2026": {
+     "pozos": 12,
+     "etapas": 604,
+     "arena_kt": 123.8,
+     "agua_hm3": 0.96,
+     "camiones_arena": 4420,
+     "locaciones_vistas": 6
+    }
+   },
+   "por_pozo": {
+    "arena_t": 10482.0,
+    "agua_m3": 77297.0,
+    "etapas": 50.0,
+    "n": 24
+   },
+   "proy2027": {
+    "locaciones_sin_pozo": 6,
+    "locaciones_sin_pozo_viejas": 5,
+    "locaciones_ultimos_12_meses": 6,
+    "piso": {
+     "pozos": 18,
+     "etapas": 900,
+     "arena_kt": 188.7,
+     "agua_hm3": 1.39,
+     "camiones_arena": 6738,
+     "equipos_fractura": 0.3
+    },
+    "ritmo": {
+     "pozos": 36,
+     "etapas": 1800,
+     "arena_kt": 377.4,
+     "agua_hm3": 2.78,
+     "camiones_arena": 13477,
+     "equipos_fractura": 0.7
+    }
+   }
+  },
+  "fortin_de_piedra": {
+   "nombre": "Fortín de Piedra",
+   "anios": {
+    "2019": {
+     "pozos": 16,
+     "etapas": 701,
+     "arena_kt": 160.5,
+     "agua_hm3": 1.08,
+     "camiones_arena": 5732,
+     "locaciones_vistas": 0
+    },
+    "2020": {
+     "pozos": 3,
+     "etapas": 99,
+     "arena_kt": 29.5,
+     "agua_hm3": 0.21,
+     "camiones_arena": 1054,
+     "locaciones_vistas": 0
+    },
+    "2021": {
+     "pozos": 18,
+     "etapas": 840,
+     "arena_kt": 191.4,
+     "agua_hm3": 1.39,
+     "camiones_arena": 6834,
+     "locaciones_vistas": 5
+    },
+    "2022": {
+     "pozos": 25,
+     "etapas": 1289,
+     "arena_kt": 289.8,
+     "agua_hm3": 1.88,
+     "camiones_arena": 10351,
+     "locaciones_vistas": 5
+    },
+    "2023": {
+     "pozos": 15,
+     "etapas": 729,
+     "arena_kt": 144.0,
+     "agua_hm3": 1.23,
+     "camiones_arena": 5141,
+     "locaciones_vistas": 5
+    },
+    "2024": {
+     "pozos": 20,
+     "etapas": 1069,
+     "arena_kt": 233.2,
+     "agua_hm3": 1.49,
+     "camiones_arena": 8328,
+     "locaciones_vistas": 5
+    },
+    "2025": {
+     "pozos": 8,
+     "etapas": 378,
+     "arena_kt": 84.0,
+     "agua_hm3": 0.62,
+     "camiones_arena": 2998,
+     "locaciones_vistas": 2
+    },
+    "2026": {
+     "pozos": 0,
+     "etapas": 0,
+     "arena_kt": 0.0,
+     "agua_hm3": 0.0,
+     "camiones_arena": 0,
+     "locaciones_vistas": 2
+    }
+   },
+   "por_pozo": {
+    "arena_t": 10365.0,
+    "agua_m3": 80236.0,
+    "etapas": 50.0,
+    "n": 28
+   },
+   "proy2027": {
+    "locaciones_sin_pozo": 5,
+    "locaciones_sin_pozo_viejas": 2,
+    "locaciones_ultimos_12_meses": 4,
+    "piso": {
+     "pozos": 15,
+     "etapas": 750,
+     "arena_kt": 155.5,
+     "agua_hm3": 1.2,
+     "camiones_arena": 5553,
+     "equipos_fractura": 0.3
+    },
+    "ritmo": {
+     "pozos": 27,
+     "etapas": 1350,
+     "arena_kt": 279.9,
+     "agua_hm3": 2.17,
+     "camiones_arena": 9995,
+     "equipos_fractura": 0.5
+    }
+   }
+  },
+  "loma_campana_este": {
+   "nombre": "Loma Campana este",
+   "anios": {
+    "2019": {
+     "pozos": 40,
+     "etapas": 1323,
+     "arena_kt": 312.5,
+     "agua_hm3": 1.86,
+     "camiones_arena": 11159,
+     "locaciones_vistas": 0
+    },
+    "2020": {
+     "pozos": 10,
+     "etapas": 445,
+     "arena_kt": 104.6,
+     "agua_hm3": 0.63,
+     "camiones_arena": 3734,
+     "locaciones_vistas": 0
+    },
+    "2021": {
+     "pozos": 50,
+     "etapas": 1801,
+     "arena_kt": 424.2,
+     "agua_hm3": 2.63,
+     "camiones_arena": 15151,
+     "locaciones_vistas": 15
+    },
+    "2022": {
+     "pozos": 63,
+     "etapas": 2628,
+     "arena_kt": 601.6,
+     "agua_hm3": 3.7,
+     "camiones_arena": 21485,
+     "locaciones_vistas": 9
+    },
+    "2023": {
+     "pozos": 40,
+     "etapas": 1903,
+     "arena_kt": 436.5,
+     "agua_hm3": 2.78,
+     "camiones_arena": 15589,
+     "locaciones_vistas": 7
+    },
+    "2024": {
+     "pozos": 42,
+     "etapas": 1822,
+     "arena_kt": 421.7,
+     "agua_hm3": 2.6,
+     "camiones_arena": 15061,
+     "locaciones_vistas": 7
+    },
+    "2025": {
+     "pozos": 34,
+     "etapas": 2065,
+     "arena_kt": 452.4,
+     "agua_hm3": 2.82,
+     "camiones_arena": 16157,
+     "locaciones_vistas": 6
+    },
+    "2026": {
+     "pozos": 11,
+     "etapas": 513,
+     "arena_kt": 117.9,
+     "agua_hm3": 0.75,
+     "camiones_arena": 4211,
+     "locaciones_vistas": 7
+    }
+   },
+   "por_pozo": {
+    "arena_t": 11544.0,
+    "agua_m3": 78280.0,
+    "etapas": 50.0,
+    "n": 45
+   },
+   "proy2027": {
+    "locaciones_sin_pozo": 9,
+    "locaciones_sin_pozo_viejas": 4,
+    "locaciones_ultimos_12_meses": 10,
+    "piso": {
+     "pozos": 27,
+     "etapas": 1350,
+     "arena_kt": 311.7,
+     "agua_hm3": 2.11,
+     "camiones_arena": 11132,
+     "equipos_fractura": 0.5
+    },
+    "ritmo": {
+     "pozos": 57,
+     "etapas": 2850,
+     "arena_kt": 658.0,
+     "agua_hm3": 4.46,
+     "camiones_arena": 23500,
+     "equipos_fractura": 1.0
+    }
+   }
+  },
+  "loma_campana_oeste": {
+   "nombre": "Loma Campana oeste y Añelo",
+   "anios": {
+    "2019": {
+     "pozos": 10,
+     "etapas": 360,
+     "arena_kt": 83.8,
+     "agua_hm3": 0.51,
+     "camiones_arena": 2993,
+     "locaciones_vistas": 0
+    },
+    "2020": {
+     "pozos": 6,
+     "etapas": 194,
+     "arena_kt": 45.4,
+     "agua_hm3": 0.27,
+     "camiones_arena": 1623,
+     "locaciones_vistas": 0
+    },
+    "2021": {
+     "pozos": 23,
+     "etapas": 931,
+     "arena_kt": 209.5,
+     "agua_hm3": 1.43,
+     "camiones_arena": 7480,
+     "locaciones_vistas": 5
+    },
+    "2022": {
+     "pozos": 10,
+     "etapas": 433,
+     "arena_kt": 101.0,
+     "agua_hm3": 0.62,
+     "camiones_arena": 3606,
+     "locaciones_vistas": 4
+    },
+    "2023": {
+     "pozos": 18,
+     "etapas": 870,
+     "arena_kt": 204.9,
+     "agua_hm3": 1.23,
+     "camiones_arena": 7316,
+     "locaciones_vistas": 6
+    },
+    "2024": {
+     "pozos": 35,
+     "etapas": 1727,
+     "arena_kt": 409.1,
+     "agua_hm3": 2.44,
+     "camiones_arena": 14609,
+     "locaciones_vistas": 13
+    },
+    "2025": {
+     "pozos": 18,
+     "etapas": 1237,
+     "arena_kt": 270.9,
+     "agua_hm3": 1.81,
+     "camiones_arena": 9673,
+     "locaciones_vistas": 6
+    },
+    "2026": {
+     "pozos": 30,
+     "etapas": 1675,
+     "arena_kt": 372.9,
+     "agua_hm3": 2.55,
+     "camiones_arena": 13319,
+     "locaciones_vistas": 5
+    }
+   },
+   "por_pozo": {
+    "arena_t": 12683.0,
+    "agua_m3": 86675.0,
+    "etapas": 56.0,
+    "n": 48
+   },
+   "proy2027": {
+    "locaciones_sin_pozo": 13,
+    "locaciones_sin_pozo_viejas": 9,
+    "locaciones_ultimos_12_meses": 9,
+    "piso": {
+     "pozos": 39,
+     "etapas": 2184,
+     "arena_kt": 494.6,
+     "agua_hm3": 3.38,
+     "camiones_arena": 17666,
+     "equipos_fractura": 0.8
+    },
+    "ritmo": {
+     "pozos": 66,
+     "etapas": 3696,
+     "arena_kt": 837.1,
+     "agua_hm3": 5.72,
+     "camiones_arena": 29896,
+     "equipos_fractura": 1.3
+    }
+   }
+  },
+  "loma_la_lata_sur": {
+   "nombre": "Loma La Lata sur (YPF, Tecpetrol)",
+   "anios": {
+    "2019": {
+     "pozos": 1,
+     "etapas": 25,
+     "arena_kt": 7.4,
+     "agua_hm3": 0.04,
+     "camiones_arena": 265,
+     "locaciones_vistas": 0
+    },
+    "2020": {
+     "pozos": 0,
+     "etapas": 0,
+     "arena_kt": 0.0,
+     "agua_hm3": 0.0,
+     "camiones_arena": 0,
+     "locaciones_vistas": 0
+    },
+    "2021": {
+     "pozos": 1,
+     "etapas": 22,
+     "arena_kt": 4.9,
+     "agua_hm3": 0.03,
+     "camiones_arena": 175,
+     "locaciones_vistas": 0
+    },
+    "2022": {
+     "pozos": 4,
+     "etapas": 120,
+     "arena_kt": 27.6,
+     "agua_hm3": 0.17,
+     "camiones_arena": 984,
+     "locaciones_vistas": 3
+    },
+    "2023": {
+     "pozos": 0,
+     "etapas": 0,
+     "arena_kt": 0.0,
+     "agua_hm3": 0.0,
+     "camiones_arena": 0,
+     "locaciones_vistas": 0
+    },
+    "2024": {
+     "pozos": 15,
+     "etapas": 716,
+     "arena_kt": 165.4,
+     "agua_hm3": 1.0,
+     "camiones_arena": 5907,
+     "locaciones_vistas": 5
+    },
+    "2025": {
+     "pozos": 23,
+     "etapas": 1289,
+     "arena_kt": 291.9,
+     "agua_hm3": 1.89,
+     "camiones_arena": 10425,
+     "locaciones_vistas": 5
+    },
+    "2026": {
+     "pozos": 18,
+     "etapas": 1183,
+     "arena_kt": 255.4,
+     "agua_hm3": 1.73,
+     "camiones_arena": 9122,
+     "locaciones_vistas": 5
+    }
+   },
+   "por_pozo": {
+    "arena_t": 13372.0,
+    "agua_m3": 89298.0,
+    "etapas": 61.0,
+    "n": 41
+   },
+   "proy2027": {
+    "locaciones_sin_pozo": 8,
+    "locaciones_sin_pozo_viejas": 2,
+    "locaciones_ultimos_12_meses": 9,
+    "piso": {
+     "pozos": 24,
+     "etapas": 1464,
+     "arena_kt": 320.9,
+     "agua_hm3": 2.14,
+     "camiones_arena": 11462,
+     "equipos_fractura": 0.5
+    },
+    "ritmo": {
+     "pozos": 51,
+     "etapas": 3111,
+     "arena_kt": 682.0,
+     "agua_hm3": 4.55,
+     "camiones_arena": 24356,
+     "equipos_fractura": 1.1
+    }
+   }
+  },
+  "norte_este": {
+   "nombre": "Bajada del Palo este (YPF, Vista)",
+   "anios": {
+    "2019": {
+     "pozos": 1,
+     "etapas": 28,
+     "arena_kt": 6.8,
+     "agua_hm3": 0.04,
+     "camiones_arena": 242,
+     "locaciones_vistas": 0
+    },
+    "2020": {
+     "pozos": 3,
+     "etapas": 87,
+     "arena_kt": 21.3,
+     "agua_hm3": 0.12,
+     "camiones_arena": 761,
+     "locaciones_vistas": 0
+    },
+    "2021": {
+     "pozos": 2,
+     "etapas": 76,
+     "arena_kt": 18.1,
+     "agua_hm3": 0.11,
+     "camiones_arena": 644,
+     "locaciones_vistas": 5
+    },
+    "2022": {
+     "pozos": 15,
+     "etapas": 600,
+     "arena_kt": 302.3,
+     "agua_hm3": 0.77,
+     "camiones_arena": 10796,
+     "locaciones_vistas": 3
+    },
+    "2023": {
+     "pozos": 8,
+     "etapas": 395,
+     "arena_kt": 94.6,
+     "agua_hm3": 0.57,
+     "camiones_arena": 3380,
+     "locaciones_vistas": 8
+    },
+    "2024": {
+     "pozos": 34,
+     "etapas": 1578,
+     "arena_kt": 390.1,
+     "agua_hm3": 2.45,
+     "camiones_arena": 13931,
+     "locaciones_vistas": 13
+    },
+    "2025": {
+     "pozos": 43,
+     "etapas": 2096,
+     "arena_kt": 498.0,
+     "agua_hm3": 3.15,
+     "camiones_arena": 17786,
+     "locaciones_vistas": 7
+    },
+    "2026": {
+     "pozos": 3,
+     "etapas": 144,
+     "arena_kt": 38.7,
+     "agua_hm3": 0.26,
+     "camiones_arena": 1382,
+     "locaciones_vistas": 2
+    }
+   },
+   "por_pozo": {
+    "arena_t": 11575.0,
+    "agua_m3": 73857.0,
+    "etapas": 48.0,
+    "n": 46
+   },
+   "proy2027": {
+    "locaciones_sin_pozo": 3,
+    "locaciones_sin_pozo_viejas": 3,
+    "locaciones_ultimos_12_meses": 5,
+    "piso": {
+     "pozos": 9,
+     "etapas": 432,
+     "arena_kt": 104.2,
+     "agua_hm3": 0.66,
+     "camiones_arena": 3721,
+     "equipos_fractura": 0.2
+    },
+    "ritmo": {
+     "pozos": 24,
+     "etapas": 1152,
+     "arena_kt": 277.8,
+     "agua_hm3": 1.77,
+     "camiones_arena": 9921,
+     "equipos_fractura": 0.4
+    }
+   }
+  },
+  "norte_lac_bdp_bandurria": {
+   "nombre": "La Amarga Chica, Bajada del Palo y Bandurria",
+   "anios": {
+    "2019": {
+     "pozos": 23,
+     "etapas": 745,
+     "arena_kt": 186.2,
+     "agua_hm3": 1.14,
+     "camiones_arena": 6650,
+     "locaciones_vistas": 0
+    },
+    "2020": {
+     "pozos": 17,
+     "etapas": 761,
+     "arena_kt": 187.0,
+     "agua_hm3": 1.16,
+     "camiones_arena": 6677,
+     "locaciones_vistas": 0
+    },
+    "2021": {
+     "pozos": 39,
+     "etapas": 1549,
+     "arena_kt": 373.3,
+     "agua_hm3": 2.31,
+     "camiones_arena": 13331,
+     "locaciones_vistas": 9
+    },
+    "2022": {
+     "pozos": 53,
+     "etapas": 2166,
+     "arena_kt": 519.2,
+     "agua_hm3": 3.33,
+     "camiones_arena": 18543,
+     "locaciones_vistas": 9
+    },
+    "2023": {
+     "pozos": 51,
+     "etapas": 2181,
+     "arena_kt": 513.5,
+     "agua_hm3": 3.23,
+     "camiones_arena": 18340,
+     "locaciones_vistas": 21
+    },
+    "2024": {
+     "pozos": 59,
+     "etapas": 2528,
+     "arena_kt": 608.2,
+     "agua_hm3": 3.65,
+     "camiones_arena": 21720,
+     "locaciones_vistas": 15
+    },
+    "2025": {
+     "pozos": 87,
+     "etapas": 4579,
+     "arena_kt": 1038.4,
+     "agua_hm3": 6.82,
+     "camiones_arena": 37086,
+     "locaciones_vistas": 11
+    },
+    "2026": {
+     "pozos": 31,
+     "etapas": 1532,
+     "arena_kt": 362.2,
+     "agua_hm3": 2.27,
+     "camiones_arena": 12936,
+     "locaciones_vistas": 7
+    }
+   },
+   "por_pozo": {
+    "arena_t": 11872.0,
+    "agua_m3": 78594.0,
+    "etapas": 51.0,
+    "n": 118
+   },
+   "proy2027": {
+    "locaciones_sin_pozo": 10,
+    "locaciones_sin_pozo_viejas": 11,
+    "locaciones_ultimos_12_meses": 13,
+    "piso": {
+     "pozos": 30,
+     "etapas": 1530,
+     "arena_kt": 356.2,
+     "agua_hm3": 2.36,
+     "camiones_arena": 12720,
+     "equipos_fractura": 0.6
+    },
+    "ritmo": {
+     "pozos": 69,
+     "etapas": 3519,
+     "arena_kt": 819.2,
+     "agua_hm3": 5.42,
+     "camiones_arena": 29256,
+     "equipos_fractura": 1.3
+    }
+   }
+  },
+  "norte_noreste": {
+   "nombre": "Parva Negra y El Mangrullo (Pampa, YPF)",
+   "anios": {
+    "2019": {
+     "pozos": 2,
+     "etapas": 57,
+     "arena_kt": 14.0,
+     "agua_hm3": 0.08,
+     "camiones_arena": 498,
+     "locaciones_vistas": 0
+    },
+    "2020": {
+     "pozos": 0,
+     "etapas": 0,
+     "arena_kt": 0.0,
+     "agua_hm3": 0.0,
+     "camiones_arena": 0,
+     "locaciones_vistas": 0
+    },
+    "2021": {
+     "pozos": 0,
+     "etapas": 0,
+     "arena_kt": 0.0,
+     "agua_hm3": 0.0,
+     "camiones_arena": 0,
+     "locaciones_vistas": 0
+    },
+    "2022": {
+     "pozos": 0,
+     "etapas": 0,
+     "arena_kt": 0.0,
+     "agua_hm3": 0.0,
+     "camiones_arena": 0,
+     "locaciones_vistas": 0
+    },
+    "2023": {
+     "pozos": 0,
+     "etapas": 0,
+     "arena_kt": 0.0,
+     "agua_hm3": 0.0,
+     "camiones_arena": 0,
+     "locaciones_vistas": 1
+    },
+    "2024": {
+     "pozos": 8,
+     "etapas": 403,
+     "arena_kt": 93.1,
+     "agua_hm3": 0.59,
+     "camiones_arena": 3324,
+     "locaciones_vistas": 2
+    },
+    "2025": {
+     "pozos": 17,
+     "etapas": 810,
+     "arena_kt": 187.9,
+     "agua_hm3": 1.17,
+     "camiones_arena": 6711,
+     "locaciones_vistas": 5
+    },
+    "2026": {
+     "pozos": 8,
+     "etapas": 368,
+     "arena_kt": 84.3,
+     "agua_hm3": 0.53,
+     "camiones_arena": 3010,
+     "locaciones_vistas": 3
+    }
+   },
+   "por_pozo": {
+    "arena_t": 11652.0,
+    "agua_m3": 71222.0,
+    "etapas": 51.0,
+    "n": 25
+   },
+   "proy2027": {
+    "locaciones_sin_pozo": 7,
+    "locaciones_sin_pozo_viejas": 1,
+    "locaciones_ultimos_12_meses": 4,
+    "piso": {
+     "pozos": 21,
+     "etapas": 1071,
+     "arena_kt": 244.7,
+     "agua_hm3": 1.5,
+     "camiones_arena": 8739,
+     "equipos_fractura": 0.4
+    },
+    "ritmo": {
+     "pozos": 33,
+     "etapas": 1683,
+     "arena_kt": 384.5,
+     "agua_hm3": 2.35,
+     "camiones_arena": 13733,
+     "equipos_fractura": 0.6
+    }
+   }
+  },
+  "norte_norte": {
+   "nombre": "Bandurria norte y Aguada Federal (Vista, Pampa)",
+   "anios": {
+    "2019": {
+     "pozos": 6,
+     "etapas": 220,
+     "arena_kt": 54.1,
+     "agua_hm3": 0.31,
+     "camiones_arena": 1930,
+     "locaciones_vistas": 0
+    },
+    "2020": {
+     "pozos": 0,
+     "etapas": 0,
+     "arena_kt": 0.0,
+     "agua_hm3": 0.0,
+     "camiones_arena": 0,
+     "locaciones_vistas": 0
+    },
+    "2021": {
+     "pozos": 4,
+     "etapas": 118,
+     "arena_kt": 30.5,
+     "agua_hm3": 0.16,
+     "camiones_arena": 1087,
+     "locaciones_vistas": 2
+    },
+    "2022": {
+     "pozos": 16,
+     "etapas": 674,
+     "arena_kt": 160.2,
+     "agua_hm3": 0.99,
+     "camiones_arena": 5723,
+     "locaciones_vistas": 2
+    },
+    "2023": {
+     "pozos": 29,
+     "etapas": 1237,
+     "arena_kt": 294.0,
+     "agua_hm3": 1.82,
+     "camiones_arena": 10501,
+     "locaciones_vistas": 5
+    },
+    "2024": {
+     "pozos": 17,
+     "etapas": 773,
+     "arena_kt": 188.6,
+     "agua_hm3": 1.11,
+     "camiones_arena": 6735,
+     "locaciones_vistas": 9
+    },
+    "2025": {
+     "pozos": 47,
+     "etapas": 2052,
+     "arena_kt": 458.0,
+     "agua_hm3": 2.88,
+     "camiones_arena": 16358,
+     "locaciones_vistas": 9
+    },
+    "2026": {
+     "pozos": 17,
+     "etapas": 800,
+     "arena_kt": 188.8,
+     "agua_hm3": 1.17,
+     "camiones_arena": 6743,
+     "locaciones_vistas": 2
+    }
+   },
+   "por_pozo": {
+    "arena_t": 9528.0,
+    "agua_m3": 60882.0,
+    "etapas": 43.0,
+    "n": 64
+   },
+   "proy2027": {
+    "locaciones_sin_pozo": 6,
+    "locaciones_sin_pozo_viejas": 2,
+    "locaciones_ultimos_12_meses": 5,
+    "piso": {
+     "pozos": 18,
+     "etapas": 774,
+     "arena_kt": 171.5,
+     "agua_hm3": 1.1,
+     "camiones_arena": 6125,
+     "equipos_fractura": 0.3
+    },
+    "ritmo": {
+     "pozos": 33,
+     "etapas": 1419,
+     "arena_kt": 314.4,
+     "agua_hm3": 2.01,
+     "camiones_arena": 11229,
+     "equipos_fractura": 0.5
+    }
+   }
+  },
+  "rincon_del_mangrullo": {
+   "nombre": "Rincón del Mangrullo (PAE, YPF, Pampa)",
+   "anios": {
+    "2019": {
+     "pozos": 6,
+     "etapas": 179,
+     "arena_kt": 44.6,
+     "agua_hm3": 0.29,
+     "camiones_arena": 1592,
+     "locaciones_vistas": 0
+    },
+    "2020": {
+     "pozos": 0,
+     "etapas": 0,
+     "arena_kt": 0.0,
+     "agua_hm3": 0.0,
+     "camiones_arena": 0,
+     "locaciones_vistas": 0
+    },
+    "2021": {
+     "pozos": 26,
+     "etapas": 1027,
+     "arena_kt": 232.1,
+     "agua_hm3": 1.53,
+     "camiones_arena": 8290,
+     "locaciones_vistas": 8
+    },
+    "2022": {
+     "pozos": 21,
+     "etapas": 942,
+     "arena_kt": 203.9,
+     "agua_hm3": 1.56,
+     "camiones_arena": 7283,
+     "locaciones_vistas": 9
+    },
+    "2023": {
+     "pozos": 23,
+     "etapas": 1163,
+     "arena_kt": 253.7,
+     "agua_hm3": 1.88,
+     "camiones_arena": 9060,
+     "locaciones_vistas": 3
+    },
+    "2024": {
+     "pozos": 6,
+     "etapas": 247,
+     "arena_kt": 57.6,
+     "agua_hm3": 0.44,
+     "camiones_arena": 2058,
+     "locaciones_vistas": 1
+    },
+    "2025": {
+     "pozos": 15,
+     "etapas": 768,
+     "arena_kt": 179.4,
+     "agua_hm3": 1.44,
+     "camiones_arena": 6406,
+     "locaciones_vistas": 1
+    },
+    "2026": {
+     "pozos": 4,
+     "etapas": 227,
+     "arena_kt": 52.2,
+     "agua_hm3": 0.37,
+     "camiones_arena": 1863,
+     "locaciones_vistas": 5
+    }
+   },
+   "por_pozo": {
+    "arena_t": 11592.0,
+    "agua_m3": 95372.0,
+    "etapas": 50.0,
+    "n": 19
+   },
+   "proy2027": {
+    "locaciones_sin_pozo": 5,
+    "locaciones_sin_pozo_viejas": 4,
+    "locaciones_ultimos_12_meses": 6,
+    "piso": {
+     "pozos": 15,
+     "etapas": 750,
+     "arena_kt": 173.9,
+     "agua_hm3": 1.43,
+     "camiones_arena": 6210,
+     "equipos_fractura": 0.3
+    },
+    "ritmo": {
+     "pozos": 33,
+     "etapas": 1650,
+     "arena_kt": 382.5,
+     "agua_hm3": 3.15,
+     "camiones_arena": 13662,
+     "equipos_fractura": 0.6
+    }
+   }
+  },
+  "sierras_blancas": {
+   "nombre": "Sierras Blancas y Cruz de Lorena (Shell, YPF, Phoenix)",
+   "anios": {
+    "2019": {
+     "pozos": 18,
+     "etapas": 600,
+     "arena_kt": 137.7,
+     "agua_hm3": 0.77,
+     "camiones_arena": 4918,
+     "locaciones_vistas": 0
+    },
+    "2020": {
+     "pozos": 12,
+     "etapas": 356,
+     "arena_kt": 83.4,
+     "agua_hm3": 0.42,
+     "camiones_arena": 2979,
+     "locaciones_vistas": 0
+    },
+    "2021": {
+     "pozos": 8,
+     "etapas": 352,
+     "arena_kt": 82.8,
+     "agua_hm3": 0.5,
+     "camiones_arena": 2957,
+     "locaciones_vistas": 5
+    },
+    "2022": {
+     "pozos": 21,
+     "etapas": 904,
+     "arena_kt": 221.4,
+     "agua_hm3": 1.19,
+     "camiones_arena": 7908,
+     "locaciones_vistas": 7
+    },
+    "2023": {
+     "pozos": 32,
+     "etapas": 1404,
+     "arena_kt": 348.4,
+     "agua_hm3": 1.76,
+     "camiones_arena": 12444,
+     "locaciones_vistas": 3
+    },
+    "2024": {
+     "pozos": 28,
+     "etapas": 1413,
+     "arena_kt": 325.7,
+     "agua_hm3": 1.85,
+     "camiones_arena": 11631,
+     "locaciones_vistas": 9
+    },
+    "2025": {
+     "pozos": 24,
+     "etapas": 1158,
+     "arena_kt": 277.1,
+     "agua_hm3": 1.65,
+     "camiones_arena": 9897,
+     "locaciones_vistas": 8
+    },
+    "2026": {
+     "pozos": 9,
+     "etapas": 363,
+     "arena_kt": 102.5,
+     "agua_hm3": 0.63,
+     "camiones_arena": 3659,
+     "locaciones_vistas": 5
+    }
+   },
+   "por_pozo": {
+    "arena_t": 10279.0,
+    "agua_m3": 62052.0,
+    "etapas": 47.0,
+    "n": 33
+   },
+   "proy2027": {
+    "locaciones_sin_pozo": 10,
+    "locaciones_sin_pozo_viejas": 9,
+    "locaciones_ultimos_12_meses": 9,
+    "piso": {
+     "pozos": 30,
+     "etapas": 1410,
+     "arena_kt": 308.4,
+     "agua_hm3": 1.86,
+     "camiones_arena": 11013,
+     "equipos_fractura": 0.5
+    },
+    "ritmo": {
+     "pozos": 57,
+     "etapas": 2679,
+     "arena_kt": 585.9,
+     "agua_hm3": 3.54,
+     "camiones_arena": 20925,
+     "equipos_fractura": 1.0
+    }
+   }
+  },
+  "ypf_sur_este": {
+   "nombre": "Loma Campana sur este (YPF)",
+   "anios": {
+    "2019": {
+     "pozos": 0,
+     "etapas": 0,
+     "arena_kt": 0.0,
+     "agua_hm3": 0.0,
+     "camiones_arena": 0,
+     "locaciones_vistas": 0
+    },
+    "2020": {
+     "pozos": 0,
+     "etapas": 0,
+     "arena_kt": 0.0,
+     "agua_hm3": 0.0,
+     "camiones_arena": 0,
+     "locaciones_vistas": 0
+    },
+    "2021": {
+     "pozos": 0,
+     "etapas": 0,
+     "arena_kt": 0.0,
+     "agua_hm3": 0.0,
+     "camiones_arena": 0,
+     "locaciones_vistas": 3
+    },
+    "2022": {
+     "pozos": 0,
+     "etapas": 0,
+     "arena_kt": 0.0,
+     "agua_hm3": 0.0,
+     "camiones_arena": 0,
+     "locaciones_vistas": 1
+    },
+    "2023": {
+     "pozos": 0,
+     "etapas": 0,
+     "arena_kt": 0.0,
+     "agua_hm3": 0.0,
+     "camiones_arena": 0,
+     "locaciones_vistas": 2
+    },
+    "2024": {
+     "pozos": 0,
+     "etapas": 0,
+     "arena_kt": 0.0,
+     "agua_hm3": 0.0,
+     "camiones_arena": 0,
+     "locaciones_vistas": 4
+    },
+    "2025": {
+     "pozos": 0,
+     "etapas": 0,
+     "arena_kt": 0.0,
+     "agua_hm3": 0.0,
+     "camiones_arena": 0,
+     "locaciones_vistas": 2
+    },
+    "2026": {
+     "pozos": 0,
+     "etapas": 0,
+     "arena_kt": 0.0,
+     "agua_hm3": 0.0,
+     "camiones_arena": 0,
+     "locaciones_vistas": 1
+    }
+   },
+   "por_pozo": {
+    "arena_t": 11655.0,
+    "agua_m3": 77109.0,
+    "etapas": 50.0,
+    "n": 692
+   },
+   "proy2027": {
+    "locaciones_sin_pozo": 3,
+    "locaciones_sin_pozo_viejas": 7,
+    "locaciones_ultimos_12_meses": 1,
+    "piso": {
+     "pozos": 9,
+     "etapas": 450,
+     "arena_kt": 104.9,
+     "agua_hm3": 0.69,
+     "camiones_arena": 3746,
+     "equipos_fractura": 0.2
+    },
+    "ritmo": {
+     "pozos": 12,
+     "etapas": 600,
+     "arena_kt": 139.9,
+     "agua_hm3": 0.93,
+     "camiones_arena": 4995,
+     "equipos_fractura": 0.2
+    }
+   }
+  },
+  "__ventanas__": {
+   "nombre": "Las ventanas con serie de satélite",
+   "anios": {
+    "2019": {
+     "pozos": 141,
+     "etapas": 4756,
+     "arena_kt": 1128.1,
+     "agua_hm3": 6.97,
+     "camiones_arena": 40287,
+     "locaciones_vistas": 0
+    },
+    "2020": {
+     "pozos": 58,
+     "etapas": 2157,
+     "arena_kt": 520.6,
+     "agua_hm3": 3.16,
+     "camiones_arena": 18591,
+     "locaciones_vistas": 0
+    },
+    "2021": {
+     "pozos": 195,
+     "etapas": 7587,
+     "arena_kt": 1775.2,
+     "agua_hm3": 11.5,
+     "camiones_arena": 63400,
+     "locaciones_vistas": 65
+    },
+    "2022": {
+     "pozos": 265,
+     "etapas": 11287,
+     "arena_kt": 2753.2,
+     "agua_hm3": 16.57,
+     "camiones_arena": 98327,
+     "locaciones_vistas": 66
+    },
+    "2023": {
+     "pozos": 259,
+     "etapas": 11781,
+     "arena_kt": 2702.5,
+     "agua_hm3": 17.5,
+     "camiones_arena": 96516,
+     "locaciones_vistas": 76
+    },
+    "2024": {
+     "pozos": 304,
+     "etapas": 14291,
+     "arena_kt": 3341.8,
+     "agua_hm3": 21.25,
+     "camiones_arena": 119351,
+     "locaciones_vistas": 111
+    },
+    "2025": {
+     "pozos": 360,
+     "etapas": 18612,
+     "arena_kt": 4251.5,
+     "agua_hm3": 28.05,
+     "camiones_arena": 151839,
+     "locaciones_vistas": 87
+    },
+    "2026": {
+     "pozos": 177,
+     "etapas": 9003,
+     "arena_kt": 2072.2,
+     "agua_hm3": 13.84,
+     "camiones_arena": 74007,
+     "locaciones_vistas": 54
+    }
+   },
+   "por_pozo": {
+    "arena_t": 11659.0,
+    "agua_m3": 76496.0,
+    "etapas": 50.0,
+    "n": 537
+   },
+   "proy2027": {
+    "locaciones_sin_pozo": 120,
+    "locaciones_sin_pozo_viejas": 65,
+    "locaciones_ultimos_12_meses": 98,
+    "piso": {
+     "pozos": 360,
+     "etapas": 18000,
+     "arena_kt": 4197.2,
+     "agua_hm3": 27.54,
+     "camiones_arena": 149901,
+     "equipos_fractura": 6.5
+    },
+    "ritmo": {
+     "pozos": 654,
+     "etapas": 32700,
+     "arena_kt": 7625.0,
+     "agua_hm3": 50.03,
+     "camiones_arena": 272321,
+     "equipos_fractura": 11.8
+    }
+   }
+  }
+ },
+ "cuenca": {
+  "nombre": "Toda Vaca Muerta (Adjunto IV)",
+  "anios": {
+   "2019": {
+    "pozos": 189,
+    "etapas": 6180,
+    "arena_kt": 1483.1,
+    "agua_hm3": 9.22,
+    "camiones_arena": 52969
+   },
+   "2020": {
+    "pozos": 83,
+    "etapas": 2883,
+    "arena_kt": 682.7,
+    "agua_hm3": 4.21,
+    "camiones_arena": 24383
+   },
+   "2021": {
+    "pozos": 251,
+    "etapas": 9667,
+    "arena_kt": 2238.3,
+    "agua_hm3": 14.33,
+    "camiones_arena": 79938
+   },
+   "2022": {
+    "pozos": 294,
+    "etapas": 12368,
+    "arena_kt": 2980.8,
+    "agua_hm3": 18.11,
+    "camiones_arena": 106456
+   },
+   "2023": {
+    "pozos": 320,
+    "etapas": 13884,
+    "arena_kt": 3169.5,
+    "agua_hm3": 20.78,
+    "camiones_arena": 113196
+   },
+   "2024": {
+    "pozos": 356,
+    "etapas": 16599,
+    "arena_kt": 3875.6,
+    "agua_hm3": 24.95,
+    "camiones_arena": 138412
+   },
+   "2025": {
+    "pozos": 457,
+    "etapas": 23564,
+    "arena_kt": 5398.9,
+    "agua_hm3": 35.64,
+    "camiones_arena": 192817
+   },
+   "2026": {
+    "pozos": 235,
+    "etapas": 12033,
+    "arena_kt": 2728.0,
+    "agua_hm3": 18.51,
+    "camiones_arena": 97430
+   }
+  },
+  "por_pozo": {
+   "arena_t": 11655.0,
+   "agua_m3": 77109.0,
+   "etapas": 50.0,
+   "n": 692
+  }
+ }
+}

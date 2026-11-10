@@ -89,6 +89,24 @@ comienzos de 2027. Las coordenadas no se publican.
 **CBERS-4A no cubre Vaca Muerta.** El catálogo abierto del INPE no tiene ninguna escena CBERS-4A sobre
 Neuquén entre 2019 y 2026. Para la cuenca, el satélite es Sentinel-2.
 
+## El tablero
+
+<https://dpinero14.github.io/locaciones-lab/tablero/>
+
+El detector corrido sobre quince ventanas de la cuenca (`scripts/detectar.py`), en un mapa: mes a mes,
+cada locación aparece cuando el satélite la ve y el pozo del padrón cuando llega. Suma los gasoductos
+troncales y las plantas compresoras de ENARGAS, la ruta de la arena de
+[arena-lab](https://github.com/dpinero14/arena-lab), un mapa de calor de producción contra exploración y
+dos pestañas:
+
+- **Demanda:** pozos fracturados, etapas, arena, agua, camiones y equipos por año desde 2019, del
+  Adjunto IV de fracturas, con la proyección de 2027 a partir de las locaciones que ya se ven.
+- **Finanzas:** la producción nueva por operadora con la curva tipo de la cuenca, y la facturación y las
+  regalías al precio que elija quien lo mira.
+
+Es la versión pública: las locaciones que todavía no tienen pozo registrado no se publican, entran solo
+como conteo por ventana.
+
 ## Limitaciones
 
 - **Cuatro ventanas, cinco áreas.** Loma Campana, La Amarga Chica, Bajada del Palo, Bandurria y Fortín

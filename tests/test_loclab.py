@@ -57,3 +57,29 @@ def test_estado_al_verla():
 
 def test_scl():
     assert fraccion_mala(np.array([4, 5, 8, 0])) == 0.5
+
+
+def test_pixel_caliente_y_regla_de_antorcha():
+    from loclab import antorchas
+
+    # una llama: la banda de 2,2 micrones satura y supera por mucho a la de 1,6; el suelo y un techo claro, no
+    b12 = np.array([[1.50, 0.30, 0.55]], np.float32)
+    b11 = np.array([[0.60, 0.33, 0.52]], np.float32)
+    b8a = np.array([[0.30, 0.28, 0.50]], np.float32)
+    assert antorchas.calientes(b12, b11, b8a).tolist() == [[True, False, False]]
+    # dos detecciones a tres píxeles son el mismo foco; a veinte, otro
+    assert antorchas.agrupar(np.array([10.0, 12.0, 30.0]), np.array([10.0, 12.0, 10.0])).tolist() == [0, 0, 1]
+    # la regla: una llama de todo el año pasa; un reflejo que solo aparece en invierno, uno que no satura y uno en el pueblo, no
+    f = pd.DataFrame({"meses": [20, 9, 12, 15], "fuera_invierno": [14, 1, 8, 10], "b12": [1.5, 1.5, 0.8, 1.5], "km_anelo": [12.0, 9.0, 7.0, 1.5]})
+    assert antorchas.es_antorcha(f).tolist() == [True, False, False, False]
+
+
+def test_antorchas_vecinas_y_revision():
+    from loclab import antorchas
+
+    f = pd.DataFrame({"antorcha": [True, True, True, False], "lon": [-68.6000, -68.6010, -68.5000, -68.4000], "lat": [-38.3000, -38.3000, -38.3000, -38.3000]})
+    u = antorchas.unir(f)   # la segunda está a menos de 100 m de la primera: es la misma; la cuarta no pasó la regla
+    assert u.lon.round(3).tolist() == [-68.6, -68.5]
+    r = antorchas.aplicar_revision(u, pd.DataFrame({"lon": [-68.5001], "lat": [-38.3], "veredicto": ["galpon"]}))
+    assert r.firme.tolist() == [True, False] and r.revision.tolist() == ["", "galpon"]
+    assert antorchas.km_al_mas_cercano([-68.6], [-38.3], [-68.6, -68.0], [-38.31, -38.3]).round(2).tolist() == [1.11]

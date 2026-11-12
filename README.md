@@ -24,12 +24,14 @@ público de pozos, y la responde con una prueba hacia atrás, no con un ejemplo.
 |---|---|
 | `01_la_locacion_se_ve` | Verifica que cada locación se ve en Sentinel-2 y que el pozo del padrón cae encima. Sigue el contraste de cada una de las locaciones de cinco áreas contra el monte que la rodea, en 82 escenas mensuales, y fecha su construcción. Mide cuánto antes aparece que el inicio de perforación y que la primera producción. |
 | `02_el_detector_a_ciegas` | Busca locaciones sin mirar el padrón, en toda la serie, con el contraste local de cada píxel. Clasifica qué es locación y qué es camino, planta, pueblo o barda, con 48 detecciones etiquetadas a mano. Prueba hacia atrás: en el mes en que el satélite vio la obra, ¿había un pozo perforado al lado? Si no, ¿llegó uno después? Y verifica las locaciones del último año que todavía no tienen pozo registrado. |
+| `03_las_antorchas` | Busca las antorchas en las bandas infrarrojas de la misma escena mensual, en quince ventanas. Muestra por qué un píxel caliente no alcanza (los techos de Añelo brillan en invierno), arma la regla, revisa una por una las dudosas y cruza el resultado con los puntos de venteo que las empresas declaran a la Secretaría de Energía. |
 
 Las funciones están en `src/loclab/`: `escenas.py` busca y baja la serie mensual del STAC público
 de Sentinel-2 y elige la escena limpia de cada mes; `padron.py` lee los pozos, sus fechas y las
 locaciones multipozo; `senal.py` mide el contraste de una locación y fecha su construcción;
 `ciego.py` es el detector a ciegas, la regla de clasificación y la prueba hacia atrás;
-`figuras.py`, las figuras.
+`antorchas.py` baja las bandas infrarrojas, marca los píxeles calientes, los agrupa en focos y aplica
+la regla de antorcha; `figuras.py`, las figuras.
 
 ## Qué encontramos
 
@@ -89,6 +91,56 @@ comienzos de 2027. Las coordenadas no se publican.
 **CBERS-4A no cubre Vaca Muerta.** El catálogo abierto del INPE no tiene ninguna escena CBERS-4A sobre
 Neuquén entre 2019 y 2026. Para la cuenca, el satélite es Sentinel-2.
 
+## Las antorchas
+
+Una chimenea de quema encendida emite en el infrarrojo de onda corta. En Sentinel-2 es un píxel donde la
+banda de 2,2 micrones (B12) queda muy por encima de la de 1,6 (B11) y del infrarrojo cercano (B8A): en
+una escena de Loma Campana este, 0,83 contra 0,41 y 0,22, cuando el resto de la ventana da 0,18, 0,19 y
+0,17. El índice es el de anomalía térmica de Liu et al. (2021), TAI = (B12 − B11) / B8A.
+
+![Cada antorcha está sobre una instalación](docs/figures/antorchas_recortes.png)
+
+**No todo lo que brilla es una llama.** En 1.220 escenas mensuales de quince ventanas hay 4.420
+detecciones y 263 focos que se repiten en tres meses o más. De esos, 101 están en la ventana de Añelo:
+son techos de chapa y galpones, que con el sol bajo del invierno reflejan en el infrarrojo. Se delatan
+por el calendario: una llama se ve todo el año, un reflejo casi solo de mayo a agosto.
+
+![Una llama se ve todo el año; un techo que refleja, casi solo en invierno](docs/figures/antorchas_invierno.png)
+
+| La regla, paso a paso | Focos |
+|---|---:|
+| Vistos en tres escenas mensuales o más | 263 |
+| Y tres o más fuera del invierno (septiembre a abril) | 139 |
+| Y que saturan la banda de 2,2 micrones alguna vez | 119 |
+| Y a más de 3 km de Añelo | 106 |
+| Sin repetir entre ventanas vecinas (a menos de 200 m es la misma) | 94 |
+| Después de mirarlas una por una (`data/antorchas_revision.csv`) | **86** |
+
+La revisión a mano sacó seis que eran galpones o bases de servicios junto a zonas urbanas y dos que no
+se pudieron ver porque la escena estaba saturada.
+
+**Crecen con la actividad.** Antorchas vistas encendidas al menos una vez en el año: 39 en 2020, 45, 55,
+57, 59, 65 en 2025 y 63 en 2026 hasta octubre. En la última escena estaban encendidas 25 de las 86. La
+mediana es de 21 escenas con llama sobre 82.
+
+**Contra lo declarado.** La Secretaría de Energía publica 1.269 puntos de venteo declarados por las
+empresas; 173 caen en las ventanas.
+
+| | |
+|---|---:|
+| Antorchas vistas con un punto declarado a menos de 150 m | 42 de 86 |
+| Con un punto declarado a menos de 500 m | 45 de 86 |
+| Sin ningún punto declarado a menos de 500 m | 41 de 86 |
+| Chimeneas de quema declaradas que se vieron encendidas | 67 de 101 |
+| Fosas de quema declaradas que se vieron encendidas | 8 de 72 |
+
+![86 antorchas en quince ventanas de la cuenca](docs/figures/antorchas_mapa.png)
+
+Que una antorcha no tenga un punto declarado cerca no la vuelve irregular. De las 41, nueve se vieron
+menos de ocho meses, y varias están sobre locaciones de pozo: una quema temporal de ensayo no lleva un
+punto fijo. Y ocho están en una sola ventana, lo que apunta a un registro incompleto en esa área. Otras
+17 llevan veinte meses o más encendidas: son las que vale la pena mirar con más detalle.
+
 ## El tablero
 
 <https://dpinero14.github.io/locaciones-lab/tablero/>
@@ -103,6 +155,10 @@ dos pestañas:
   Adjunto IV de fracturas, con la proyección de 2027 a partir de las locaciones que ya se ven.
 - **Finanzas:** la producción nueva por operadora con la curva tipo de la cuenca, y la facturación y las
   regalías al precio que elija quien lo mira.
+
+También muestra las antorchas, que se prenden y se apagan con la línea de tiempo, y los puntos de venteo
+declarados; un filtro por operadora, una ficha por ventana, la comparación con la imagen de 2020 y un
+recorrido guiado de un minuto.
 
 Es la versión pública: las locaciones que todavía no tienen pozo registrado no se publican, entran solo
 como conteo por ventana.
@@ -120,6 +176,12 @@ como conteo por ventana.
 - **El padrón como verdad** tiene su propio atraso y sus errores. Un pozo a menos de 150 m de la
   detección cuenta como acierto aunque sea de otra locación vecina.
 - **El cerca de Añelo** es difícil: el pueblo crece y confunde al detector; la regla lo excluye.
+- **Las antorchas se ven con una escena por mes**, así que se subestima cuánto tiempo están encendidas:
+  una llama se prende y se apaga, y el satélite pasa cada dos o tres días. No se mide cuánto gas se
+  quema, solo dónde y cuándo hay llama. Las fosas de quema casi no se ven. Y la regla pierde algunas
+  reales: descarta focos que sí tienen un punto declarado al lado.
+- **La operadora de una antorcha no se publica.** Se podría atribuir por el pozo más cercano, pero la
+  dueña de la instalación puede ser otra.
 
 ## Cómo correrlo
 
@@ -131,6 +193,8 @@ python -m venv .venv
 .venv\Scripts\python.exe -m pytest -q tests
 .venv\Scripts\python.exe -m jupyter nbconvert --to notebook --execute --inplace notebooks/01_la_locacion_se_ve.ipynb
 .venv\Scripts\python.exe -m jupyter nbconvert --to notebook --execute --inplace notebooks/02_el_detector_a_ciegas.ipynb
+.venv\Scripts\python.exe scripts/antorchas.py --bajar
+.venv\Scripts\python.exe -m jupyter nbconvert --to notebook --execute --inplace notebooks/03_las_antorchas.ipynb
 ```
 
 La serie de Sentinel-2 son unas 80 escenas por zona recortadas a la ventana, unos 3 GB y 40 minutos
@@ -142,6 +206,11 @@ por zona. En Linux, en lugar de `.venv\Scripts\python.exe`, `.venv/bin/python`.
   <https://earth-search.aws.element84.com/v1>. Datos libres y abiertos de Copernicus.
 - Secretaría de Energía, Capítulo IV: shapefile de pozos y producción de pozos no convencionales,
   CC BY 4.0: <http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c>
+- Secretaría de Energía, puntos de venteo declarados, CC BY 4.0:
+  <http://datos.energia.gob.ar/dataset/produccion-hidrocarburos-puntos-de-venteo-declarados>
+- Liu, Y. et al. (2021), *Automatic extraction of offshore platforms and gas flares using Sentinel-2
+  thermal anomaly index*: de ahí sale el índice TAI.
+- `data/antorchas_revision.csv`: los ocho focos que pasaron la regla y se descartaron mirándolos.
 - `data/etiquetas_muestra.csv`: 48 detecciones etiquetadas a mano, sin coordenadas.
 - `data/verificacion_visual_2026-10.csv`: la verificación visual de las 28 locaciones sin pozo, sin
   coordenadas.

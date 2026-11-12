@@ -133,3 +133,83 @@ def lamina(recortes: list, titulos: list[str], path, columnas: int = 8, titulo: 
         _titles(fig, titulo, subtitulo)
     fig.subplots_adjust(top=0.9 if titulo else 0.98, bottom=0.04, left=0.01, right=0.99, hspace=0.25, wspace=0.05)
     return _save(fig, path)
+
+
+FUENTE_ANT = "locaciones-lab · Copernicus Sentinel-2 L2A (ESA), bandas infrarrojas de 20 m, una escena por mes · puntos de venteo declarados: Secretaría de Energía"
+
+
+def antorchas_invierno(focos: pd.DataFrame, det: pd.DataFrame, path) -> Path:
+    """Los reflejos se delatan por el calendario: qué parte de las veces que se vio cada foco fue en invierno."""
+    plt = _plt()
+    inv = det.assign(inv=det.mes.str[5:7].astype(int).between(5, 8)).groupby(["zona", "foco"]).inv.mean().rename("parte_invierno").reset_index()
+    f = focos[focos.meses >= 3].merge(inv, on=["zona", "foco"])
+    fig, ax = plt.subplots(figsize=(11, 5.6), facecolor=BG)
+    _style(ax)
+    cortes = np.linspace(0, 1, 11)
+    a, b = f[f.antorcha].parte_invierno * 100, f[~f.antorcha].parte_invierno * 100
+    ax.hist([a, b], bins=cortes * 100, stacked=True, color=[CIAN, GRIS], label=[f"pasan la regla ({len(a)})", f"descartados ({len(b)})"], zorder=3, rwidth=0.9)
+    ax.axvline(33.3, color=MUTED, linewidth=1, linestyle=(0, (4, 4)), zorder=2)
+    ax.text(35, ax.get_ylim()[1] * 0.97, "si el foco se viera parejo todo el año,\nun tercio de las veces caería de mayo a agosto", color=MUTED, fontsize=9.5, va="top")
+    ax.set_xlabel("de las veces que se vio el foco, porcentaje entre mayo y agosto", color=MUTED)
+    ax.set_ylabel("focos vistos en tres meses o más", color=MUTED)
+    ax.legend(frameon=False, labelcolor=INK, fontsize=10.5, loc="upper left", bbox_to_anchor=(0.0, 1.0))
+    _titles(fig, "Una llama se ve todo el año; un techo que refleja, casi solo en invierno",
+            "con el sol bajo, la chapa y los paneles brillan en el infrarrojo y pasan por píxeles calientes", FUENTE_ANT)
+    fig.subplots_adjust(top=0.82, bottom=0.14, left=0.08, right=0.97)
+    return _save(fig, path)
+
+
+def antorchas_mapa(ant: pd.DataFrame, pozos: pd.DataFrame, zonas: dict, path, km_declarado: float = 0.5) -> Path:
+    """Las antorchas de las ventanas sobre los pozos del padrón: llenas las que tienen un punto de venteo declarado cerca."""
+    plt = _plt()
+    fig, ax = plt.subplots(figsize=(12.5, 9), facecolor=BG)
+    ax.set_facecolor(BG)
+    ax.scatter(pozos.lon, pozos.lat, s=1.2, color="#2c3e4b", linewidths=0, zorder=1)
+    for z in zonas.values():
+        x0, y0, x1, y1 = z["bbox"]
+        ax.plot([x0, x1, x1, x0, x0], [y0, y0, y1, y1, y0], color=RULE, linewidth=1, zorder=2)
+    con = ant.km_declarado <= km_declarado
+    s = 30 + ant.meses * 6
+    ax.scatter(ant.lon[con], ant.lat[con], s=s[con], color=CIAN, alpha=0.85, linewidths=0, zorder=4, label=f"con punto de venteo declarado a menos de {int(km_declarado * 1000)} m ({int(con.sum())})")
+    ax.scatter(ant.lon[~con], ant.lat[~con], s=s[~con], facecolors="none", edgecolors=CIAN, linewidths=1.6, zorder=4, label=f"sin punto declarado cerca ({int((~con).sum())})")
+    ax.set_xlim(-69.45, -68.12)
+    ax.set_ylim(-38.90, -37.93)
+    ax.set_aspect(111 / 87.5)
+    ax.axis("off")
+    ax.legend(frameon=False, labelcolor=INK, fontsize=11, loc="lower left", markerscale=0.8)
+    _titles(fig, f"{len(ant)} antorchas en quince ventanas de la cuenca",
+            "el tamaño es en cuántas escenas mensuales de 2020 a 2026 se la vio encendida · en gris, los pozos del padrón", FUENTE_ANT)
+    fig.subplots_adjust(top=0.9, bottom=0.04, left=0.01, right=0.99)
+    return _save(fig, path)
+
+
+def antorchas_por_anio(tabla: pd.DataFrame, path) -> Path:
+    """Antorchas vistas encendidas al menos una vez en las escenas de cada año."""
+    plt = _plt()
+    fig, ax = plt.subplots(figsize=(10, 5.2), facecolor=BG)
+    _style(ax)
+    ax.bar(tabla.anio.astype(str), tabla.antorchas, color=CIAN, width=0.62, zorder=3)
+    for x, v in zip(tabla.anio.astype(str), tabla.antorchas):
+        ax.text(x, v + 1, str(int(v)), color=INK, ha="center", fontsize=12, fontweight="bold")
+    ax.set_ylabel("antorchas vistas encendidas en el año", color=MUTED)
+    _titles(fig, "Las antorchas encendidas crecen de 2020 a 2025, a la par de la actividad",
+            "una antorcha cuenta en el año si alguna de sus escenas mensuales la muestra con llama · 2026 hasta octubre", FUENTE_ANT)
+    fig.subplots_adjust(top=0.82, bottom=0.1, left=0.08, right=0.97)
+    return _save(fig, path)
+
+
+def antorchas_recortes(arriba: list, abajo: list, titulos: list[str], meses: list[str], path) -> Path:
+    """Las antorchas más constantes: arriba el color real a 10 m, abajo las bandas infrarrojas a 20 m de la misma escena."""
+    plt = _plt()
+    n = len(arriba)
+    fig, axes = plt.subplots(2, n, figsize=(2.6 * n, 6.9), facecolor=BG)
+    for j in range(n):
+        axes[0, j].imshow(arriba[j])
+        axes[0, j].set_title(titulos[j], color=INK, fontsize=9.5)
+        axes[1, j].imshow(abajo[j])
+        axes[1, j].set_title(f"infrarrojo, {meses[j]}", color=MUTED, fontsize=9)
+    for ax in np.ravel(axes):
+        ax.axis("off")
+    _titles(fig, "Cada antorcha está sobre una instalación", "recortes de 800 m · arriba el color real, abajo las bandas infrarrojas (B12, B11, B8A) de la misma escena: la llama es el punto claro", FUENTE_ANT)
+    fig.subplots_adjust(top=0.84, bottom=0.05, left=0.01, right=0.99, hspace=0.16, wspace=0.04)
+    return _save(fig, path)

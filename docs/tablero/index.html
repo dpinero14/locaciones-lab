@@ -4,6 +4,18 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Vaca Muerta desde el satélite</title>
+<meta name="description" content="Cada locación nueva, cada pozo y cada antorcha de Vaca Muerta, mes a mes desde 2020. Lo que el satélite ve antes de que llegue al registro oficial. Datos abiertos y código abierto.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://dpinero14.github.io/locaciones-lab/tablero/">
+<meta property="og:title" content="Vaca Muerta desde el satélite">
+<meta property="og:description" content="Cada locación nueva, cada pozo y cada antorcha de Vaca Muerta, mes a mes desde 2020. Lo que el satélite ve antes de que llegue al registro oficial. Datos abiertos y código abierto.">
+<meta property="og:image" content="https://dpinero14.github.io/locaciones-lab/tablero/img/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="es_AR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://dpinero14.github.io/locaciones-lab/tablero/img/og.jpg">
+<meta name="theme-color" content="#0c1116">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>
 :root{--bg:#ece6d8;--panel:#f9f6ee;--ink:#17212b;--muted:#5d6974;--rule:#d6cdb9;--acento:#0b6b7a;--pozo:#d02e7f;--infra:#17212b;--gris:#8a8f94;--acento2:#7b2cbf;--mapa:#19d3ff}
@@ -117,6 +129,11 @@ details.mas{margin:4px 0 8px}details.mas summary{cursor:pointer;color:var(--acen
   #graf{left:0;right:0}
   #portada .cifra{min-width:104px;padding:10px}#portada .cifra b{font-size:26px}
 }
+.cta{margin:18px 0 6px;padding:14px;border-radius:8px;background:#17212b;color:#f9f6ee}.cta b{display:block;font-size:15px;margin-bottom:3px}.cta span{display:block;font-size:12px;color:#c9cfd4;line-height:1.45;margin-bottom:10px}
+.cta a{display:inline-block;background:#19d3ff;color:#0c1116;font-weight:600;font-size:13px;padding:8px 14px;border-radius:6px;text-decoration:none}.cta a:hover{background:#6fe4ff}
+.como{display:inline-block;margin-top:8px;color:var(--acento);font-weight:600;font-size:12px}
+#portada .pie a{color:#b8c3ca}
+#nov .pend{color:var(--muted);font-style:italic}
 .nota{color:var(--muted);font-size:11px;line-height:1.45;margin-top:14px}
 .tag{display:inline-block;font-family:"Cascadia Mono",Consolas,monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#fff;background:var(--ink);padding:2px 6px;border-radius:3px;margin-left:6px;vertical-align:middle}
 #demanda{background:var(--bg);border-left:1px solid var(--rule);overflow-y:auto;padding:16px}
@@ -155,7 +172,7 @@ svg text{font-family:"Cascadia Mono",Consolas,monospace;font-size:9px;fill:var(-
   <div class="cifras"><div class="cifra a"><b id="pc_loc">·</b><span>Locaciones nuevas detectadas</span></div><div class="cifra b"><b id="pc_poz">·</b><span>Pozos del padrón oficial</span></div><div class="cifra c"><b id="pc_ant">·</b><span>Antorchas vistas en el infrarrojo</span></div></div>
   <div class="bot"><button class="pri" id="pb_ver">Explorar el mapa</button><button class="sec" id="pb_tour" style="display:none">Mostrame en un minuto</button></div>
   <a class="wa" href="https://whatsapp.com/channel/0029VbDhfzIB4hdKBOmHzr0u" target="_blank" rel="noopener"><img src="img/whatsapp.png" alt="">Sumate al canal de WhatsApp</a>
-  <div class="pie">Contiene datos modificados de Copernicus Sentinel · Capítulo IV y puntos de venteo, Secretaría de Energía · ENARGAS</div>
+  <div class="pie">Contiene datos modificados de Copernicus Sentinel · Capítulo IV y puntos de venteo, Secretaría de Energía · ENARGAS · <a href="https://github.com/dpinero14/locaciones-lab#readme" target="_blank" rel="noopener" data-ev="como_se_hizo">Cómo se hizo</a></div>
 </div></div>
 <div id="app">
 <div id="panel">
@@ -191,7 +208,7 @@ svg text{font-family:"Cascadia Mono",Consolas,monospace;font-size:9px;fill:var(-
   <label class="capa"><input type="checkbox" id="c_arena"><span class="ln" style="border-color:var(--acento2)"></span>La ruta de la arena (arena-lab)<span class="n"></span></label>
   <h2>Ventanas (radar)</h2>
   <div id="zonas"></div>
-  <p class="nota">Locaciones: detector a ciegas sobre Sentinel-2, una escena limpia por mes (locaciones-lab). Pozos: Capítulo IV, Secretaría de Energía; el padrón carga los pozos nuevos con unos seis meses de demora. Gasoductos y compresoras: ENARGAS. Antorchas: bandas infrarrojas de Sentinel-2 (20 m), una escena por mes, vistas en tres meses o más fuera del invierno; puntos de venteo declarados: Secretaría de Energía. Fondo fuera de las ventanas: Esri World Imagery.</p>
+  <p class="nota">Locaciones: detector a ciegas sobre Sentinel-2, una escena limpia por mes (locaciones-lab). Pozos: Capítulo IV, Secretaría de Energía; el padrón carga los pozos nuevos con unos seis meses de demora. Gasoductos y compresoras: ENARGAS. Antorchas: bandas infrarrojas de Sentinel-2 (20 m), una escena por mes, vistas en tres meses o más fuera del invierno; puntos de venteo declarados: Secretaría de Energía. Fondo fuera de las ventanas: Esri World Imagery.<br><a class="como" href="https://github.com/dpinero14/locaciones-lab#readme" target="_blank" rel="noopener" data-ev="como_se_hizo">Cómo se hizo: método y código abierto →</a></p>
 </div>
 <div id="map"></div>
 <div id="demanda">
@@ -215,6 +232,7 @@ svg text{font-family:"Cascadia Mono",Consolas,monospace;font-size:9px;fill:var(-
     <div class="tabla"><table id="fin_tabla"></table></div>
     <p class="sup" id="fin_sup"></p>
   </div>
+  <div class="cta"><b>¿Querés este análisis para tu área?</b><span>Locaciones nuevas, pozos que vienen, demanda de arena y antorchas, a medida de una zona o una operación.</span><a href="https://www.linkedin.com/in/dpinero/" target="_blank" rel="noopener" data-ev="contacto">Escribime por LinkedIn</a></div>
 </div>
 </div>
 <button class="tog" id="tog_izq" title="ocultar o mostrar el panel de capas">‹</button><button class="tog" id="tog_der" title="ocultar o mostrar demanda y finanzas">›</button>
@@ -363,6 +381,9 @@ const MENTA="#19d3ff",ROSA="#ff3d9a",CIAN="#f9f6ee",GRIS="#8a8f94",AMARILLO="#7b
 const map=L.map("map",{zoomControl:true,preferCanvas:true}).setView([-38.33,-68.72],12);
 L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{maxZoom:18,attribution:"Esri World Imagery · Copernicus Sentinel-2 · Secretaría de Energía · ENARGAS"}).addTo(map);
 const IC_TORRE='<svg viewBox="0 0 24 24"><path d="M12 2 6 22h12L12 2zM8.700 13h6.600M10.200 8h3.600M7.400 17.500l9.200-4.500M16.600 17.500 7.400 13"/></svg>',IC_PAD='<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M12 8v8M8 12h8"/></svg>',IC_COMP='<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.500"/><path d="M12 12V4.500a4 4 0 0 1 3.500 5.500zM12 12l6.500 3.750a4 4 0 0 1-6.500-.750zM12 12l-6.500 3.750a4 4 0 0 1 3-6z"/></svg>';const ico=(cl,html,t)=>L.divIcon({className:"ic",html:`<div class="ico ${cl}" style="width:${t}px;height:${t}px">${html}</div>`,iconSize:[t,t],iconAnchor:[t/2,t/2]});
+function ev(n,p){if(typeof gtag==="function")gtag("event",n,p||{});}
+document.addEventListener("click",e=>{const a=e.target.closest("a.wa,[data-ev]");if(a)ev(a.classList.contains("wa")?"canal_whatsapp":a.dataset.ev,{desde:a.closest("#portada")?"portada":a.closest("#ficha")?"ficha":"panel"});});
+let ULT_LOC="",ULT_POZ="";
 let OP="",DECL=null,CALOR=null,COMP=false,FRAC=.5,listo=false;
 const opN=e=>{e=(e||"").toUpperCase();for(const [k,v] of [["YPF","YPF"],["VISTA","Vista"],["PLUSPETROL","Pluspetrol"],["SHELL","Shell"],["PAMPA","Pampa"],["PHOENIX","Phoenix"],["PAN AMERICAN","PAE"],["TECPETROL","Tecpetrol"],["TOTAL","Total"],["GEOPARK","GeoPark"],["CHEVRON","Chevron"],["EXXON","ExxonMobil"],["CAPEX","Capex"],["KILWER","Kilwer"],["OILSTONE","Oilstone"]])if(e.includes(k))return v;return e?e.split(" ").slice(0,2).map(w=>w[0]+w.slice(1).toLowerCase()).join(" "):"";};
 const CAPAS=["c_img","c_loc","c_otras","c_ant","c_decl","c_calor","c_pozos","c_todos","c_gas","c_comp","c_arena","c_comp2"];
@@ -374,9 +395,11 @@ function novedades(mes){const i=meses.indexOf(mes),ant=i>0?meses[i-1]:null;let n
   for(const f of POZ.features){const p=f.properties;if(p.perforacion&&p.perforacion.slice(0,7)===mes&&!(OP&&p._op!==OP))np++;}
   if(ANT&&ant)for(const f of ANT.features){const p=f.properties;if(OP&&p._op&&p._op!==OP)continue;const a=p.meses.includes(mes),b=p.meses.includes(ant);if(a&&!b)on++;if(!a&&b)off++;}
   const MES=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
-  document.getElementById("nov").innerHTML=`<span class="t">Qué cambió en ${MES[+mes.slice(5)-1]} de ${mes.slice(0,4)}${OP?" · "+OP:""}</span><span class="mas">+${nl}</span> locaciones nuevas · <span class="ros">+${np}</span> pozos iniciados<br><span class="lla">${on}</span> antorchas se encendieron · <b>${off}</b> se apagaron`;}
+  const tl=mes>ULT_LOC?`<span class="pend" title="El detector confirma una locación con cuatro meses de imágenes posteriores">Locaciones: en confirmación</span>`:`<span class="mas">+${nl}</span> locaciones nuevas`;
+  const tp=mes>ULT_POZ?`<span class="pend" title="El padrón oficial carga los pozos nuevos con unos seis meses de demora">Pozos: el padrón aún no los cargó</span>`:`<span class="ros">+${np}</span> pozos iniciados`;
+  document.getElementById("nov").innerHTML=`<span class="t">Qué cambió en ${MES[+mes.slice(5)-1]} de ${mes.slice(0,4)}${OP?" · "+OP:""}</span>${tl} · ${tp}<br><span class="lla">${on}</span> antorchas se encendieron · <b>${off}</b> se apagaron`;}
 function barritas(cats,vals,color){const max=Math.max(...vals,1),w=300/cats.length;return `<svg viewBox="0 0 300 120">`+cats.map((c,i)=>{const h=vals[i]/max*84;return `<rect x="${i*w+3}" y="${98-h}" width="${w-6}" height="${h}" fill="${color}" rx="1"/><text x="${i*w+w/2}" y="${94-h}" text-anchor="middle">${vals[i]||""}</text><text x="${i*w+w/2}" y="113" text-anchor="middle">${c.slice(2)}</text>`;}).join("")+"</svg>";}
-function ficha(z){const zc=CFG.zonas[z],b=zc.bbox,F=document.getElementById("ficha"),years=["2020","2021","2022","2023","2024","2025","2026"];
+function ficha(z){ev("ficha_zona",{zona:z});const zc=CFG.zonas[z],b=zc.bbox,F=document.getElementById("ficha"),years=["2020","2021","2022","2023","2024","2025","2026"];
   const pz=POZ.features.filter(f=>{const c=f.geometry.coordinates;return c[0]>=b[0]&&c[0]<=b[2]&&c[1]>=b[1]&&c[1]<=b[3];});
   const cnt={};pz.forEach(f=>{const e=f.properties._op;cnt[e]=(cnt[e]||0)+1;});const ops=Object.entries(cnt).sort((x,y)=>y[1]-x[1]).slice(0,4).map(x=>`${x[0]} (${nf(x[1])})`).join(" · ");
   const dz=DEM&&DEM.zonas[z];const lv=years.map(y=>dz&&dz.anios[y]&&dz.anios[y].locaciones_vistas!==undefined?dz.anios[y].locaciones_vistas:LOC.features.filter(f=>f.properties.zona===z&&f.properties.tipo==="locacion"&&f.properties.mes_txt.slice(0,4)===y).length);
@@ -386,7 +409,7 @@ function ficha(z){const zc=CFG.zonas[z],b=zc.bbox,F=document.getElementById("fic
   F.querySelector(".caja").innerHTML=`<h3>${zc.nombre}</h3><div class="ops">${ops}</div>
     <div class="fk"><div><b>${nf(lv.reduce((a,v)=>a+v,0))}</b><span>Locaciones nuevas desde 2020</span></div><div class="r"><b>${nf(pz.length)}</b><span>Pozos en el padrón</span></div>${cz?`<div><b>${nf(cz.boed)}</b><span>boe por día, ${nf(cz.productores)} pozos productores</span></div>`:""}<div class="f"><b>${az.filter(f=>f.properties.meses.includes(ult)).length} de ${az.length}</b><span>Antorchas encendidas en ${ult}</span></div>${pr?`<div class="v"><b>${nf(pr.piso.pozos)}</b><span>Pozos que vienen en 2027, como piso</span></div>`:""}</div>
     <div class="gs"><div><h4>Locaciones nuevas vistas por el satélite, por año</h4>${barritas(years,lv,"#0b6b7a")}</div><div><h4>Pozos por año de inicio de perforación</h4>${barritas(years,pv,"#d02e7f")}</div><div><h4>Antorchas vistas encendidas, por año</h4>${barritas(years,av,"#17212b")}</div>${dz?`<div><h4>Arena de fractura, miles de toneladas</h4>${barritas(years,years.map(y=>dz.anios[y]?Math.round(dz.anios[y].arena_kt):0),"#7b2cbf")}</div>`:""}</div>
-    <div class="pie"><span class="sup" style="margin:0">El padrón carga los pozos nuevos con unos seis meses de demora: los últimos años están incompletos.</span><button class="ghost" id="ficha_x">Cerrar</button></div>`;
+    <div class="pie"><span class="sup" style="margin:0">El padrón carga los pozos nuevos con unos seis meses de demora: los últimos años están incompletos. <a class="como" style="margin:0" href="https://www.linkedin.com/in/dpinero/" target="_blank" rel="noopener" data-ev="contacto">¿Querés este análisis para tu área?</a></span><button class="ghost" id="ficha_x">Cerrar</button></div>`;
   F.style.display="flex";document.getElementById("ficha_x").onclick=()=>F.style.display="none";}
 document.getElementById("ficha").addEventListener("click",e=>{if(e.target.id==="ficha")e.target.style.display="none";});
 let CFG,LOC,POZ,ANT,meses=[],idx=0,overlayLayers={},playing=null;
@@ -441,12 +464,14 @@ function toggle(id,layer){document.getElementById(id).addEventListener("change",
 Promise.all(["data/config.json","data/locaciones.geojson","data/pozos.geojson","data/gasoductos.geojson","data/compresoras.geojson","data/ruta_arena.geojson","data/calor.json","data/antorchas.geojson","data/venteos_declarados.geojson"].map(u=>fetch(u).then(r=>r.ok?r.json():null))).then(([cfg,loc,poz,gas,comp,arena,calor,ant,decl])=>{ANT=ant;
   CFG=cfg;LOC=loc;POZ=poz;DECL=decl;CALOR=calor;meses=cfg.meses;idx=meses.length-1;
   // operadora de cada pozo, de cada locación (la del pozo más cercano a menos de 2 km) y de cada antorcha si el dato viene
-  const cn={};for(const f of poz.features){const o=opN(f.properties.empresa);f.properties._op=o;cn[o]=(cn[o]||0)+1;}
+  const cn={};for(const f of poz.features){const o=opN(f.properties.empresa);f.properties._op=o;if(f.properties.recurso==="NO CONVENCIONAL")cn[o]=(cn[o]||0)+1;}
+  ULT_LOC=loc.features.reduce((m,f)=>f.properties.tipo==="locacion"&&f.properties.mes_txt>m?f.properties.mes_txt:m,"");
+  {const pm={};for(const f of poz.features){const q=(f.properties.perforacion||"").slice(0,7);if(q>="2024")pm[q]=(pm[q]||0)+1;}const ms=Object.keys(pm).sort();const ref=ms.slice(-18,-6).map(k=>pm[k]).sort((a,b)=>a-b);const med=ref[Math.floor(ref.length/2)]||1;ULT_POZ=ms.filter(k=>pm[k]>=med*.6).pop()||"";}
   const PX=poz.features.map(f=>f.geometry.coordinates);
   for(const f of loc.features){const [x,y]=f.geometry.coordinates;let m=1e9,k=-1;for(let i=0;i<PX.length;i++){const dx=(PX[i][0]-x)*87.5,dy=(PX[i][1]-y)*111;const d=dx*dx+dy*dy;if(d<m){m=d;k=i;}}f.properties._op=m<4?poz.features[k].properties._op:"";}
   if(ant)for(const f of ant.features)if(f.properties.empresa)f.properties._op=opN(f.properties.empresa);
-  const so=document.getElementById("f_op");Object.entries(cn).sort((a,b)=>b[1]-a[1]).slice(0,14).forEach(([o,n])=>{const e=document.createElement("option");e.value=o;e.textContent=`${o} · ${nf(n)} pozos`;so.appendChild(e);});
-  so.onchange=()=>{OP=so.value;dibujar();if(OP){const ps=poz.features.filter(f=>f.properties._op===OP&&f.properties.perforacion&&f.properties.perforacion>="2015");if(ps.length)map.fitBounds(L.latLngBounds(ps.map(f=>[f.geometry.coordinates[1],f.geometry.coordinates[0]])).pad(.05));}};
+  const so=document.getElementById("f_op");Object.entries(cn).filter(x=>x[1]>=10&&x[0]).sort((a,b)=>b[1]-a[1]).forEach(([o,n])=>{const e=document.createElement("option");e.value=o;e.textContent=`${o} · ${nf(n)} pozos no convencionales`;so.appendChild(e);});
+  so.onchange=()=>{OP=so.value;ev("filtro_operadora",{operadora:OP||"todas"});dibujar();if(OP){const ps=poz.features.filter(f=>f.properties._op===OP&&f.properties.perforacion&&f.properties.perforacion>="2015");if(ps.length)map.fitBounds(L.latLngBounds(ps.map(f=>[f.geometry.coordinates[1],f.geometry.coordinates[0]])).pad(.05));}};
   const AR={};for(const f of poz.features){for(const k of [f.properties.area,f.properties.yacimiento]){if(k)(AR[k]=AR[k]||[]).push(f.geometry.coordinates);}}
   document.getElementById("dl_areas").innerHTML=Object.keys(AR).sort().map(k=>`<option value="${k}">`).join("");
   document.getElementById("f_buscar").addEventListener("change",e=>{const c=AR[e.target.value];if(c){map.fitBounds(L.latLngBounds(c.map(q=>[q[1],q[0]])).pad(.15),{maxZoom:14});if(innerWidth<820&&!document.body.classList.contains("sin-izq"))plegar("izq");}else if(e.target.value)aviso("No encuentro esa área: elegila de la lista");});
@@ -478,13 +503,13 @@ Promise.all(["data/config.json","data/locaciones.geojson","data/pozos.geojson","
   for(const z in cfg.overlays){const o=cfg.overlays[z][0];if(o)L.imageOverlay(o.img,o.bounds,{interactive:false,pane:"antes"}).addTo(g.antes);}
   const cortar=()=>{const pi=map.getPane("imgs");if(!COMP){pi.style.clip="auto";return;}const nw=map.containerPointToLayerPoint([0,0]),se=map.containerPointToLayerPoint(map.getSize());const x=nw.x+(se.x-nw.x)*FRAC;pi.style.clip=`rect(${nw.y-2000}px,${se.x+2000}px,${se.y+2000}px,${x}px)`;CT.style.left=(FRAC*100)+"%";};
   map.on("move zoom resize moveend zoomend",cortar);
-  document.getElementById("c_comp2").addEventListener("change",e=>{COMP=e.target.checked;CT.style.display=COMP?"block":"none";COMP?g.antes.addTo(map):map.removeLayer(g.antes);document.querySelector("#cortina .et.b").textContent=meses[idx].slice(0,4);cortar();guardarURL();});
+  document.getElementById("c_comp2").addEventListener("change",e=>{COMP=e.target.checked;if(COMP)ev("comparar_2020");CT.style.display=COMP?"block":"none";COMP?g.antes.addTo(map):map.removeLayer(g.antes);document.querySelector("#cortina .et.b").textContent=meses[idx].slice(0,4);cortar();guardarURL();});
   const AG=CT.querySelector(".ag");L.DomEvent.disableClickPropagation(AG);let arr=false;
   AG.addEventListener("pointerdown",e=>{arr=true;AG.setPointerCapture(e.pointerId);map.dragging.disable();e.preventDefault();});
   AG.addEventListener("pointermove",e=>{if(!arr)return;const r=map.getContainer().getBoundingClientRect();FRAC=Math.min(.97,Math.max(.03,(e.clientX-r.left)/r.width));cortar();});
   const soltar=()=>{if(arr){arr=false;map.dragging.enable();}};AG.addEventListener("pointerup",soltar);AG.addEventListener("pointercancel",soltar);
   CAPAS.forEach(id=>document.getElementById(id).addEventListener("change",guardarURL));map.on("moveend",guardarURL);
-  document.getElementById("b_comp").onclick=()=>{const u=location.origin+location.pathname+location.search+estadoURL();(navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(()=>aviso("Enlace a esta vista copiado")).catch(()=>{prompt("Copiá el enlace:",u);});};
+  document.getElementById("b_comp").onclick=()=>{ev("compartir_vista");const u=location.origin+location.pathname+location.search+estadoURL();(navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(()=>aviso("Enlace a esta vista copiado")).catch(()=>{prompt("Copiá el enlace:",u);});};
   g.calor=L.layerGroup();toggle("c_calor",g.calor);document.getElementById("c_calor").addEventListener("change",e=>{document.getElementById("calor_nota").style.display=e.target.checked?"":"none";});if(calor){L.imageOverlay(calor.img,calor.bounds,{opacity:.7,interactive:false}).addTo(g.calor);document.getElementById("calor_nota").innerHTML=`${nf(calor.n.productores)} pozos producen ${nf(calor.n.boed)} boe/d (${calor.mes}); ${calor.n.exploracion} pozos de exploración, en estudio o nuevos sin producir. Padrón y Capítulo IV.`;}toggle("c_img",g.img);toggle("c_loc",g.loc);toggle("c_otras",g.otras);toggle("c_pozos",g.pozos);toggle("c_gas",g.gas);toggle("c_comp",g.comp);toggle("c_arena",g.arena);
   document.getElementById("c_todos").addEventListener("change",dibujar);
   map.on("zoomend",dibujar);map.on("moveend",()=>{if(map.getZoom()>=13)dibujar();});
@@ -505,7 +530,7 @@ Promise.all(["data/config.json","data/locaciones.geojson","data/pozos.geojson","
     {t:"Con las locaciones ya construidas, el tablero proyecta los pozos, la arena y los camiones que va a pedir 2027.",v:[[-38.36,-68.72],10],f:async()=>{document.body.classList.remove("sin-der");document.getElementById("demanda").classList.add("luz");elegirAnio("2027");await esp(5200);document.getElementById("demanda").classList.remove("luz");}},
   ];
   const finGuia=()=>{guiaOn=false;G.style.display="none";document.body.classList.remove("guiando");capa("c_ant",true);capa("c_pozos",true);};
-  const guia=async()=>{if(guiaOn)return;if(playing){clearInterval(playing);playing=null;document.getElementById("play").textContent="▶";}
+  const guia=async()=>{if(guiaOn)return;ev("recorrido");if(playing){clearInterval(playing);playing=null;document.getElementById("play").textContent="▶";}
     guiaOn=true;document.body.classList.add("guiando");G.style.display="flex";G.querySelector(".pts").innerHTML=PASOS.map(()=>"<i></i>").join("");
     for(let k=0;k<PASOS.length&&guiaOn;k++){const ps=PASOS[k];G.querySelector(".tx").textContent=ps.t;G.querySelectorAll(".pts i").forEach((e,j)=>e.classList.toggle("on",j<=k));
       if(ps.v)map.flyTo(ps.v[0],ps.v[1],{duration:1.6});await ps.f();}
@@ -513,7 +538,7 @@ Promise.all(["data/config.json","data/locaciones.geojson","data/pozos.geojson","
   document.getElementById("guia_salir").onclick=()=>{finGuia();irMes(ult);};document.getElementById("b_guia").onclick=guia;
   const cuenta=(id,n)=>{const el=document.getElementById(id);const t0=performance.now();const paso=t=>{const f=Math.min(1,(t-t0)/1100);el.textContent=nf(n*(1-Math.pow(1-f,3)));if(f<1)requestAnimationFrame(paso);};requestAnimationFrame(paso);};
   const nPre=Object.values(cfg.zonas).reduce((a,z)=>a+(z.n_locaciones||0),0);cuenta("pc_loc",nPre||loc.features.filter(f=>f.properties.tipo==="locacion").length);cuenta("pc_poz",poz.features.length);cuenta("pc_ant",ant?ant.features.length:0);
-  const P=document.getElementById("portada");const cerrarPortada=()=>P.classList.add("fuera");document.getElementById("pb_ver").onclick=cerrarPortada;const bt=document.getElementById("pb_tour");bt.style.display="";bt.onclick=()=>{cerrarPortada();setTimeout(guia,500);};
+  const P=document.getElementById("portada");const cerrarPortada=()=>P.classList.add("fuera");document.getElementById("pb_ver").onclick=()=>{ev("explorar");cerrarPortada();};const bt=document.getElementById("pb_tour");bt.style.display="";bt.onclick=()=>{cerrarPortada();setTimeout(guia,500);};
   if(new URLSearchParams(location.search).has("recorrido"))setTimeout(guia,1500);
   if(new URLSearchParams(location.search).has("sinportada"))P.style.display="none";
   if(innerWidth<820){document.body.classList.add("sin-izq","sin-der");document.getElementById("tog_izq").textContent="›";document.getElementById("tog_der").textContent="‹";setTimeout(()=>map.invalidateSize(),400);}

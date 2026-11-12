@@ -83,6 +83,39 @@ body.guiando #demanda.luz{box-shadow:inset 0 0 0 3px #7b2cbf}
 .heroes{display:grid;gap:8px;margin:6px 0 10px}.hero{background:var(--panel);border:1px solid var(--rule);border-left:5px solid var(--acento);border-radius:6px;padding:10px 12px;cursor:pointer;transition:transform .15s}.hero:hover{transform:translateX(3px)}
 .hero b{display:block;font-size:32px;line-height:1.05;font-variant-numeric:tabular-nums;color:var(--acento)}.hero span{font-size:12px;color:var(--muted)}.hero i{display:block;font-style:normal;font-size:12px;color:var(--acento2);font-weight:600;margin-top:2px}
 details.mas{margin:4px 0 8px}details.mas summary{cursor:pointer;color:var(--acento);font-size:12px;font-weight:600;padding:6px 0;list-style:none}details.mas summary::before{content:"+ "}details.mas[open] summary::before{content:"- "}details.mas summary::-webkit-details-marker{display:none}
+.wa{display:flex;align-items:center;gap:8px;justify-content:center;background:#25d366;color:#07261a;font-weight:600;font-size:13px;padding:8px 10px;border-radius:6px;text-decoration:none;margin:0 0 12px}.wa:hover{background:#4ae08a}.wa img{width:18px;height:18px}
+#portada a.wa{display:inline-flex;margin:16px auto 0;font-size:14px;padding:9px 16px}
+.filtros{display:grid;gap:6px;margin:0 0 10px}.filtros select,.filtros input{width:100%;padding:7px 8px;border:1px solid var(--rule);border-radius:5px;background:var(--panel);color:var(--ink);font-family:inherit;font-size:13px}
+.filtros label{font-size:11px;color:var(--muted)}
+#nov{background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:9px 11px;margin:0 0 4px;font-size:12px;line-height:1.5}#nov b{color:var(--ink)}#nov .t{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--acento);font-weight:600;margin-bottom:3px}
+#nov .mas{color:var(--acento);font-weight:700}#nov .ros{color:var(--pozo);font-weight:700}#nov .lla{background:#17212b;color:#eaff3a;font-weight:700;padding:0 5px;border-radius:3px}
+#ficha{display:none;position:fixed;inset:0;z-index:2500;background:rgba(12,17,22,.55);align-items:center;justify-content:center;padding:14px}
+#ficha .caja{background:var(--bg);border-radius:10px;max-width:760px;width:100%;max-height:92vh;overflow:auto;padding:20px 22px;box-shadow:0 10px 40px rgba(0,0,0,.5);border-top:6px solid var(--acento)}
+#ficha h3{margin:0;font-size:22px}#ficha .ops{color:var(--muted);font-size:13px;margin:2px 0 12px}
+#ficha .fk{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:14px}#ficha .fk div{background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:9px 11px}
+#ficha .fk b{display:block;font-size:24px;font-variant-numeric:tabular-nums;color:var(--acento)}#ficha .fk span{font-size:11px;color:var(--muted)}#ficha .fk .r b{color:var(--pozo)}#ficha .fk .f{background:#17212b}#ficha .fk .f b{color:#eaff3a}#ficha .fk .f span{color:#c9cfd4}#ficha .fk .v b{color:var(--acento2)}
+#ficha .gs{display:grid;grid-template-columns:1fr 1fr;gap:16px}#ficha .gs h4{margin:0 0 4px;font-size:12px;color:var(--muted);font-weight:600}#ficha svg{width:100%;height:auto}#ficha svg text{font-size:10px;fill:#5d6974;font-family:"Cascadia Mono",Consolas,monospace}
+#ficha .pie{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:14px}
+@media(max-width:640px){#ficha .gs{grid-template-columns:1fr}}
+#cortina{position:absolute;top:0;bottom:0;width:0;z-index:950;display:none;pointer-events:none}
+#cortina .raya{position:absolute;top:0;bottom:0;left:-1.5px;width:3px;background:#f9f6ee;box-shadow:0 0 6px rgba(0,0,0,.6)}
+#cortina .ag{position:absolute;top:50%;left:-22px;width:44px;height:44px;margin-top:-22px;border-radius:50%;background:#f9f6ee;color:#17212b;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;cursor:ew-resize;pointer-events:auto;box-shadow:0 2px 10px rgba(0,0,0,.5);touch-action:none;user-select:none}
+#cortina .et{position:absolute;top:70px;font-family:"Cascadia Mono",Consolas,monospace;font-size:13px;font-weight:700;background:rgba(12,17,22,.85);color:#f9f6ee;padding:3px 8px;border-radius:4px;white-space:nowrap}#cortina .et.a{right:10px}#cortina .et.b{left:10px}
+#aviso{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#17212b;color:#f9f6ee;padding:9px 16px;border-radius:20px;font-size:13px;z-index:2600;opacity:0;transition:opacity .3s;pointer-events:none}#aviso.on{opacity:1}
+@media(max-width:820px){
+  body{--izq:0px!important;--der:0px!important}#app{grid-template-columns:1fr!important}
+  #panel,#demanda{position:fixed;top:0;bottom:0;width:88vw;max-width:350px;z-index:1500;transition:transform .3s;padding:16px!important;overflow-y:auto!important;box-shadow:0 0 30px rgba(0,0,0,.5)}
+  #panel{left:0;border-right:1px solid var(--rule)!important}#demanda{right:0;border-left:1px solid var(--rule)!important}
+  body.sin-izq #panel{transform:translateX(-105%)}body.sin-der #demanda{transform:translateX(105%)}
+  #map{grid-column:1;height:100vh;height:100dvh}
+  .tog{z-index:1600;width:40px;height:40px;top:10px;font-size:20px}#tog_izq{left:10px}#tog_der{right:10px}
+  body:not(.sin-izq) #tog_izq{left:min(88vw,350px)}body:not(.sin-der) #tog_der{right:min(88vw,350px)}
+  .leaflet-top.leaflet-left .leaflet-control{margin-top:60px}
+  #tiempo{left:8px;right:8px;bottom:8px;flex-wrap:wrap;gap:6px 8px;padding:8px 10px}#tiempo input[type=range]{order:5;flex:1 1 100%}#mes{min-width:0;font-size:14px}#tiempo button{padding:6px 9px;font-size:12px}
+  #guia{left:56px;right:56px;top:8px}#guia .tx{font-size:15px;min-height:0}
+  #graf{left:0;right:0}
+  #portada .cifra{min-width:104px;padding:10px}#portada .cifra b{font-size:26px}
+}
 .nota{color:var(--muted);font-size:11px;line-height:1.45;margin-top:14px}
 .tag{display:inline-block;font-family:"Cascadia Mono",Consolas,monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#fff;background:var(--ink);padding:2px 6px;border-radius:3px;margin-left:6px;vertical-align:middle}
 #demanda{background:var(--bg);border-left:1px solid var(--rule);overflow-y:auto;padding:16px}
@@ -120,21 +153,29 @@ svg text{font-family:"Cascadia Mono",Consolas,monospace;font-size:9px;fill:var(-
   <p>Cada locación nueva, cada pozo y cada antorcha de la cuenca, mes a mes desde 2020. Lo que el satélite ve antes de que llegue al registro oficial.</p>
   <div class="cifras"><div class="cifra a"><b id="pc_loc">·</b><span>Locaciones nuevas detectadas</span></div><div class="cifra b"><b id="pc_poz">·</b><span>Pozos del padrón oficial</span></div><div class="cifra c"><b id="pc_ant">·</b><span>Antorchas vistas en el infrarrojo</span></div></div>
   <div class="bot"><button class="pri" id="pb_ver">Explorar el mapa</button><button class="sec" id="pb_tour" style="display:none">Mostrame en un minuto</button></div>
+  <a class="wa" href="https://whatsapp.com/channel/0029VbDhfzIB4hdKBOmHzr0u" target="_blank" rel="noopener"><img src="img/whatsapp.png" alt="">Sumate al canal de WhatsApp</a>
   <div class="pie">Contiene datos modificados de Copernicus Sentinel · Capítulo IV y puntos de venteo, Secretaría de Energía · ENARGAS</div>
 </div></div>
 <div id="app">
 <div id="panel">
   <h1>Vaca Muerta desde el satélite <span class="tag" id="tag">privado</span></h1>
   <p class="sub">La actividad vista mes a mes, antes de que aparezca en el padrón.</p>
+  <a class="wa" href="https://whatsapp.com/channel/0029VbDhfzIB4hdKBOmHzr0u" target="_blank" rel="noopener"><img src="img/whatsapp.png" alt="">Sumate al canal de WhatsApp</a>
+  <div class="filtros">
+    <select id="f_op" title="Filtrar por operadora"><option value="">Todas las operadoras</option></select>
+    <input id="f_buscar" list="dl_areas" placeholder="Buscar un área o yacimiento..." autocomplete="off"><datalist id="dl_areas"></datalist>
+  </div>
   <div class="kpis">
     <div class="kpi"><b id="k_vistas">0</b><span>Locaciones vistas hasta el mes elegido</span></div>
     <div class="kpi r"><b id="k_sinpozo">0</b><span>De ellas, sin pozo registrado todavía</span></div>
     <div class="kpi f"><b id="k_ant">0</b><span>Antorchas encendidas ese mes</span></div>
   </div>
+  <div id="nov"></div>
   <h2>Satélite</h2>
   <label class="capa"><input type="checkbox" id="c_img" checked><span class="sq" style="border-color:var(--gris)"></span>Imagen Sentinel-2 del año elegido<span class="n" id="n_img"></span></label>
   <label class="capa"><input type="checkbox" id="c_loc" checked><span class="lgi" style="stroke:var(--acento)"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M12 8v8M8 12h8"/></svg></span>Locaciones nuevas detectadas<span class="n" id="n_loc"></span></label>
   <label class="capa"><input type="checkbox" id="c_otras"><span class="sq" style="border-color:var(--gris)"></span>Otras obras detectadas (caminos, plantas)<span class="n" id="n_otras"></span></label>
+  <label class="capa"><input type="checkbox" id="c_comp2"><span class="sq" style="border-color:var(--ink);background:linear-gradient(90deg,var(--gris) 50%,transparent 50%)"></span>Comparar con la imagen de 2020<span class="n"></span></label>
   <h2>Antorchas</h2>
   <label class="capa"><input type="checkbox" id="c_ant" checked><span class="lg"><svg viewBox="0 0 24 24"><path class="f1" d="M12 1.5c.6 3.6 5.6 6.2 5.6 11.6a5.6 5.6 0 0 1-11.2 0c0-2.3 1-3.9 2.2-5 .1 1.9.8 3 1.9 3.3C10.300 8 9.8 4.700 12 1.5z"/><path class="f2" d="M12 11.500c.3 1.600 2.300 2.500 2.300 4.600a2.300 2.300 0 0 1-4.600 0c0-1.800 1.600-2.600 2.300-4.600z"/></svg></span>Antorchas vistas desde el satélite<span class="n" id="n_ant"></span></label>
   <label class="capa"><input type="checkbox" id="c_decl"><span class="lgd"></span>Puntos de venteo declarados<span class="n" id="n_decl"></span></label>
@@ -177,12 +218,15 @@ svg text{font-family:"Cascadia Mono",Consolas,monospace;font-size:9px;fill:var(-
 </div>
 <button class="tog" id="tog_izq" title="ocultar o mostrar el panel de capas">‹</button><button class="tog" id="tog_der" title="ocultar o mostrar demanda y finanzas">›</button>
 <div id="graf"><div class="caja"><h3></h3><svg></svg><div class="pie"><p class="sup"></p><button class="ghost cerrar">Cerrar</button></div></div></div>
+<div id="ficha"><div class="caja"></div></div>
+<div id="aviso"></div>
 <div id="guia"><div class="caja"><div class="tx"></div><div class="ab"><div class="pts"></div><button id="guia_salir">Saltar</button></div></div></div>
 <div id="tiempo">
   <button id="play">▶</button>
   <span id="mes">2026-10</span>
   <input type="range" id="slider" min="0" max="81" value="81" step="1">
   <button class="ghost" id="hoy">Hoy</button>
+  <button class="ghost" id="b_comp" title="Copiar el enlace a esta vista">Compartir</button>
   <button class="ghost" id="b_guia" title="Un recorrido de un minuto por el tablero">Recorrido</button>
 </div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -318,9 +362,36 @@ const MENTA="#19d3ff",ROSA="#ff3d9a",CIAN="#f9f6ee",GRIS="#8a8f94",AMARILLO="#7b
 const map=L.map("map",{zoomControl:true,preferCanvas:true}).setView([-38.33,-68.72],12);
 L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{maxZoom:18,attribution:"Esri World Imagery · Copernicus Sentinel-2 · Secretaría de Energía · ENARGAS"}).addTo(map);
 const IC_TORRE='<svg viewBox="0 0 24 24"><path d="M12 2 6 22h12L12 2zM8.700 13h6.600M10.200 8h3.600M7.400 17.500l9.200-4.500M16.600 17.500 7.400 13"/></svg>',IC_PAD='<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M12 8v8M8 12h8"/></svg>',IC_COMP='<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.500"/><path d="M12 12V4.500a4 4 0 0 1 3.500 5.500zM12 12l6.500 3.750a4 4 0 0 1-6.500-.750zM12 12l-6.500 3.750a4 4 0 0 1 3-6z"/></svg>';const ico=(cl,html,t)=>L.divIcon({className:"ic",html:`<div class="ico ${cl}" style="width:${t}px;height:${t}px">${html}</div>`,iconSize:[t,t],iconAnchor:[t/2,t/2]});
+let OP="",DECL=null,CALOR=null,COMP=false,FRAC=.5,listo=false;
+const opN=e=>{e=(e||"").toUpperCase();for(const [k,v] of [["YPF","YPF"],["VISTA","Vista"],["PLUSPETROL","Pluspetrol"],["SHELL","Shell"],["PAMPA","Pampa"],["PHOENIX","Phoenix"],["PAN AMERICAN","PAE"],["TECPETROL","Tecpetrol"],["TOTAL","Total"],["GEOPARK","GeoPark"],["CHEVRON","Chevron"],["EXXON","ExxonMobil"],["CAPEX","Capex"],["KILWER","Kilwer"],["OILSTONE","Oilstone"]])if(e.includes(k))return v;return e?e.split(" ").slice(0,2).map(w=>w[0]+w.slice(1).toLowerCase()).join(" "):"";};
+const CAPAS=["c_img","c_loc","c_otras","c_ant","c_decl","c_calor","c_pozos","c_todos","c_gas","c_comp","c_arena","c_comp2"];
+function estadoURL(){const c=map.getCenter();return "#"+[c.lat.toFixed(4),c.lng.toFixed(4),map.getZoom(),meses[idx],CAPAS.map(id=>document.getElementById(id).checked?1:0).join(""),encodeURIComponent(OP)].join(",");}
+function guardarURL(){if(listo)history.replaceState(null,"",location.pathname+location.search+estadoURL());}
+function aviso(t){const a=document.getElementById("aviso");a.textContent=t;a.classList.add("on");setTimeout(()=>a.classList.remove("on"),2200);}
+function novedades(mes){const i=meses.indexOf(mes),ant=i>0?meses[i-1]:null;let nl=0,np=0,on=0,off=0;
+  for(const f of LOC.features){const p=f.properties;if(p.tipo==="locacion"&&p.mes_txt===mes&&!(PUBLICO&&p.estado==="sin_pozo")&&!(OP&&p._op!==OP))nl++;}
+  for(const f of POZ.features){const p=f.properties;if(p.perforacion&&p.perforacion.slice(0,7)===mes&&!(OP&&p._op!==OP))np++;}
+  if(ANT&&ant)for(const f of ANT.features){const p=f.properties;if(OP&&p._op&&p._op!==OP)continue;const a=p.meses.includes(mes),b=p.meses.includes(ant);if(a&&!b)on++;if(!a&&b)off++;}
+  const MES=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+  document.getElementById("nov").innerHTML=`<span class="t">Qué cambió en ${MES[+mes.slice(5)-1]} de ${mes.slice(0,4)}${OP?" · "+OP:""}</span><span class="mas">+${nl}</span> locaciones nuevas · <span class="ros">+${np}</span> pozos iniciados<br><span class="lla">${on}</span> antorchas se encendieron · <b>${off}</b> se apagaron`;}
+function barritas(cats,vals,color){const max=Math.max(...vals,1),w=300/cats.length;return `<svg viewBox="0 0 300 120">`+cats.map((c,i)=>{const h=vals[i]/max*84;return `<rect x="${i*w+3}" y="${98-h}" width="${w-6}" height="${h}" fill="${color}" rx="1"/><text x="${i*w+w/2}" y="${94-h}" text-anchor="middle">${vals[i]||""}</text><text x="${i*w+w/2}" y="113" text-anchor="middle">${c.slice(2)}</text>`;}).join("")+"</svg>";}
+function ficha(z){const zc=CFG.zonas[z],b=zc.bbox,F=document.getElementById("ficha"),years=["2020","2021","2022","2023","2024","2025","2026"];
+  const pz=POZ.features.filter(f=>{const c=f.geometry.coordinates;return c[0]>=b[0]&&c[0]<=b[2]&&c[1]>=b[1]&&c[1]<=b[3];});
+  const cnt={};pz.forEach(f=>{const e=f.properties._op;cnt[e]=(cnt[e]||0)+1;});const ops=Object.entries(cnt).sort((x,y)=>y[1]-x[1]).slice(0,4).map(x=>`${x[0]} (${nf(x[1])})`).join(" · ");
+  const dz=DEM&&DEM.zonas[z];const lv=years.map(y=>dz&&dz.anios[y]&&dz.anios[y].locaciones_vistas!==undefined?dz.anios[y].locaciones_vistas:LOC.features.filter(f=>f.properties.zona===z&&f.properties.tipo==="locacion"&&f.properties.mes_txt.slice(0,4)===y).length);
+  const pv=years.map(y=>pz.filter(f=>(f.properties.perforacion||"").slice(0,4)===y).length);
+  const az=ANT?ANT.features.filter(f=>f.properties.zona===z):[];const ult=meses[meses.length-1];const av=years.map(y=>az.filter(f=>f.properties.meses.some(m=>m.slice(0,4)===y)).length);
+  const cz=CALOR&&CALOR.zonas[z];const pr=dz&&dz.proy2027;
+  F.querySelector(".caja").innerHTML=`<h3>${zc.nombre}</h3><div class="ops">${ops}</div>
+    <div class="fk"><div><b>${nf(lv.reduce((a,v)=>a+v,0))}</b><span>Locaciones nuevas desde 2020</span></div><div class="r"><b>${nf(pz.length)}</b><span>Pozos en el padrón</span></div>${cz?`<div><b>${nf(cz.boed)}</b><span>boe por día, ${nf(cz.productores)} pozos productores</span></div>`:""}<div class="f"><b>${az.filter(f=>f.properties.meses.includes(ult)).length} de ${az.length}</b><span>Antorchas encendidas en ${ult}</span></div>${pr?`<div class="v"><b>${nf(pr.piso.pozos)}</b><span>Pozos que vienen en 2027, como piso</span></div>`:""}</div>
+    <div class="gs"><div><h4>Locaciones nuevas vistas por el satélite, por año</h4>${barritas(years,lv,"#0b6b7a")}</div><div><h4>Pozos por año de inicio de perforación</h4>${barritas(years,pv,"#d02e7f")}</div><div><h4>Antorchas vistas encendidas, por año</h4>${barritas(years,av,"#17212b")}</div>${dz?`<div><h4>Arena de fractura, miles de toneladas</h4>${barritas(years,years.map(y=>dz.anios[y]?Math.round(dz.anios[y].arena_kt):0),"#7b2cbf")}</div>`:""}</div>
+    <div class="pie"><span class="sup" style="margin:0">El padrón carga los pozos nuevos con unos seis meses de demora: los últimos años están incompletos.</span><button class="ghost" id="ficha_x">Cerrar</button></div>`;
+  F.style.display="flex";document.getElementById("ficha_x").onclick=()=>F.style.display="none";}
+document.getElementById("ficha").addEventListener("click",e=>{if(e.target.id==="ficha")e.target.style.display="none";});
 let CFG,LOC,POZ,ANT,meses=[],idx=0,overlayLayers={},playing=null;
 const PUBLICO=true;
-const g={img:L.layerGroup().addTo(map),loc:L.layerGroup().addTo(map),otras:L.layerGroup(),pozos:L.layerGroup().addTo(map),gas:L.layerGroup().addTo(map),comp:L.layerGroup().addTo(map),ant:L.layerGroup().addTo(map),decl:L.layerGroup(),arena:L.layerGroup(),zonas:L.layerGroup().addTo(map)};
+map.createPane("antes");map.getPane("antes").style.zIndex=340;map.createPane("imgs");map.getPane("imgs").style.zIndex=350;
+const g={antes:L.layerGroup(),img:L.layerGroup().addTo(map),loc:L.layerGroup().addTo(map),otras:L.layerGroup(),pozos:L.layerGroup().addTo(map),gas:L.layerGroup().addTo(map),comp:L.layerGroup().addTo(map),ant:L.layerGroup().addTo(map),decl:L.layerGroup(),arena:L.layerGroup(),zonas:L.layerGroup().addTo(map)};
 const fmt=d=>d?d:"—";
 function estadoTxt(p){
   if(p.estado==="llego_despues")return `<span class="r">Llegó un pozo</span> a los ${p.espera_meses} meses (perforación ${fmt(p.drill_cercano)})`;
@@ -332,7 +403,7 @@ function dibujar(){
   const anio=mes.slice(0,4);
   g.loc.clearLayers();g.otras.clearLayers();g.pozos.clearLayers();
   let vistas=0,sinpozo=0,otras=0;
-  for(const f of LOC.features){const p=f.properties;if(p.mes_txt>mes)continue;if(PUBLICO&&p.estado==="sin_pozo")continue;
+  for(const f of LOC.features){const p=f.properties;if(p.mes_txt>mes)continue;if(PUBLICO&&p.estado==="sin_pozo")continue;if(OP&&p._op!==OP)continue;
     const [lon,lat]=f.geometry.coordinates;const lado=Math.max(60,Math.sqrt(p.area_ha*1e4))/2;
     const b=L.latLngBounds([lat-lado/111000,lon-lado/(111000*Math.cos(lat*Math.PI/180))],[lat+lado/111000,lon+lado/(111000*Math.cos(lat*Math.PI/180))]);
     const nuevo=(parseInt(mes.slice(0,4))*12+parseInt(mes.slice(5)))-(parseInt(p.mes_txt.slice(0,4))*12+parseInt(p.mes_txt.slice(5)))<3;
@@ -344,13 +415,13 @@ function dibujar(){
     else{otras++;(lejos?L.circleMarker([lat,lon],{radius:3,color:GRIS,weight:1,fillOpacity:0}):L.rectangle(b,{color:GRIS,weight:1,fill:false,dashArray:"3 3"})).bindPopup(pop).addTo(g.otras);}
   }
   g.ant.clearLayers();let nant=0,nenc=0;const FL='<svg viewBox="0 0 24 24"><path class="f1" d="M12 1.5c.6 3.6 5.6 6.2 5.6 11.6a5.6 5.6 0 0 1-11.2 0c0-2.3 1-3.9 2.2-5 .1 1.9.8 3 1.9 3.3C10.300 8 9.8 4.700 12 1.5z"/><path class="f2" d="M12 11.500c.3 1.600 2.300 2.500 2.300 4.600a2.300 2.300 0 0 1-4.600 0c0-1.800 1.600-2.600 2.300-4.600z"/></svg>';
-  if(ANT)for(const f of ANT.features){const p=f.properties;if(p.primero>mes)continue;nant++;const [lon,lat]=f.geometry.coordinates;const enc=p.meses.includes(mes);if(enc)nenc++;
+  if(ANT)for(const f of ANT.features){const p=f.properties;if(p.primero>mes)continue;if(OP&&p._op&&p._op!==OP)continue;nant++;const [lon,lat]=f.geometry.coordinates;const enc=p.meses.includes(mes);if(enc)nenc++;
     const tira=meses.map(m=>`<i class="${p.meses.includes(m)?"s":""}${m===mes?" h":""}"></i>`).join("");
     const pop=`<div class="pa"><h4><span class="lg">${FL}</span>Antorcha <span class="est${enc?"":" no"}">${enc?"Encendida este mes":"Sin llama este mes"}</span></h4>${p.zona.replaceAll("_"," ")}<div class="tira">${tira}</div><div class="ej"><span>${meses[0].slice(0,4)}</span><span>${meses[meses.length-1].slice(0,4)}</span></div><span class="gr">${p.n}</span> de ${meses.length} imágenes mensuales con llama<br>Primera vez ${p.primero} · última ${p.ultimo}${PUBLICO?"":`<br>Pozo más cercano: ${p.empresa}`}${p.declarado?`<br>Punto de venteo declarado a ${p.declarado_m} m`:(PUBLICO?"":"<br><b>Sin punto de venteo declarado</b> a menos de 500 m")}</div>`;
     L.marker([lat,lon],{icon:L.divIcon({className:"ic",html:`<div class="llama ${enc?"on":"off"}">${FL}</div>`,iconSize:[44,44],iconAnchor:[22,22]}),zIndexOffset:enc?900:300}).bindPopup(pop,{minWidth:250}).bindTooltip(enc?"Antorcha encendida":"Antorcha sin llama este mes",{className:"tt",direction:"top",offset:[0,-14]}).addTo(g.ant);}
   document.getElementById("n_ant").textContent=ANT?nenc+" de "+nant:"";document.getElementById("k_ant").textContent=nenc;
   const todos=document.getElementById("c_todos").checked;let np=0;const vista=map.getBounds().pad(0.15);
-  for(const f of POZ.features){const p=f.properties;if(!p.perforacion)continue;const antes=p.perforacion.slice(0,7)<=mes;if(!antes&&!todos)continue;np++;
+  for(const f of POZ.features){const p=f.properties;if(!p.perforacion)continue;if(OP&&p._op!==OP)continue;const antes=p.perforacion.slice(0,7)<=mes;if(!antes&&!todos)continue;np++;
     const [lon,lat]=f.geometry.coordinates;
     const lejos=map.getZoom()<13;if(!lejos&&!vista.contains([lat,lon]))continue;
     (lejos?L.circleMarker([lat,lon],{radius:antes?2:1.5,color:antes?ROSA:"#9c7f8c",fillColor:antes?ROSA:"#9c7f8c",fillOpacity:.55,weight:0}):L.marker([lat,lon],{icon:ico("torre"+(antes?"":" fut"),IC_TORRE,map.getZoom()>=15?22:16)}))
@@ -361,12 +432,23 @@ function dibujar(){
   g.img.clearLayers();let nimg=0;
   for(const z in CFG.overlays){const ov=CFG.overlays[z];if(!ov.length)continue;
     let mejor=ov[0];for(const o of ov){if(Math.abs(parseInt(o.mes.slice(0,4))-parseInt(anio))<=Math.abs(parseInt(mejor.mes.slice(0,4))-parseInt(anio)))mejor=o;}
-    L.imageOverlay(mejor.img,mejor.bounds,{opacity:1,interactive:false}).addTo(g.img);nimg++;}
+    L.imageOverlay(mejor.img,mejor.bounds,{opacity:1,interactive:false,pane:"imgs"}).addTo(g.img);nimg++;}
+  novedades(mes);if(COMP){document.querySelector("#cortina .et.b").textContent=anio;}guardarURL();
   document.getElementById("n_img").textContent=nimg;
 }
 function toggle(id,layer){document.getElementById(id).addEventListener("change",e=>{e.target.checked?layer.addTo(map):map.removeLayer(layer);});}
 Promise.all(["data/config.json","data/locaciones.geojson","data/pozos.geojson","data/gasoductos.geojson","data/compresoras.geojson","data/ruta_arena.geojson","data/calor.json","data/antorchas.geojson","data/venteos_declarados.geojson"].map(u=>fetch(u).then(r=>r.ok?r.json():null))).then(([cfg,loc,poz,gas,comp,arena,calor,ant,decl])=>{ANT=ant;
-  CFG=cfg;LOC=loc;POZ=poz;meses=cfg.meses;idx=meses.length-1;
+  CFG=cfg;LOC=loc;POZ=poz;DECL=decl;CALOR=calor;meses=cfg.meses;idx=meses.length-1;
+  // operadora de cada pozo, de cada locación (la del pozo más cercano a menos de 2 km) y de cada antorcha si el dato viene
+  const cn={};for(const f of poz.features){const o=opN(f.properties.empresa);f.properties._op=o;cn[o]=(cn[o]||0)+1;}
+  const PX=poz.features.map(f=>f.geometry.coordinates);
+  for(const f of loc.features){const [x,y]=f.geometry.coordinates;let m=1e9,k=-1;for(let i=0;i<PX.length;i++){const dx=(PX[i][0]-x)*87.5,dy=(PX[i][1]-y)*111;const d=dx*dx+dy*dy;if(d<m){m=d;k=i;}}f.properties._op=m<4?poz.features[k].properties._op:"";}
+  if(ant)for(const f of ant.features)if(f.properties.empresa)f.properties._op=opN(f.properties.empresa);
+  const so=document.getElementById("f_op");Object.entries(cn).sort((a,b)=>b[1]-a[1]).slice(0,14).forEach(([o,n])=>{const e=document.createElement("option");e.value=o;e.textContent=`${o} · ${nf(n)} pozos`;so.appendChild(e);});
+  so.onchange=()=>{OP=so.value;dibujar();if(OP){const ps=poz.features.filter(f=>f.properties._op===OP&&f.properties.perforacion&&f.properties.perforacion>="2015");if(ps.length)map.fitBounds(L.latLngBounds(ps.map(f=>[f.geometry.coordinates[1],f.geometry.coordinates[0]])).pad(.05));}};
+  const AR={};for(const f of poz.features){for(const k of [f.properties.area,f.properties.yacimiento]){if(k)(AR[k]=AR[k]||[]).push(f.geometry.coordinates);}}
+  document.getElementById("dl_areas").innerHTML=Object.keys(AR).sort().map(k=>`<option value="${k}">`).join("");
+  document.getElementById("f_buscar").addEventListener("change",e=>{const c=AR[e.target.value];if(c){map.fitBounds(L.latLngBounds(c.map(q=>[q[1],q[0]])).pad(.15),{maxZoom:14});if(innerWidth<820&&!document.body.classList.contains("sin-izq"))plegar("izq");}else if(e.target.value)aviso("No encuentro esa área: elegila de la lista");});
   const s=document.getElementById("slider");s.max=meses.length-1;s.value=idx;
   L.geoJSON(gas,{style:f=>({color:CIAN,weight:f.properties.subtipo==="Troncal"?2.5:1.2,opacity:.85}),onEachFeature:(f,l)=>l.bindPopup(`<b>${f.properties.gasoducto}</b><br>${f.properties.tramo||""}<br>${f.properties.licenciataria} · ${f.properties.subtipo||""}`)}).addTo(g.gas);
   document.getElementById("n_gas").textContent=gas.features.length;
@@ -387,9 +469,21 @@ Promise.all(["data/config.json","data/locaciones.geojson","data/pozos.geojson","
     const cnt={};pz.forEach(f=>{const e=corto(f.properties.empresa);cnt[e]=(cnt[e]||0)+1;});const ops=Object.entries(cnt).sort((x,y)=>y[1]-x[1]).slice(0,2).map(x=>x[0]).join(", ");
     const cz=calor&&calor.zonas[z];
     const a=document.createElement("div");a.className="vent";a.innerHTML=`<b>${cfg.zonas[z].nombre}</b><span class="n">${nl}</span><div class="det">${nl} locaciones vistas${sp?`, ${sp} sin pozo`:""} · ${nf(pz.length)} pozos${cz?` · ${nf(cz.boed)} boe/d`:""}<br>${ops}</div>`;
-    a.onclick=()=>{map.fitBounds(bounds);document.querySelectorAll(".vent").forEach(v=>v.classList.toggle("on",v===a));for(const k in RAD)RAD[k].setStyle(k===z?{weight:3,opacity:1,dashArray:null}:{weight:1.2,opacity:.7,dashArray:"2 6"});};
+    a.onclick=()=>{ficha(z);map.fitBounds(bounds);document.querySelectorAll(".vent").forEach(v=>v.classList.toggle("on",v===a));for(const k in RAD)RAD[k].setStyle(k===z?{weight:3,opacity:1,dashArray:null}:{weight:1.2,opacity:.7,dashArray:"2 6"});};
     RAD[z]=ring;zdiv.appendChild(a);}
   toggle("c_ant",g.ant);toggle("c_decl",g.decl);
+  // cortina: a la izquierda la primera imagen de cada ventana, a la derecha la del año elegido
+  const CT=document.createElement("div");CT.id="cortina";CT.innerHTML='<div class="raya"></div><div class="et a">2020</div><div class="et b"></div><div class="ag">⇆</div>';map.getContainer().appendChild(CT);
+  for(const z in cfg.overlays){const o=cfg.overlays[z][0];if(o)L.imageOverlay(o.img,o.bounds,{interactive:false,pane:"antes"}).addTo(g.antes);}
+  const cortar=()=>{const pi=map.getPane("imgs");if(!COMP){pi.style.clip="auto";return;}const nw=map.containerPointToLayerPoint([0,0]),se=map.containerPointToLayerPoint(map.getSize());const x=nw.x+(se.x-nw.x)*FRAC;pi.style.clip=`rect(${nw.y-2000}px,${se.x+2000}px,${se.y+2000}px,${x}px)`;CT.style.left=(FRAC*100)+"%";};
+  map.on("move zoom resize moveend zoomend",cortar);
+  document.getElementById("c_comp2").addEventListener("change",e=>{COMP=e.target.checked;CT.style.display=COMP?"block":"none";COMP?g.antes.addTo(map):map.removeLayer(g.antes);document.querySelector("#cortina .et.b").textContent=meses[idx].slice(0,4);cortar();guardarURL();});
+  const AG=CT.querySelector(".ag");L.DomEvent.disableClickPropagation(AG);let arr=false;
+  AG.addEventListener("pointerdown",e=>{arr=true;AG.setPointerCapture(e.pointerId);map.dragging.disable();e.preventDefault();});
+  AG.addEventListener("pointermove",e=>{if(!arr)return;const r=map.getContainer().getBoundingClientRect();FRAC=Math.min(.97,Math.max(.03,(e.clientX-r.left)/r.width));cortar();});
+  const soltar=()=>{if(arr){arr=false;map.dragging.enable();}};AG.addEventListener("pointerup",soltar);AG.addEventListener("pointercancel",soltar);
+  CAPAS.forEach(id=>document.getElementById(id).addEventListener("change",guardarURL));map.on("moveend",guardarURL);
+  document.getElementById("b_comp").onclick=()=>{const u=location.origin+location.pathname+location.search+estadoURL();(navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(()=>aviso("Enlace a esta vista copiado")).catch(()=>{prompt("Copiá el enlace:",u);});};
   g.calor=L.layerGroup();toggle("c_calor",g.calor);document.getElementById("c_calor").addEventListener("change",e=>{document.getElementById("calor_nota").style.display=e.target.checked?"":"none";});if(calor){L.imageOverlay(calor.img,calor.bounds,{opacity:.7,interactive:false}).addTo(g.calor);document.getElementById("calor_nota").innerHTML=`${nf(calor.n.productores)} pozos producen ${nf(calor.n.boed)} boe/d (${calor.mes}); ${calor.n.exploracion} pozos de exploración, en estudio o nuevos sin producir. Padrón y Capítulo IV.`;}toggle("c_img",g.img);toggle("c_loc",g.loc);toggle("c_otras",g.otras);toggle("c_pozos",g.pozos);toggle("c_gas",g.gas);toggle("c_comp",g.comp);toggle("c_arena",g.arena);
   document.getElementById("c_todos").addEventListener("change",dibujar);
   map.on("zoomend",dibujar);map.on("moveend",()=>{if(map.getZoom()>=13)dibujar();});
@@ -421,6 +515,12 @@ Promise.all(["data/config.json","data/locaciones.geojson","data/pozos.geojson","
   const P=document.getElementById("portada");const cerrarPortada=()=>P.classList.add("fuera");document.getElementById("pb_ver").onclick=cerrarPortada;const bt=document.getElementById("pb_tour");bt.style.display="";bt.onclick=()=>{cerrarPortada();setTimeout(guia,500);};
   if(new URLSearchParams(location.search).has("recorrido"))setTimeout(guia,1500);
   if(new URLSearchParams(location.search).has("sinportada"))P.style.display="none";
+  if(innerWidth<820){document.body.classList.add("sin-izq","sin-der");document.getElementById("tog_izq").textContent="›";document.getElementById("tog_der").textContent="‹";setTimeout(()=>map.invalidateSize(),400);}
+  // vista compartida: #lat,lon,zoom,mes,capas,operadora
+  const hv=location.hash.slice(1).split(",");if(hv.length>=5&&!isNaN(+hv[0])){P.style.display="none";map.setView([+hv[0],+hv[1]],+hv[2]);const im=meses.indexOf(hv[3]);if(im>=0){idx=im;s.value=im;}
+    CAPAS.forEach((id,i)=>{const c=document.getElementById(id);if(hv[4][i]!==undefined&&c.checked!==(hv[4][i]==="1"))c.click();});
+    if(hv[5]){OP=decodeURIComponent(hv[5]);so.value=OP;}}
+  listo=true;
   if(PUBLICO){document.getElementById("tag").textContent="avance";document.querySelector(".kpi.r").style.display="none";}
   dibujar();
 });

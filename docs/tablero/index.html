@@ -37,13 +37,14 @@ button.ghost{background:transparent;color:var(--ink);border:1px solid var(--rule
 .leaflet-popup-tip{background:var(--panel)}.leaflet-popup-content b{color:var(--acento)}.leaflet-popup-content .r{color:var(--pozo)}
 .leaflet-container{font-family:inherit}
 .ic{background:none;border:0}
-.llama{position:relative;width:44px;height:44px}.llama svg{position:absolute;left:12px;top:8px;width:20px;height:20px;filter:drop-shadow(0 0 2px rgba(12,17,22,.9))}
-.llama .f1{fill:#eaff3a;stroke:#17212b;stroke-width:.7;stroke-linejoin:round}.llama .f2{fill:#fffbe0;opacity:.9}
-.llama.on svg{animation:flama 2.4s ease-in-out infinite;transform-origin:50% 90%}
-.llama.on::before{content:"";position:absolute;left:9px;top:6px;width:26px;height:26px;border-radius:50%;background:radial-gradient(circle,rgba(234,255,58,.38),rgba(234,255,58,0) 70%);animation:halo 2.8s ease-in-out infinite}
-.llama.off svg{left:16px;top:13px;width:12px;height:12px;opacity:.75}.llama.off .f1{fill:none;stroke:#eaff3a;stroke-width:1.8}.llama.off .f2{fill:none}
-@keyframes flama{0%,100%{transform:scale(1)}50%{transform:scale(1.06,1.1)}}
-@keyframes halo{0%,100%{transform:scale(.85);opacity:.55}50%{transform:scale(1.25);opacity:1}}
+.llama{position:relative;width:44px;height:44px}
+.llama i{position:absolute;left:10px;top:10px;width:24px;height:24px;border-radius:50%;background:#17212b;border:1.5px solid #eaff3a;box-shadow:0 1px 4px rgba(0,0,0,.55)}
+.llama svg{position:absolute;left:14px;top:13px;width:16px;height:16px}
+.llama .f1{fill:#eaff3a;stroke:none}.llama .f2{fill:#17212b;opacity:.55}
+.llama.on::before{content:"";position:absolute;left:4px;top:4px;width:36px;height:36px;border-radius:50%;background:radial-gradient(circle,rgba(234,255,58,.5),rgba(234,255,58,0) 70%);animation:halo 2.8s ease-in-out infinite}
+.llama.off i{left:14px;top:14px;width:16px;height:16px;background:rgba(23,33,43,.75);border:1px solid rgba(234,255,58,.7);box-shadow:none}
+.llama.off svg{left:17px;top:16.5px;width:10px;height:10px}.llama.off .f1{fill:rgba(234,255,58,.75)}.llama.off .f2{fill:none}
+@keyframes halo{0%,100%{transform:scale(.8);opacity:.5}50%{transform:scale(1.25);opacity:1}}
 .decl{width:8px;height:8px;transform:rotate(45deg);background:#17212b;border:2px solid #eaff3a;box-shadow:0 0 0 1px #17212b}
 .lg{width:16px;height:16px;flex:none;display:inline-block}.lg .f1{fill:#eaff3a;stroke:#17212b;stroke-width:1.4}.lg .f2{fill:#fff}
 .lgd{width:9px;height:9px;flex:none;display:inline-block;transform:rotate(45deg);background:#17212b;border:2px solid #b9cc10;margin:0 3px}
@@ -418,7 +419,7 @@ function dibujar(){
   if(ANT)for(const f of ANT.features){const p=f.properties;if(p.primero>mes)continue;if(OP&&p._op&&p._op!==OP)continue;nant++;const [lon,lat]=f.geometry.coordinates;const enc=p.meses.includes(mes);if(enc)nenc++;
     const tira=meses.map(m=>`<i class="${p.meses.includes(m)?"s":""}${m===mes?" h":""}"></i>`).join("");
     const pop=`<div class="pa"><h4><span class="lg">${FL}</span>Antorcha <span class="est${enc?"":" no"}">${enc?"Encendida este mes":"Sin llama este mes"}</span></h4>${p.zona.replaceAll("_"," ")}<div class="tira">${tira}</div><div class="ej"><span>${meses[0].slice(0,4)}</span><span>${meses[meses.length-1].slice(0,4)}</span></div><span class="gr">${p.n}</span> de ${meses.length} imágenes mensuales con llama<br>Primera vez ${p.primero} · última ${p.ultimo}${PUBLICO?"":`<br>Pozo más cercano: ${p.empresa}`}${p.declarado?`<br>Punto de venteo declarado a ${p.declarado_m} m`:(PUBLICO?"":"<br><b>Sin punto de venteo declarado</b> a menos de 500 m")}</div>`;
-    L.marker([lat,lon],{icon:L.divIcon({className:"ic",html:`<div class="llama ${enc?"on":"off"}">${FL}</div>`,iconSize:[44,44],iconAnchor:[22,22]}),zIndexOffset:enc?900:300}).bindPopup(pop,{minWidth:250}).bindTooltip(enc?"Antorcha encendida":"Antorcha sin llama este mes",{className:"tt",direction:"top",offset:[0,-14]}).addTo(g.ant);}
+    L.marker([lat,lon],{icon:L.divIcon({className:"ic",html:`<div class="llama ${enc?"on":"off"}"><i></i>${FL}</div>`,iconSize:[44,44],iconAnchor:[22,22]}),zIndexOffset:enc?900:300}).bindPopup(pop,{minWidth:250}).bindTooltip(enc?"Antorcha encendida":"Antorcha sin llama este mes",{className:"tt",direction:"top",offset:[0,-14]}).addTo(g.ant);}
   document.getElementById("n_ant").textContent=ANT?nenc+" de "+nant:"";document.getElementById("k_ant").textContent=nenc;
   const todos=document.getElementById("c_todos").checked;let np=0;const vista=map.getBounds().pad(0.15);
   for(const f of POZ.features){const p=f.properties;if(!p.perforacion)continue;if(OP&&p._op!==OP)continue;const antes=p.perforacion.slice(0,7)<=mes;if(!antes&&!todos)continue;np++;

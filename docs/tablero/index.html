@@ -79,6 +79,9 @@ svg text{font-family:"Cascadia Mono",Consolas,monospace;font-size:9px;fill:var(-
   <label class="capa"><input type="checkbox" id="c_img" checked><span class="sq" style="border-color:var(--gris)"></span>Imagen Sentinel-2 del año elegido<span class="n" id="n_img"></span></label>
   <label class="capa"><input type="checkbox" id="c_loc" checked><span class="sq" style="border-color:var(--acento)"></span>Locaciones nuevas detectadas<span class="n" id="n_loc"></span></label>
   <label class="capa"><input type="checkbox" id="c_otras"><span class="sq" style="border-color:var(--gris)"></span>Otras obras detectadas (caminos, plantas)<span class="n" id="n_otras"></span></label>
+  <h2>Antorchas</h2>
+  <label class="capa"><input type="checkbox" id="c_ant" checked><span class="dot" style="background:#eaff3a;box-shadow:0 0 0 2px #17212b"></span>Antorchas vistas en el infrarrojo (llenas: encendidas ese mes)<span class="n" id="n_ant"></span></label>
+  <label class="capa"><input type="checkbox" id="c_decl"><span class="dot" style="background:#17212b;box-shadow:0 0 0 2px #eaff3a"></span>Puntos de venteo declarados (Secretaría de Energía)<span class="n" id="n_decl"></span></label>
   <h2>Padrón oficial</h2>
   <label class="capa"><input type="checkbox" id="c_calor"><span class="calorbar"></span>Calor: producción (azul) vs exploración (violeta)</label>
   <div class="nota" id="calor_nota" style="margin:0 0 6px 28px;display:none"></div>
@@ -90,7 +93,7 @@ svg text{font-family:"Cascadia Mono",Consolas,monospace;font-size:9px;fill:var(-
   <label class="capa"><input type="checkbox" id="c_arena"><span class="ln" style="border-color:var(--acento2)"></span>La ruta de la arena (arena-lab)<span class="n"></span></label>
   <h2>Ventanas (radar)</h2>
   <div id="zonas"></div>
-  <p class="nota">Locaciones: detector a ciegas sobre Sentinel-2, una escena limpia por mes (locaciones-lab). Pozos: Capítulo IV, Secretaría de Energía; el padrón carga los pozos nuevos con unos seis meses de demora. Gasoductos y compresoras: ENARGAS. Fondo fuera de las ventanas: Esri World Imagery.</p>
+  <p class="nota">Locaciones: detector a ciegas sobre Sentinel-2, una escena limpia por mes (locaciones-lab). Pozos: Capítulo IV, Secretaría de Energía; el padrón carga los pozos nuevos con unos seis meses de demora. Gasoductos y compresoras: ENARGAS. Antorchas: bandas infrarrojas de Sentinel-2 (20 m), una escena por mes, vistas en tres meses o más fuera del invierno; puntos de venteo declarados: Secretaría de Energía. Fondo fuera de las ventanas: Esri World Imagery.</p>
 </div>
 <div id="map"></div>
 <div id="demanda">
@@ -252,9 +255,9 @@ fetch("data/demanda.json").then(r=>r.json()).then(j=>{DEM=j;const sel=document.g
 const MENTA="#19d3ff",ROSA="#ff3d9a",CIAN="#f9f6ee",GRIS="#8a8f94",AMARILLO="#7b2cbf";
 const map=L.map("map",{zoomControl:true,preferCanvas:true}).setView([-38.33,-68.72],12);
 L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{maxZoom:18,attribution:"Esri World Imagery · Copernicus Sentinel-2 · Secretaría de Energía · ENARGAS"}).addTo(map);
-let CFG,LOC,POZ,meses=[],idx=0,overlayLayers={},playing=null;
+let CFG,LOC,POZ,ANT,meses=[],idx=0,overlayLayers={},playing=null;
 const PUBLICO=true;
-const g={img:L.layerGroup().addTo(map),loc:L.layerGroup().addTo(map),otras:L.layerGroup(),pozos:L.layerGroup().addTo(map),gas:L.layerGroup().addTo(map),comp:L.layerGroup().addTo(map),arena:L.layerGroup(),zonas:L.layerGroup().addTo(map)};
+const g={img:L.layerGroup().addTo(map),loc:L.layerGroup().addTo(map),otras:L.layerGroup(),pozos:L.layerGroup().addTo(map),gas:L.layerGroup().addTo(map),comp:L.layerGroup().addTo(map),ant:L.layerGroup().addTo(map),decl:L.layerGroup(),arena:L.layerGroup(),zonas:L.layerGroup().addTo(map)};
 const fmt=d=>d?d:"—";
 function estadoTxt(p){
   if(p.estado==="llego_despues")return `<span class="r">Llegó un pozo</span> a los ${p.espera_meses} meses (perforación ${fmt(p.drill_cercano)})`;
@@ -277,6 +280,12 @@ function dibujar(){
             :L.rectangle(b,{color:MENTA,weight:nuevo?3:1.5,fill:p.estado==="sin_pozo",fillColor:MENTA,fillOpacity:.25})).bindPopup(pop).addTo(g.loc);}
     else{otras++;(lejos?L.circleMarker([lat,lon],{radius:3,color:GRIS,weight:1,fillOpacity:0}):L.rectangle(b,{color:GRIS,weight:1,fill:false,dashArray:"3 3"})).bindPopup(pop).addTo(g.otras);}
   }
+  g.ant.clearLayers();let nant=0,nenc=0;const LLAMA="#eaff3a";
+  if(ANT)for(const f of ANT.features){const p=f.properties;if(p.primero>mes)continue;nant++;const [lon,lat]=f.geometry.coordinates;const enc=p.meses.includes(mes);if(enc)nenc++;
+    const pop=`<b>Antorcha</b> · ${p.zona.replaceAll("_"," ")}<br>Encendida en <b>${p.n}</b> imágenes mensuales, de ${p.primero} a ${p.ultimo}<br>${enc?"<b>Encendida este mes</b>":"Sin llama visible este mes"}${PUBLICO?"":`<br>Pozo más cercano: ${p.empresa}`}${p.declarado?`<br>Punto de venteo declarado a ${p.declarado_m} m`:(PUBLICO?"":"<br><b>Sin punto de venteo declarado</b> a menos de 500 m")}`;
+    if(enc)L.circleMarker([lat,lon],{radius:13,color:LLAMA,weight:0,fillColor:LLAMA,fillOpacity:.25,interactive:false}).addTo(g.ant);
+    L.circleMarker([lat,lon],{radius:enc?6:4,color:enc?"#17212b":LLAMA,weight:enc?1.5:1.5,fillColor:LLAMA,fillOpacity:enc?1:0,opacity:enc?1:.7}).bindPopup(pop).addTo(g.ant);}
+  document.getElementById("n_ant").textContent=ANT?nenc+" / "+nant:"";
   const todos=document.getElementById("c_todos").checked;let np=0;
   for(const f of POZ.features){const p=f.properties;if(!p.perforacion)continue;const antes=p.perforacion.slice(0,7)<=mes;if(!antes&&!todos)continue;np++;
     const [lon,lat]=f.geometry.coordinates;
@@ -293,13 +302,14 @@ function dibujar(){
   document.getElementById("n_img").textContent=nimg;
 }
 function toggle(id,layer){document.getElementById(id).addEventListener("change",e=>{e.target.checked?layer.addTo(map):map.removeLayer(layer);});}
-Promise.all(["data/config.json","data/locaciones.geojson","data/pozos.geojson","data/gasoductos.geojson","data/compresoras.geojson","data/ruta_arena.geojson","data/calor.json"].map(u=>fetch(u).then(r=>r.ok?r.json():null))).then(([cfg,loc,poz,gas,comp,arena,calor])=>{
+Promise.all(["data/config.json","data/locaciones.geojson","data/pozos.geojson","data/gasoductos.geojson","data/compresoras.geojson","data/ruta_arena.geojson","data/calor.json","data/antorchas.geojson","data/venteos_declarados.geojson"].map(u=>fetch(u).then(r=>r.ok?r.json():null))).then(([cfg,loc,poz,gas,comp,arena,calor,ant,decl])=>{ANT=ant;
   CFG=cfg;LOC=loc;POZ=poz;meses=cfg.meses;idx=meses.length-1;
   const s=document.getElementById("slider");s.max=meses.length-1;s.value=idx;
   L.geoJSON(gas,{style:f=>({color:CIAN,weight:f.properties.subtipo==="Troncal"?2.5:1.2,opacity:.85}),onEachFeature:(f,l)=>l.bindPopup(`<b>${f.properties.gasoducto}</b><br>${f.properties.tramo||""}<br>${f.properties.licenciataria} · ${f.properties.subtipo||""}`)}).addTo(g.gas);
   document.getElementById("n_gas").textContent=gas.features.length;
   for(const f of comp.features){const [lon,lat]=f.geometry.coordinates;L.circleMarker([lat,lon],{radius:5,color:"#17212b",fillColor:CIAN,fillOpacity:1,weight:2}).bindPopup(`<b>${f.properties.nombre}</b><br>${f.properties.gasoducto}<br>${f.properties.licenciataria}`).addTo(g.comp);}
   document.getElementById("n_comp").textContent=comp.features.length;
+  if(decl){for(const f of decl.features){const [lon,lat]=f.geometry.coordinates;const p=f.properties;L.circleMarker([lat,lon],{radius:4,color:"#eaff3a",weight:1.5,fillColor:"#17212b",fillOpacity:.85}).bindPopup(`<b>Punto de venteo declarado</b><br>${p.tipo}${p.instalacion?" · "+p.instalacion:""}<br>${p.empresa||"Sin empresa informante"}<br>Alta ${p.alta}`).addTo(g.decl);}document.getElementById("n_decl").textContent=decl.features.length;}
   if(arena)L.geoJSON(arena,{style:{color:AMARILLO,weight:3,dashArray:"6 4"}}).bindPopup("La ruta de la arena: Ibicuy a Añelo, 1.461 km (arena-lab)").addTo(g.arena);
   const zdiv=document.getElementById("zonas");const RAD={};
   const corto=n=>({"YPF S.A.":"YPF","VISTA ENERGY ARGENTINA SAU":"Vista","PLUSPETROL S.A.":"Pluspetrol","SHELL ARGENTINA S.A.":"Shell","PAMPA ENERGIA S.A.":"Pampa","PHOENIX GLOBAL RESOURCES S.A.":"Phoenix","PAN AMERICAN ENERGY SL":"PAE","TECPETROL S.A.":"Tecpetrol","TOTAL AUSTRAL S.A.":"Total","GEOPARK ARGENTINA S.A.":"GeoPark","CHEVRON ARGENTINA S.R.L.":"Chevron","EXXONMOBIL EXPLORATION ARGENTINA S.R.L.":"ExxonMobil","CAPEX S.A.":"Capex"}[n]||(n||"").split(" ")[0]);
@@ -316,6 +326,7 @@ Promise.all(["data/config.json","data/locaciones.geojson","data/pozos.geojson","
     const a=document.createElement("div");a.className="vent";a.innerHTML=`<b>${cfg.zonas[z].nombre}</b><span class="n">${nl}</span><div class="det">${nl} locaciones vistas${sp?`, ${sp} sin pozo`:""} · ${nf(pz.length)} pozos${cz?` · ${nf(cz.boed)} boe/d`:""}<br>${ops}</div>`;
     a.onclick=()=>{map.fitBounds(bounds);document.querySelectorAll(".vent").forEach(v=>v.classList.toggle("on",v===a));for(const k in RAD)RAD[k].setStyle(k===z?{weight:3,opacity:1,dashArray:null}:{weight:1.2,opacity:.7,dashArray:"2 6"});};
     RAD[z]=ring;zdiv.appendChild(a);}
+  toggle("c_ant",g.ant);toggle("c_decl",g.decl);
   g.calor=L.layerGroup();toggle("c_calor",g.calor);document.getElementById("c_calor").addEventListener("change",e=>{document.getElementById("calor_nota").style.display=e.target.checked?"":"none";});if(calor){L.imageOverlay(calor.img,calor.bounds,{opacity:.7,interactive:false}).addTo(g.calor);document.getElementById("calor_nota").innerHTML=`${nf(calor.n.productores)} pozos producen ${nf(calor.n.boed)} boe/d (${calor.mes}); ${calor.n.exploracion} pozos de exploración, en estudio o nuevos sin producir. Padrón y Capítulo IV.`;}toggle("c_img",g.img);toggle("c_loc",g.loc);toggle("c_otras",g.otras);toggle("c_pozos",g.pozos);toggle("c_gas",g.gas);toggle("c_comp",g.comp);toggle("c_arena",g.arena);
   document.getElementById("c_todos").addEventListener("change",dibujar);
   map.on("zoomend",dibujar);

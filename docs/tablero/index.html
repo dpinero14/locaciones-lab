@@ -127,7 +127,9 @@ details.mas{margin:4px 0 8px}details.mas summary{cursor:pointer;color:var(--acen
   #tiempo{left:8px;right:8px;bottom:8px;flex-wrap:wrap;gap:6px 8px;padding:8px 10px}#tiempo input[type=range]{order:5;flex:1 1 100%}#mes{min-width:0;font-size:14px}#tiempo button{padding:6px 9px;font-size:12px}
   #guia{left:56px;right:56px;top:8px}#guia .tx{font-size:15px;min-height:0}
   #graf{left:0;right:0}
-  #portada .cifra{min-width:104px;padding:10px}#portada .cifra b{font-size:26px}
+  #portada{padding:12px}#portada h1{margin:8px 0 10px}#portada p{margin-bottom:16px}#portada .eb{font-size:10px;letter-spacing:.14em}
+  #portada .cifras{gap:8px;flex-wrap:nowrap;margin-bottom:18px}#portada .cifra{min-width:0;flex:1;padding:9px 4px}#portada .cifra b{font-size:23px}#portada .cifra span{font-size:10px;line-height:1.25;display:block}
+  #portada button{font-size:15px;padding:11px 18px}#portada .pie{display:none}
 }
 .cta{margin:18px 0 6px;padding:14px;border-radius:8px;background:#17212b;color:#f9f6ee}.cta b{display:block;font-size:15px;margin-bottom:3px}.cta span{display:block;font-size:12px;color:#c9cfd4;line-height:1.45;margin-bottom:10px}
 .cta a{display:inline-block;background:#19d3ff;color:#0c1116;font-weight:600;font-size:13px;padding:8px 14px;border-radius:6px;text-decoration:none}.cta a:hover{background:#6fe4ff}
@@ -527,7 +529,7 @@ Promise.all(["data/config.json","data/locaciones.geojson","data/pozos.geojson","
     {t:"Cada cuadrado celeste es una locación nueva: el satélite la marca el mes en que aparece.",v:[[-38.215,-68.635],13],f:async()=>{await esp(1800);await correr(0,ult,95);await esp(1200);}},
     {t:"Las torres rosas son los pozos del registro oficial. Llegan después: el satélite los anticipa unos dos meses.",v:null,f:async()=>{capa("c_pozos",true);irMes(18);await esp(1500);await correr(18,ult,95);await esp(1200);}},
     {t:"Las llamas son antorchas, vistas con las bandas infrarrojas. Se prenden y se apagan mes a mes.",v:[[-38.33,-68.62],12],f:async()=>{capa("c_ant",true);await esp(1800);await correr(Math.max(0,ult-30),ult,170);await esp(1500);}},
-    {t:"Con las locaciones ya construidas, el tablero proyecta los pozos, la arena y los camiones que va a pedir 2027.",v:[[-38.36,-68.72],10],f:async()=>{document.body.classList.remove("sin-der");document.getElementById("demanda").classList.add("luz");elegirAnio("2027");await esp(5200);document.getElementById("demanda").classList.remove("luz");}},
+    {t:"Con las locaciones ya construidas, el tablero proyecta los pozos, la arena y los camiones que va a pedir 2027.",v:[[-38.36,-68.72],10],f:async()=>{document.body.classList.remove("sin-der");document.getElementById("demanda").classList.add("luz");elegirAnio("2027");await esp(5200);document.getElementById("demanda").classList.remove("luz");if(innerWidth<820&&!document.body.classList.contains("sin-der"))plegar("der");}},
   ];
   const finGuia=()=>{guiaOn=false;G.style.display="none";document.body.classList.remove("guiando");capa("c_ant",true);capa("c_pozos",true);};
   const guia=async()=>{if(guiaOn)return;ev("recorrido");if(playing){clearInterval(playing);playing=null;document.getElementById("play").textContent="▶";}

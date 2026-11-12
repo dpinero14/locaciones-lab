@@ -176,8 +176,8 @@ como conteo por ventana.
 - **El padrón como verdad** tiene su propio atraso y sus errores. Un pozo a menos de 150 m de la
   detección cuenta como acierto aunque sea de otra locación vecina.
 - **El cerca de Añelo** es difícil: el pueblo crece y confunde al detector; la regla lo excluye.
-- **Las antorchas se ven con una escena por mes**, así que se subestima cuánto tiempo están encendidas:
-  una llama se prende y se apaga, y el satélite pasa cada dos o tres días. No se mide cuánto gas se
+- **Las antorchas se ven con una escena por mes.** Una llama se prende y se apaga, y el satélite pasa
+  cada dos o tres días: en un mes dado, la escena elegida pierde las que estuvieron encendidas otros días. No se mide cuánto gas se
   quema, solo dónde y cuándo hay llama. Las fosas de quema casi no se ven. Y la regla pierde algunas
   reales: descarta focos que sí tienen un punto declarado al lado.
 - **La operadora de una antorcha no se publica.** Se podría atribuir por el pozo más cercano, pero la

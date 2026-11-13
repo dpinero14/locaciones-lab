@@ -193,3 +193,87 @@ def aplicar_revision(ant: pd.DataFrame, revision: pd.DataFrame, km: float = 0.1)
             ant.loc[d.idxmin(), "revision"] = r.veredicto
     ant["firme"] = ant.revision == ""
     return ant
+
+
+# ---------------------------------------------------------------- todas las pasadas, no una por mes
+NUBES_PASADA_MAX = 0.6      # una pasada con más de 60 % de nubes o sombras en la ventana no se baja
+NUBES_SOBRE_MAX = 0.2       # la antorcha "se ve" si en los 200 m de alrededor hay menos de 20 % de nubes o sombras
+
+
+def bajar_pasadas(zona: str, desde_anio: int = 2025, hasta_anio: int = 2026, raw: Path = DATA_RAW, aviso=None) -> int:
+    """Todas las pasadas de Sentinel-2 sobre la zona: de cada una se guardan los píxeles calientes y la máscara de nubes.
+
+    Van a `data/raw/<zona>/pasadas/AAAA-MM-DD.npz`, unos pocos kilobytes cada una. Reanudable.
+    """
+    from .escenas import SCL_MALAS
+
+    destino = raw / zona / "pasadas"
+    destino.mkdir(parents=True, exist_ok=True)
+    bbox, nuevas = ZONAS[zona]["bbox"], 0
+    for anio in range(hasta_anio, desde_anio - 1, -1):
+        por_fecha = {}
+        for f in buscar(zona, f"{anio}-01-01", f"{anio}-12-31", nubes_tile_max=101):
+            por_fecha.setdefault(f["properties"]["datetime"][:10], f)
+        for fecha, f in sorted(por_fecha.items(), reverse=True):
+            arch = destino / f"{fecha}.npz"
+            if arch.exists():
+                continue
+            try:
+                scl, _, _ = leer(f["assets"]["scl"]["href"], bbox)
+                mala = np.isin(scl, SCL_MALAS)
+                if mala.mean() > NUBES_PASADA_MAX:
+                    np.savez_compressed(arch, fecha=fecha, descartada=True, mala_frac=float(mala.mean()))
+                    continue
+                b12, tr, crs = leer(f["assets"]["swir22"]["href"], bbox)
+                b11, _, _ = leer(f["assets"]["swir16"]["href"], bbox)
+                b8a, _, _ = leer(f["assets"]["nir08"]["href"], bbox)
+            except Exception as e:  # noqa: BLE001  (un archivo que no responde no corta la bajada)
+                if aviso:
+                    aviso(f"{zona} {fecha}: {str(e)[:80]}")
+                continue
+            h, w = min(b12.shape[0], scl.shape[0]), min(b12.shape[1], scl.shape[1])
+            a, b, c = (x[:h, :w].astype(np.float32) / 10000 for x in (b12, b11, b8a))
+            cal = calientes(a, b, c)
+            ys, xs = np.nonzero(cal)
+            np.savez_compressed(arch, fecha=fecha, descartada=False, mala_frac=float(mala.mean()), mala=np.packbits(mala[:h, :w]), forma=np.array([h, w]),
+                                fila=ys.astype(np.int16), col=xs.astype(np.int16), b12=a[cal], b11=b[cal], b8a=c[cal], transform=np.array(tr.to_gdal()), crs=crs)
+            nuevas += 1
+    return nuevas
+
+
+def tiempo_encendida(ant: pd.DataFrame, raw: Path = DATA_RAW) -> pd.DataFrame:
+    """En qué fracción de las pasadas sin nubes tenía llama cada antorcha.
+
+    Una pasada cuenta para una antorcha si alrededor suyo (200 m) no hay nubes ni sombras; está encendida si hay
+    un píxel caliente a menos de `RADIO_FOCO_PX` píxeles, la misma tolerancia con que se agrupan los focos.
+    """
+    from rasterio.transform import Affine
+
+    r, filas = RADIO_FOCO_PX, []
+    for zona, g in ant.groupby("zona"):
+        archivos = sorted((raw / zona / "pasadas").glob("20*.npz"))
+        vistas, enc = np.zeros(len(g), int), np.zeros(len(g), int)
+        ultima = [""] * len(g)
+        for p in archivos:
+            e = np.load(p)
+            if bool(e["descartada"]):
+                continue
+            h, w = e["forma"]
+            mala = np.unpackbits(e["mala"])[:h * w].reshape(h, w).astype(bool)
+            tr = Affine.from_gdal(*e["transform"])
+            fc, cc = e["fila"].astype(int), e["col"].astype(int)
+            for k, a in enumerate(g.itertuples()):
+                c, f = ~tr * (a.x, a.y)
+                c, f = int(c), int(f)
+                v = mala[max(f - r, 0):f + r + 1, max(c - r, 0):c + r + 1]
+                if v.size == 0 or v.mean() > NUBES_SOBRE_MAX:
+                    continue
+                vistas[k] += 1
+                if len(fc) and (np.hypot(fc - f, cc - c) <= r).any():
+                    enc[k] += 1
+                    ultima[k] = p.stem
+        for k, a in enumerate(g.itertuples()):
+            filas.append({"zona": zona, "foco": a.foco, "pasadas": len(archivos), "vistas": int(vistas[k]), "encendida": int(enc[k]), "ultima": ultima[k]})
+    t = pd.DataFrame(filas)
+    t["pct"] = (t.encendida / t.vistas.clip(lower=1) * 100).round(1)
+    return t

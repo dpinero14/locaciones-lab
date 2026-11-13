@@ -27,6 +27,9 @@ KM_TECHO_ANELO = 2.0     # etiqueta "techo": a menos de 2 km del centro de Añel
 KM_TECHO_LEJOS = 0.3     # ...y a más de 300 m de cualquier punto declarado
 P_LLAMA = 0.7            # desde esta probabilidad no pasó ningún techo de Añelo en la validación cruzada
 VEREDICTOS_TECHO = ("galpon", "zona urbana", "base de servicios", "techos de planta")
+# la ventana que el modelo no vio: una ciudad petrolera con chimeneas declaradas alrededor (scripts/zona_nueva.py)
+ZONA_PRUEBA = {"bbox": (-69.33, -39.00, -69.12, -38.87), "tile": "MGRS-19HDS", "nombre": "Cutral Có y Plaza Huincul"}
+CENTROS_PRUEBA = ((-69.230, -38.940), (-69.200, -38.930))      # las plazas de Cutral Có y de Plaza Huincul
 
 RASGOS = ["frac_invierno", "frac_meses", "b12_mediana", "b12_max", "exceso_mediana", "cociente_b12_b11", "pix_mediana", "pix_max",
           "deriva_m", "apagado_b12", "apagado_rel", "variacion_b12", "salto", "alargada", "tai_max", "visible_claro",
@@ -157,12 +160,19 @@ def clasificar(t: pd.DataFrame, repeticiones: int = 10) -> tuple[pd.DataFrame, p
     for s in range(repeticiones):
         for tr, te in StratifiedGroupKFold(n_splits=5, shuffle=True, random_state=s).split(X, y, e.celda):
             fuera[te] += _bosque(s).fit(X.iloc[tr], y.iloc[tr]).predict_proba(X.iloc[te])[:, 1] / repeticiones
-    final = _bosque(0, 600).fit(X, y)
+    final, _ = entrenar(t)
     con = ~t.borde
     t["p"] = np.nan
     t.loc[con, "p"] = final.predict_proba(_matriz(t[con], med))[:, 1]
     t.loc[e.index, "p"] = fuera
     return t, pd.Series(final.feature_importances_, RASGOS).sort_values(ascending=False)
+
+
+def entrenar(t: pd.DataFrame):
+    """El modelo entrenado con todos los focos etiquetados de `t`, y las medianas con que se rellenan los rasgos que falten."""
+    e = t[t.etiqueta.notna()]
+    med = e[RASGOS].median()
+    return _bosque(0, 600).fit(_matriz(e, med), e.etiqueta.astype(int)), med
 
 
 def regla_sin_lugar(t: pd.DataFrame, focos: pd.DataFrame) -> pd.Series:

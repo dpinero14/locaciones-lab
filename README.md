@@ -144,6 +144,34 @@ menos de ocho meses, y varias están sobre locaciones de pozo: una quema tempora
 punto fijo. Y ocho están en una sola ventana, lo que apunta a un registro incompleto en esa área. Otras
 17 llevan veinte meses o más encendidas: son las que vale la pena mirar con más detalle.
 
+**Cuánto tiempo están encendidas.** Una escena por mes dice si la antorcha estuvo encendida ese día. Para
+saber cuánto tiempo arde se bajaron todas las pasadas de 2025 y 2026 (`scripts/pasadas.py`): cada antorcha
+se pudo ver sin nubes en unas 149 pasadas. La antorcha típica tenía llama en el 23 % de ellas, y la mitad
+está entre el 9 % y el 52 %. Once arden más de tres cuartas partes del tiempo, 22 más de la mitad y 15 no
+se encendieron nunca en esos dos años.
+
+**Contra el satélite nocturno.** La quema de gas del mundo se mide con otro satélite, VIIRS, que pasa de
+noche y ve el calor de la llama. Su registro público (Zhizhin et al., 2026) trae cada sitio de quema con
+su volumen anual, y no se usó para nada en este trabajo: sirve de prueba (`scripts/comparar_viirs.py`).
+
+| | |
+|---|---:|
+| Antorchas firmes con un sitio VIIRS a menos de 500 m | 77 de 83 |
+| Distancia mediana entre las dos posiciones | 138 m |
+| Quemas temporales del clasificador con un sitio VIIRS a menos de 500 m | 9 de 12 |
+| Sitios VIIRS activos desde 2020 en las ventanas que también se ven acá | 76 de 108 |
+| Parte del volumen quemado 2020-2025 que corresponde a esos 76 | 96 % |
+
+Los 32 sitios que faltan son chicos: suman el 4 % del volumen. Y la fracción del tiempo con llama medida
+de día coincide con la medida de noche (correlación 0,74 en 77 antorchas).
+
+![En 2025 hubo más antorchas encendidas, pero se quemó menos gas](docs/figures/antorchas_viirs.png)
+
+Las dos medidas cuentan cosas distintas. Las antorchas que se ven encendidas alguna vez en el año suben de
+37 a 63. El volumen que estima VIIRS en las mismas ventanas sube hasta 0,57 mil millones de m³ en 2024 y
+cae a 0,36 en 2025; en todo el país pasa de 0,91 a 0,73. Más llamas, pero más chicas o más cortas: coincide
+con lo que dice el Banco Mundial sobre los gasoductos y plantas nuevas.
+
 ## El clasificador
 
 La regla de las antorchas deja pasar techos, y por eso hubo que mirar los focos uno por uno y sacar once. El
@@ -187,7 +215,8 @@ dos pestañas:
   regalías al precio que elija quien lo mira.
 
 También muestra las antorchas, que se prenden y se apagan con la línea de tiempo, las quemas temporales
-que reconoce el clasificador y los puntos de venteo declarados; un filtro por operadora, una ficha por ventana, la comparación con la imagen de 2020 y un
+que reconoce el clasificador y los puntos de venteo declarados; en el cartel de cada antorcha, en cuántas
+pasadas sin nubes de 2025 y 2026 tenía llama; un filtro por operadora, una ficha por ventana, la comparación con la imagen de 2020 y un
 recorrido guiado de un minuto.
 
 Es la versión pública: las locaciones que todavía no tienen pozo registrado no se publican, entran solo
@@ -207,7 +236,7 @@ como conteo por ventana.
   detección cuenta como acierto aunque sea de otra locación vecina.
 - **El cerca de Añelo** es difícil: el pueblo crece y confunde al detector; la regla lo excluye.
 - **Las antorchas se ven con una escena por mes.** Una llama se prende y se apaga, y el satélite pasa
-  cada dos o tres días: en un mes dado, la escena elegida pierde las que estuvieron encendidas otros días. No se mide cuánto gas se
+  cada dos o tres días: en un mes dado, la escena elegida pierde las que estuvieron encendidas otros días. Acá no se mide cuánto gas se
   quema, solo dónde y cuándo hay llama. Las fosas de quema casi no se ven. Y la regla pierde algunas
   reales: descarta focos que sí tienen un punto declarado al lado.
 - **El clasificador aprendió techos de un solo pueblo.** Los diez de la prueba están en otras zonas y los
@@ -229,6 +258,8 @@ python -m venv .venv
 .venv\Scripts\python.exe -m jupyter nbconvert --to notebook --execute --inplace notebooks/02_el_detector_a_ciegas.ipynb
 .venv\Scripts\python.exe scripts/antorchas.py --bajar
 .venv\Scripts\python.exe -m jupyter nbconvert --to notebook --execute --inplace notebooks/03_las_antorchas.ipynb
+.venv\Scripts\python.exe scripts/pasadas.py --bajar
+.venv\Scripts\python.exe scripts/comparar_viirs.py
 .venv\Scripts\python.exe scripts/clasificar.py
 .venv\Scripts\python.exe -m jupyter nbconvert --to notebook --execute --inplace notebooks/04_el_clasificador.ipynb
 ```
@@ -244,6 +275,9 @@ por zona. En Linux, en lugar de `.venv\Scripts\python.exe`, `.venv/bin/python`.
   CC BY 4.0: <http://datos.energia.gob.ar/dataset/c846e79c-026c-4040-897f-1ad3543b407c>
 - Secretaría de Energía, puntos de venteo declarados, CC BY 4.0:
   <http://datos.energia.gob.ar/dataset/produccion-hidrocarburos-puntos-de-venteo-declarados>
+- Zhizhin, M., Ghosh, T., Gleason, G., Elvidge, C. D. y Bazilian, M. (2026), *VIIRS Nightfire upstream
+  gas-flaring volumes, 2012-2025 (MYC25Q4)*, DOI 10.5281/zenodo.23091822, CC BY-NC 4.0: solo para comparar.
+  No se redistribuye; `scripts/comparar_viirs.py` lo baja de Zenodo.
 - Liu, Y. et al. (2021), *Automatic extraction of offshore platforms and gas flares using Sentinel-2
   thermal anomaly index*: de ahí sale el índice TAI.
 - `data/antorchas_revision.csv`: los once focos que pasaron la regla y se descartaron mirándolos.

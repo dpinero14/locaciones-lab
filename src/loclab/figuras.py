@@ -266,3 +266,29 @@ def llamas_comparacion(filas: list[tuple[str, int, int, int]], path) -> Path:
             "la regla va sin el filtro de distancia a Añelo, para comparar en igualdad · umbral del modelo: 0,5", FUENTE_IA)
     fig.subplots_adjust(top=0.84, bottom=0.13, left=0.36, right=0.97)
     return _save(fig, path)
+
+
+FUENTE_VIIRS = ("locaciones-lab · Sentinel-2 L2A (ESA) · volumen: VIIRS Nightfire MYC25Q4, Zhizhin et al. 2026, "
+                "DOI 10.5281/zenodo.23091822 (CC BY-NC 4.0)")
+
+
+def antorchas_contra_viirs(por_anio: pd.DataFrame, path) -> Path:
+    """Dos medidas del mismo lugar: cuántas antorchas se vieron encendidas cada año (Sentinel-2) y cuánto gas se quemó (VIIRS).
+
+    `por_anio` trae `anio`, `antorchas` y `bcm` (mil millones de m3) para las quince ventanas.
+    """
+    plt = _plt()
+    fig, (a, b) = plt.subplots(1, 2, figsize=(12, 5.2), facecolor=BG)
+    x = por_anio.anio.astype(str)
+    for ax, col, color, fmt, titulo in ((a, "antorchas", CIAN, "{:.0f}", "antorchas vistas encendidas en el año"),
+                                         (b, "bcm", VERDE, "{:.2f}", "gas quemado, miles de millones de m³")):
+        _style(ax)
+        ax.bar(x, por_anio[col], color=color, width=0.62, zorder=3)
+        for xi, v in zip(x, por_anio[col]):
+            ax.text(xi, v + por_anio[col].max() * 0.02, fmt.format(v).replace(".", ","), color=INK, ha="center", fontsize=11, fontweight="bold")
+        ax.set_title(titulo, color=MUTED, fontsize=10.5, loc="left")
+        ax.set_ylim(0, por_anio[col].max() * 1.14)
+    _titles(fig, "En 2025 hubo más antorchas encendidas, pero se quemó menos gas",
+            "quince ventanas de la cuenca · a la izquierda lo que ve Sentinel-2 de día, a la derecha el volumen que estima el satélite nocturno", FUENTE_VIIRS)
+    fig.subplots_adjust(top=0.80, bottom=0.11, left=0.05, right=0.98, wspace=0.14)
+    return _save(fig, path)

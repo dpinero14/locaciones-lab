@@ -100,3 +100,21 @@ def test_llamas_forma_y_etiquetas():
     assert e.etiqueta.fillna(-1).tolist() == [1.0, 0.0, -1.0, -1.0]      # lo revisado a mano no entrena: es la prueba
     assert e.firme.tolist() == [True, False, False, False] and e.revision.tolist() == ["", "", "galpon", ""]
     assert e.y.tolist() == [5000.0, 5000.0, 7000.0, 9000.0] and e.celda.tolist() == ["1_5", "2_5", "9_7", "20_9"]
+
+
+def test_tiempo_encendida(tmp_path):
+    from loclab import antorchas
+
+    # tres pasadas sobre una antorcha en el píxel (10, 10): con llama, sin llama, y tapada por nubes (no cuenta)
+    d = tmp_path / "z" / "pasadas"
+    d.mkdir(parents=True)
+    tr = np.array([500000.0, 20.0, 0.0, 5800000.0, 0.0, -20.0])
+    limpia, nube = np.zeros((30, 30), bool), np.ones((30, 30), bool)
+    comun = dict(descartada=False, mala_frac=0.0, forma=np.array([30, 30]), transform=tr, crs="EPSG:32719")
+    np.savez(d / "2025-01-01.npz", fecha="2025-01-01", mala=np.packbits(limpia), fila=np.array([11], np.int16), col=np.array([10], np.int16), **comun)
+    np.savez(d / "2025-01-06.npz", fecha="2025-01-06", mala=np.packbits(limpia), fila=np.array([], np.int16), col=np.array([], np.int16), **comun)
+    np.savez(d / "2025-01-11.npz", fecha="2025-01-11", mala=np.packbits(nube), fila=np.array([10], np.int16), col=np.array([10], np.int16), **comun)
+    np.savez(d / "2025-01-16.npz", fecha="2025-01-16", descartada=True, mala_frac=0.9)
+    ant = pd.DataFrame({"zona": ["z"], "foco": [0], "x": [500000.0 + 10.5 * 20], "y": [5800000.0 - 10.5 * 20]})
+    t = antorchas.tiempo_encendida(ant, tmp_path)
+    assert t[["pasadas", "vistas", "encendida", "ultima", "pct"]].iloc[0].tolist() == [4, 2, 1, "2025-01-01", 50.0]

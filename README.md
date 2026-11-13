@@ -114,13 +114,15 @@ por el calendario: una llama se ve todo el año, un reflejo casi solo de mayo a 
 | Y que saturan la banda de 2,2 micrones alguna vez | 119 |
 | Y a más de 3 km de Añelo | 106 |
 | Sin repetir entre ventanas vecinas (a menos de 200 m es la misma) | 94 |
-| Después de mirarlas una por una (`data/antorchas_revision.csv`) | **86** |
+| Después de mirarlas una por una (`data/antorchas_revision.csv`) | **83** |
 
-La revisión a mano sacó seis que eran galpones o bases de servicios junto a zonas urbanas y dos que no
-se pudieron ver porque la escena estaba saturada.
+La revisión a mano sacó once. Seis eran galpones o bases de servicios junto a zonas urbanas y dos no se
+pudieron ver porque la escena estaba saturada. Un segundo repaso, con el mes de mancha más grande de cada
+una, sacó otras tres: el techo de un galpón dentro de una planta, los reflejos de los techos de otra
+planta y una dudosa de un solo píxel junto a chacras.
 
-**Crecen con la actividad.** Antorchas vistas encendidas al menos una vez en el año: 39 en 2020, 45, 55,
-57, 59, 65 en 2025 y 63 en 2026 hasta octubre. En la última escena estaban encendidas 25 de las 86. La
+**Crecen con la actividad.** Antorchas vistas encendidas al menos una vez en el año: 37 en 2020, 42, 53,
+54, 56, 63 en 2025 y 61 en 2026 hasta octubre. En la última escena estaban encendidas 24 de las 83. La
 mediana es de 21 escenas con llama sobre 82.
 
 **Contra lo declarado.** La Secretaría de Energía publica 1.269 puntos de venteo declarados por las
@@ -128,15 +130,15 @@ empresas; 173 caen en las ventanas.
 
 | | |
 |---|---:|
-| Antorchas vistas con un punto declarado a menos de 150 m | 42 de 86 |
-| Con un punto declarado a menos de 500 m | 45 de 86 |
-| Sin ningún punto declarado a menos de 500 m | 41 de 86 |
+| Antorchas vistas con un punto declarado a menos de 150 m | 42 de 83 |
+| Con un punto declarado a menos de 500 m | 43 de 83 |
+| Sin ningún punto declarado a menos de 500 m | 40 de 83 |
 | Chimeneas de quema declaradas que se vieron encendidas | 67 de 101 |
 | Fosas de quema declaradas que se vieron encendidas | 8 de 72 |
 
-![86 antorchas en quince ventanas de la cuenca](docs/figures/antorchas_mapa.png)
+![83 antorchas en quince ventanas de la cuenca](docs/figures/antorchas_mapa.png)
 
-Que una antorcha no tenga un punto declarado cerca no la vuelve irregular. De las 41, nueve se vieron
+Que una antorcha no tenga un punto declarado cerca no la vuelve irregular. De las 40, nueve se vieron
 menos de ocho meses, y varias están sobre locaciones de pozo: una quema temporal de ensayo no lleva un
 punto fijo. Y ocho están en una sola ventana, lo que apunta a un registro incompleto en esa área. Otras
 17 llevan veinte meses o más encendidas: son las que vale la pena mirar con más detalle.
@@ -210,7 +212,7 @@ por zona. En Linux, en lugar de `.venv\Scripts\python.exe`, `.venv/bin/python`.
   <http://datos.energia.gob.ar/dataset/produccion-hidrocarburos-puntos-de-venteo-declarados>
 - Liu, Y. et al. (2021), *Automatic extraction of offshore platforms and gas flares using Sentinel-2
   thermal anomaly index*: de ahí sale el índice TAI.
-- `data/antorchas_revision.csv`: los ocho focos que pasaron la regla y se descartaron mirándolos.
+- `data/antorchas_revision.csv`: los once focos que pasaron la regla y se descartaron mirándolos.
 - `data/etiquetas_muestra.csv`: 48 detecciones etiquetadas a mano, sin coordenadas.
 - `data/verificacion_visual_2026-10.csv`: la verificación visual de las 28 locaciones sin pozo, sin
   coordenadas.

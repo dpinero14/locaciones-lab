@@ -83,3 +83,20 @@ def test_antorchas_vecinas_y_revision():
     r = antorchas.aplicar_revision(u, pd.DataFrame({"lon": [-68.5001], "lat": [-38.3], "veredicto": ["galpon"]}))
     assert r.firme.tolist() == [True, False] and r.revision.tolist() == ["", "galpon"]
     assert antorchas.km_al_mas_cercano([-68.6], [-38.3], [-68.6, -68.0], [-38.31, -38.3]).round(2).tolist() == [1.11]
+
+
+def test_llamas_forma_y_etiquetas():
+    from loclab import ANELO, llamas
+
+    redonda = np.zeros((15, 15), bool); redonda[6:9, 6:9] = True
+    tira = np.zeros((15, 15), bool); tira[7, 3:12] = True
+    assert llamas.alargada(redonda) < 1.2 and llamas.alargada(tira) > 3 and llamas.alargada(np.zeros((15, 15), bool)) == 1.0
+    # cuatro focos: junto a un punto declarado, en el casco de Añelo, junto a un punto declarado pero revisado a mano, y en el medio del campo
+    t = pd.DataFrame({"zona": ["a"] * 4, "foco": [0, 1, 2, 3], "lon": [-68.5, ANELO[0] + 0.005, -68.3, -68.9], "lat": [-38.3, ANELO[1], -38.3, -38.6],
+                      "x": [1000.0, 2500.0, 9000.0, 20000.0], "y": [5000.0, 5000.0, 7000.0, 9000.0], "borde": [False] * 4})
+    decl = pd.DataFrame({"lon": [-68.5, -68.3], "lat": [-38.3005, -38.3]})
+    rev = pd.DataFrame({"lon": [-68.3], "lat": [-38.3], "veredicto": ["galpon"]})
+    e = llamas.etiquetar(t, decl, rev, pd.DataFrame({"zona": ["a"], "foco": [0]}))
+    assert e.etiqueta.fillna(-1).tolist() == [1.0, 0.0, -1.0, -1.0]      # lo revisado a mano no entrena: es la prueba
+    assert e.firme.tolist() == [True, False, False, False] and e.revision.tolist() == ["", "", "galpon", ""]
+    assert e.y.tolist() == [5000.0, 5000.0, 7000.0, 9000.0] and e.celda.tolist() == ["1_5", "2_5", "9_7", "20_9"]

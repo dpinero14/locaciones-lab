@@ -25,13 +25,14 @@ público de pozos, y la responde con una prueba hacia atrás, no con un ejemplo.
 | `01_la_locacion_se_ve` | Verifica que cada locación se ve en Sentinel-2 y que el pozo del padrón cae encima. Sigue el contraste de cada una de las locaciones de cinco áreas contra el monte que la rodea, en 82 escenas mensuales, y fecha su construcción. Mide cuánto antes aparece que el inicio de perforación y que la primera producción. |
 | `02_el_detector_a_ciegas` | Busca locaciones sin mirar el padrón, en toda la serie, con el contraste local de cada píxel. Clasifica qué es locación y qué es camino, planta, pueblo o barda, con 48 detecciones etiquetadas a mano. Prueba hacia atrás: en el mes en que el satélite vio la obra, ¿había un pozo perforado al lado? Si no, ¿llegó uno después? Y verifica las locaciones del último año que todavía no tienen pozo registrado. |
 | `03_las_antorchas` | Busca las antorchas en las bandas infrarrojas de la misma escena mensual, en quince ventanas. Muestra por qué un píxel caliente no alcanza (los techos de Añelo brillan en invierno), arma la regla, revisa una por una las dudosas y cruza el resultado con los puntos de venteo que las empresas declaran a la Secretaría de Energía. |
+| `04_el_clasificador` | Reemplaza la regla a mano de las antorchas por un modelo. Describe cada foco con dieciocho números sacados de las 82 escenas y entrena un bosque aleatorio con verdad independiente: llamas junto a puntos de venteo declarados contra techos del casco de Añelo. Lo prueba contra la revisión a mano, que no usa para aprender, y encuentra las llamas cortas que la regla descartaba. |
 
 Las funciones están en `src/loclab/`: `escenas.py` busca y baja la serie mensual del STAC público
 de Sentinel-2 y elige la escena limpia de cada mes; `padron.py` lee los pozos, sus fechas y las
 locaciones multipozo; `senal.py` mide el contraste de una locación y fecha su construcción;
 `ciego.py` es el detector a ciegas, la regla de clasificación y la prueba hacia atrás;
 `antorchas.py` baja las bandas infrarrojas, marca los píxeles calientes, los agrupa en focos y aplica
-la regla de antorcha; `figuras.py`, las figuras.
+la regla de antorcha; `llamas.py` es el clasificador que separa llamas de techos; `figuras.py`, las figuras.
 
 ## Qué encontramos
 
@@ -143,6 +144,33 @@ menos de ocho meses, y varias están sobre locaciones de pozo: una quema tempora
 punto fijo. Y ocho están en una sola ventana, lo que apunta a un registro incompleto en esa área. Otras
 17 llevan veinte meses o más encendidas: son las que vale la pena mirar con más detalle.
 
+## El clasificador
+
+La regla de las antorchas deja pasar techos, y por eso hubo que mirar los focos uno por uno y sacar once. El
+notebook 04 prueba si un modelo puede hacer ese trabajo. Describe cada foco con dieciocho números (en qué época
+aparece, cuánto brilla, qué forma tiene la mancha, cómo se ve apagado, cómo se ve en la foto común) y aprende
+de dos grupos que no dependen de quien mira: 54 focos a menos de 150 m de un punto de venteo declarado, que
+son llamas, y 86 focos del casco de Añelo, que son techos.
+
+| | Modelo | Regla a mano |
+|---|---:|---:|
+| Llamas declaradas que reconoce (validación cruzada) | 48 de 54 | 44 de 54 |
+| Techos de Añelo que deja pasar (validación cruzada) | 7 de 86 | 8 de 86 |
+| Techos sacados en la revisión a mano que rechaza (prueba) | **10 de 10** | 3 de 10 |
+| Antorchas firmes sin punto declarado que acepta (prueba) | 37 de 37 | 37 de 37 |
+
+La regla va sin el filtro de distancia a Añelo, para comparar en igualdad. Las dos últimas filas son casos
+que el modelo no vio al aprender.
+
+![El modelo separa llamas de techos, también en los casos que no vio](docs/figures/llamas_probabilidad.png)
+
+**Las llamas cortas.** Con probabilidad de 0,7 o más, donde ya no pasa ningún techo de Añelo, el modelo marca
+doce focos que la regla descartaba por durar poco: de dos a seis escenas, sobre locaciones de pozo o plantas.
+Dos están junto a un punto de venteo declarado. Lo más probable es que sean quemas temporales de un pozo en
+ensayo. En el tablero van como una capa aparte y no se suman a las 83 antorchas.
+
+![Las llamas cortas también están sobre una instalación](docs/figures/llamas_temporales.png)
+
 ## El tablero
 
 <https://dpinero14.github.io/locaciones-lab/tablero/>
@@ -158,8 +186,8 @@ dos pestañas:
 - **Finanzas:** la producción nueva por operadora con la curva tipo de la cuenca, y la facturación y las
   regalías al precio que elija quien lo mira.
 
-También muestra las antorchas, que se prenden y se apagan con la línea de tiempo, y los puntos de venteo
-declarados; un filtro por operadora, una ficha por ventana, la comparación con la imagen de 2020 y un
+También muestra las antorchas, que se prenden y se apagan con la línea de tiempo, las quemas temporales
+que reconoce el clasificador y los puntos de venteo declarados; un filtro por operadora, una ficha por ventana, la comparación con la imagen de 2020 y un
 recorrido guiado de un minuto.
 
 Es la versión pública: las locaciones que todavía no tienen pozo registrado no se publican, entran solo
@@ -182,6 +210,10 @@ como conteo por ventana.
   cada dos o tres días: en un mes dado, la escena elegida pierde las que estuvieron encendidas otros días. No se mide cuánto gas se
   quema, solo dónde y cuándo hay llama. Las fosas de quema casi no se ven. Y la regla pierde algunas
   reales: descarta focos que sí tienen un punto declarado al lado.
+- **El clasificador aprendió techos de un solo pueblo.** Los diez de la prueba están en otras zonas y los
+  rechazó, pero son pocos. El umbral de 0,7 se eligió mirando los resultados y falta validarlo con datos
+  nuevos. Entre 0,5 y 0,7 confunde quemas en chacras con antorchas. Y "quema temporal" es una lectura: el
+  satélite ve una llama corta sobre una locación, no por qué se encendió.
 - **La operadora de una antorcha no se publica.** Se podría atribuir por el pozo más cercano, pero la
   dueña de la instalación puede ser otra.
 
@@ -197,6 +229,8 @@ python -m venv .venv
 .venv\Scripts\python.exe -m jupyter nbconvert --to notebook --execute --inplace notebooks/02_el_detector_a_ciegas.ipynb
 .venv\Scripts\python.exe scripts/antorchas.py --bajar
 .venv\Scripts\python.exe -m jupyter nbconvert --to notebook --execute --inplace notebooks/03_las_antorchas.ipynb
+.venv\Scripts\python.exe scripts/clasificar.py
+.venv\Scripts\python.exe -m jupyter nbconvert --to notebook --execute --inplace notebooks/04_el_clasificador.ipynb
 ```
 
 La serie de Sentinel-2 son unas 80 escenas por zona recortadas a la ventana, unos 3 GB y 40 minutos

@@ -23,3 +23,4 @@ notebooks:
 	$(BIN)/python -m jupyter nbconvert --to notebook --execute --inplace --ExecutePreprocessor.kernel_name=locaciones-lab --ExecutePreprocessor.timeout=7200 notebooks/01_la_locacion_se_ve.ipynb
 	$(BIN)/python -m jupyter nbconvert --to notebook --execute --inplace --ExecutePreprocessor.kernel_name=locaciones-lab --ExecutePreprocessor.timeout=7200 notebooks/02_el_detector_a_ciegas.ipynb
 	$(BIN)/python -m jupyter nbconvert --to notebook --execute --inplace --ExecutePreprocessor.kernel_name=locaciones-lab --ExecutePreprocessor.timeout=7200 notebooks/03_las_antorchas.ipynb
+	$(BIN)/python -m jupyter nbconvert --to notebook --execute --inplace --ExecutePreprocessor.kernel_name=locaciones-lab --ExecutePreprocessor.timeout=7200 notebooks/04_el_clasificador.ipynb

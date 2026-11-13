@@ -58,7 +58,9 @@ button.ghost{background:transparent;color:var(--ink);border:1px solid var(--rule
 .llama.off svg{left:17px;top:16.5px;width:10px;height:10px}.llama.off .f1{fill:rgba(234,255,58,.75)}.llama.off .f2{fill:none}
 @keyframes halo{0%,100%{transform:scale(.8);opacity:.5}50%{transform:scale(1.25);opacity:1}}
 .decl{width:8px;height:8px;transform:rotate(45deg);background:#17212b;border:2px solid #eaff3a;box-shadow:0 0 0 1px #17212b}
-.lg{width:16px;height:16px;flex:none;display:inline-block}.lg .f1{fill:#eaff3a;stroke:#17212b;stroke-width:1.4}.lg .f2{fill:#fff}
+.lg{width:16px;height:16px;flex:none;display:inline-block}
+.lg.tmpl{border:1px dashed #7a8791;border-radius:50%}
+.llama.tmp i{border-style:dashed}.lg .f1{fill:#eaff3a;stroke:#17212b;stroke-width:1.4}.lg .f2{fill:#fff}
 .lgd{width:9px;height:9px;flex:none;display:inline-block;transform:rotate(45deg);background:#17212b;border:2px solid #b9cc10;margin:0 3px}
 .kpi.f{border-left-color:#17212b;background:#17212b}.kpi.f b{color:#eaff3a}.kpi.f span{color:#c9cfd4}
 .capa .n{white-space:nowrap}
@@ -198,6 +200,7 @@ svg text{font-family:"Cascadia Mono",Consolas,monospace;font-size:9px;fill:var(-
   <label class="capa"><input type="checkbox" id="c_comp2"><span class="sq" style="border-color:var(--ink);background:linear-gradient(90deg,var(--gris) 50%,transparent 50%)"></span>Comparar con la imagen de 2020<span class="n"></span></label>
   <h2>Antorchas</h2>
   <label class="capa"><input type="checkbox" id="c_ant" checked><span class="lg"><svg viewBox="0 0 24 24"><path class="f1" d="M12 1.5c.6 3.6 5.6 6.2 5.6 11.6a5.6 5.6 0 0 1-11.2 0c0-2.3 1-3.9 2.2-5 .1 1.9.8 3 1.9 3.3C10.300 8 9.8 4.700 12 1.5z"/><path class="f2" d="M12 11.500c.3 1.600 2.300 2.500 2.300 4.600a2.300 2.300 0 0 1-4.600 0c0-1.800 1.600-2.600 2.300-4.600z"/></svg></span>Antorchas vistas desde el satélite<span class="n" id="n_ant"></span></label>
+  <label class="capa"><input type="checkbox" id="c_tmp" checked><span class="lg tmpl"><svg viewBox="0 0 24 24"><path class="f1" d="M12 1.5c.6 3.6 5.6 6.2 5.6 11.6a5.6 5.6 0 0 1-11.2 0c0-2.3 1-3.9 2.2-5 .1 1.9.8 3 1.9 3.3C10.300 8 9.8 4.700 12 1.5z"/><path class="f2" d="M12 11.500c.3 1.600 2.300 2.500 2.300 4.600a2.300 2.300 0 0 1-4.600 0c0-1.800 1.600-2.600 2.300-4.600z"/></svg></span>Quemas temporales (ensayos de pozo)<span class="n" id="n_tmp"></span></label>
   <label class="capa"><input type="checkbox" id="c_decl"><span class="lgd"></span>Puntos de venteo declarados<span class="n" id="n_decl"></span></label>
   <h2>Padrón oficial</h2>
   <label class="capa"><input type="checkbox" id="c_calor"><span class="calorbar"></span>Calor: producción (azul) vs exploración (violeta)</label>
@@ -388,14 +391,14 @@ document.addEventListener("click",e=>{const a=e.target.closest("a.wa,[data-ev]")
 let ULT_LOC="",ULT_POZ="";
 let OP="",DECL=null,CALOR=null,COMP=false,FRAC=.5,listo=false;
 const opN=e=>{e=(e||"").toUpperCase();for(const [k,v] of [["YPF","YPF"],["VISTA","Vista"],["PLUSPETROL","Pluspetrol"],["SHELL","Shell"],["PAMPA","Pampa"],["PHOENIX","Phoenix"],["PAN AMERICAN","PAE"],["TECPETROL","Tecpetrol"],["TOTAL","Total"],["GEOPARK","GeoPark"],["CHEVRON","Chevron"],["EXXON","ExxonMobil"],["CAPEX","Capex"],["KILWER","Kilwer"],["OILSTONE","Oilstone"]])if(e.includes(k))return v;return e?e.split(" ").slice(0,2).map(w=>w[0]+w.slice(1).toLowerCase()).join(" "):"";};
-const CAPAS=["c_img","c_loc","c_otras","c_ant","c_decl","c_calor","c_pozos","c_todos","c_gas","c_comp","c_arena","c_comp2"];
+const CAPAS=["c_img","c_loc","c_otras","c_ant","c_decl","c_calor","c_pozos","c_todos","c_gas","c_comp","c_arena","c_comp2","c_tmp"];
 function estadoURL(){const c=map.getCenter();return "#"+[c.lat.toFixed(4),c.lng.toFixed(4),map.getZoom(),meses[idx],CAPAS.map(id=>document.getElementById(id).checked?1:0).join(""),encodeURIComponent(OP)].join(",");}
 function guardarURL(){if(listo)history.replaceState(null,"",location.pathname+location.search+estadoURL());}
 function aviso(t){const a=document.getElementById("aviso");a.textContent=t;a.classList.add("on");setTimeout(()=>a.classList.remove("on"),2200);}
 function novedades(mes){const i=meses.indexOf(mes),ant=i>0?meses[i-1]:null;let nl=0,np=0,on=0,off=0;
   for(const f of LOC.features){const p=f.properties;if(p.tipo==="locacion"&&p.mes_txt===mes&&!(PUBLICO&&p.estado==="sin_pozo")&&!(OP&&p._op!==OP))nl++;}
   for(const f of POZ.features){const p=f.properties;if(p.perforacion&&p.perforacion.slice(0,7)===mes&&!(OP&&p._op!==OP))np++;}
-  if(ANT&&ant)for(const f of ANT.features){const p=f.properties;if(OP&&p._op&&p._op!==OP)continue;const a=p.meses.includes(mes),b=p.meses.includes(ant);if(a&&!b)on++;if(!a&&b)off++;}
+  if(ANT&&ant)for(const f of ANT.features){const p=f.properties;if(p.temporal)continue;if(OP&&p._op&&p._op!==OP)continue;const a=p.meses.includes(mes),b=p.meses.includes(ant);if(a&&!b)on++;if(!a&&b)off++;}
   const MES=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
   const tl=mes>ULT_LOC?`<span class="pend" title="El detector confirma una locación con cuatro meses de imágenes posteriores">Locaciones: en confirmación</span>`:`<span class="mas">+${nl}</span> locaciones nuevas`;
   const tp=mes>ULT_POZ?`<span class="pend" title="El padrón oficial carga los pozos nuevos con unos seis meses de demora">Pozos: el padrón aún no los cargó</span>`:`<span class="ros">+${np}</span> pozos iniciados`;
@@ -406,7 +409,7 @@ function ficha(z){ev("ficha_zona",{zona:z});const zc=CFG.zonas[z],b=zc.bbox,F=do
   const cnt={};pz.forEach(f=>{const e=f.properties._op;cnt[e]=(cnt[e]||0)+1;});const ops=Object.entries(cnt).sort((x,y)=>y[1]-x[1]).slice(0,4).map(x=>`${x[0]} (${nf(x[1])})`).join(" · ");
   const dz=DEM&&DEM.zonas[z];const lv=years.map(y=>dz&&dz.anios[y]&&dz.anios[y].locaciones_vistas!==undefined?dz.anios[y].locaciones_vistas:LOC.features.filter(f=>f.properties.zona===z&&f.properties.tipo==="locacion"&&f.properties.mes_txt.slice(0,4)===y).length);
   const pv=years.map(y=>pz.filter(f=>(f.properties.perforacion||"").slice(0,4)===y).length);
-  const az=ANT?ANT.features.filter(f=>f.properties.zona===z):[];const ult=meses[meses.length-1];const av=years.map(y=>az.filter(f=>f.properties.meses.some(m=>m.slice(0,4)===y)).length);
+  const az=ANT?ANT.features.filter(f=>f.properties.zona===z&&!f.properties.temporal):[];const ult=meses[meses.length-1];const av=years.map(y=>az.filter(f=>f.properties.meses.some(m=>m.slice(0,4)===y)).length);
   const cz=CALOR&&CALOR.zonas[z];const pr=dz&&dz.proy2027;
   F.querySelector(".caja").innerHTML=`<h3>${zc.nombre}</h3><div class="ops">${ops}</div>
     <div class="fk"><div><b>${nf(lv.reduce((a,v)=>a+v,0))}</b><span>Locaciones nuevas desde 2020</span></div><div class="r"><b>${nf(pz.length)}</b><span>Pozos en el padrón</span></div>${cz?`<div><b>${nf(cz.boed)}</b><span>boe por día, ${nf(cz.productores)} pozos productores</span></div>`:""}<div class="f"><b>${az.filter(f=>f.properties.meses.includes(ult)).length} de ${az.length}</b><span>Antorchas encendidas en ${ult}</span></div>${pr?`<div class="v"><b>${nf(pr.piso.pozos)}</b><span>Pozos que vienen en 2027, como piso</span></div>`:""}</div>
@@ -417,7 +420,7 @@ document.getElementById("ficha").addEventListener("click",e=>{if(e.target.id==="
 let CFG,LOC,POZ,ANT,meses=[],idx=0,overlayLayers={},playing=null;
 const PUBLICO=true;
 map.createPane("antes");map.getPane("antes").style.zIndex=340;map.createPane("imgs");map.getPane("imgs").style.zIndex=350;
-const g={antes:L.layerGroup(),img:L.layerGroup().addTo(map),loc:L.layerGroup().addTo(map),otras:L.layerGroup(),pozos:L.layerGroup().addTo(map),gas:L.layerGroup().addTo(map),comp:L.layerGroup().addTo(map),ant:L.layerGroup().addTo(map),decl:L.layerGroup(),arena:L.layerGroup(),zonas:L.layerGroup().addTo(map)};
+const g={antes:L.layerGroup(),img:L.layerGroup().addTo(map),loc:L.layerGroup().addTo(map),otras:L.layerGroup(),pozos:L.layerGroup().addTo(map),gas:L.layerGroup().addTo(map),comp:L.layerGroup().addTo(map),ant:L.layerGroup().addTo(map),tmp:L.layerGroup().addTo(map),decl:L.layerGroup(),arena:L.layerGroup(),zonas:L.layerGroup().addTo(map)};
 const fmt=d=>d?d:"—";
 const nomZ=z=>((CFG&&CFG.zonas[z]||{}).nombre||z.replaceAll("_"," ")).replace(/\s*\(.*\)\s*$/,"");
 function estadoTxt(p){
@@ -441,12 +444,12 @@ function dibujar(){
             :L.rectangle(b,{color:MENTA,weight:nuevo?3:1.5,fill:p.estado==="sin_pozo",fillColor:MENTA,fillOpacity:.25})).bindPopup(pop).addTo(g.loc);}
     else{otras++;(lejos?L.circleMarker([lat,lon],{radius:3,color:GRIS,weight:1,fillOpacity:0}):L.rectangle(b,{color:GRIS,weight:1,fill:false,dashArray:"3 3"})).bindPopup(pop).addTo(g.otras);}
   }
-  g.ant.clearLayers();let nant=0,nenc=0;const FL='<svg viewBox="0 0 24 24"><path class="f1" d="M12 1.5c.6 3.6 5.6 6.2 5.6 11.6a5.6 5.6 0 0 1-11.2 0c0-2.3 1-3.9 2.2-5 .1 1.9.8 3 1.9 3.3C10.300 8 9.8 4.700 12 1.5z"/><path class="f2" d="M12 11.500c.3 1.600 2.300 2.500 2.300 4.600a2.300 2.300 0 0 1-4.600 0c0-1.800 1.600-2.600 2.300-4.600z"/></svg>';
-  if(ANT)for(const f of ANT.features){const p=f.properties;if(p.primero>mes)continue;if(OP&&p._op&&p._op!==OP)continue;nant++;const [lon,lat]=f.geometry.coordinates;const enc=p.meses.includes(mes);if(enc)nenc++;
+  g.ant.clearLayers();g.tmp.clearLayers();let nant=0,nenc=0,ntmp=0;const FL='<svg viewBox="0 0 24 24"><path class="f1" d="M12 1.5c.6 3.6 5.6 6.2 5.6 11.6a5.6 5.6 0 0 1-11.2 0c0-2.3 1-3.9 2.2-5 .1 1.9.8 3 1.9 3.3C10.300 8 9.8 4.700 12 1.5z"/><path class="f2" d="M12 11.500c.3 1.600 2.300 2.500 2.300 4.600a2.300 2.300 0 0 1-4.600 0c0-1.800 1.600-2.600 2.300-4.600z"/></svg>';
+  if(ANT)for(const f of ANT.features){const p=f.properties;if(p.primero>mes)continue;if(OP&&p._op&&p._op!==OP)continue;const tmp=!!p.temporal;if(tmp)ntmp++;else nant++;const [lon,lat]=f.geometry.coordinates;const enc=p.meses.includes(mes);if(enc&&!tmp)nenc++;
     const tira=meses.map(m=>`<i class="${p.meses.includes(m)?"s":""}${m===mes?" h":""}"></i>`).join("");
-    const pop=`<div class="pa"><h4><span class="lg">${FL}</span>Antorcha <span class="est${enc?"":" no"}">${enc?"Encendida este mes":"Sin llama este mes"}</span></h4>${nomZ(p.zona)}<div class="tira">${tira}</div><div class="ej"><span>${meses[0].slice(0,4)}</span><span>${meses[meses.length-1].slice(0,4)}</span></div><span class="gr">${p.n}</span> de ${meses.length} imágenes mensuales con llama<br>Primera vez ${p.primero} · última ${p.ultimo}${PUBLICO?"":`<br>Pozo más cercano: ${p.empresa}`}${p.declarado?`<br>Punto de venteo declarado a ${p.declarado_m} m`:(PUBLICO?"":"<br><b>Sin punto de venteo declarado</b> a menos de 500 m")}</div>`;
-    L.marker([lat,lon],{icon:L.divIcon({className:"ic",html:`<div class="llama ${enc?"on":"off"}"><i></i>${FL}</div>`,iconSize:[44,44],iconAnchor:[22,22]}),zIndexOffset:enc?900:300}).bindPopup(pop,{minWidth:250}).bindTooltip(enc?"Antorcha encendida":"Antorcha sin llama este mes",{className:"tt",direction:"top",offset:[0,-14]}).addTo(g.ant);}
-  document.getElementById("n_ant").textContent=ANT?nenc+" de "+nant:"";document.getElementById("k_ant").textContent=nenc;
+    const pop=`<div class="pa"><h4><span class="lg">${FL}</span>${tmp?"Quema temporal":"Antorcha"} <span class="est${enc?"":" no"}">${enc?"Encendida este mes":"Sin llama este mes"}</span></h4>${nomZ(p.zona)}<div class="tira">${tira}</div><div class="ej"><span>${meses[0].slice(0,4)}</span><span>${meses[meses.length-1].slice(0,4)}</span></div><span class="gr">${p.n}</span> de ${meses.length} imágenes mensuales con llama<br>Primera vez ${p.primero} · última ${p.ultimo}${tmp?"<br>Llama corta: probable ensayo de pozo. La reconoció el clasificador.":""}${PUBLICO?"":`<br>Pozo más cercano: ${p.empresa}`}${p.declarado?`<br>Punto de venteo declarado a ${p.declarado_m} m`:(PUBLICO?"":"<br><b>Sin punto de venteo declarado</b> a menos de 500 m")}</div>`;
+    L.marker([lat,lon],{icon:L.divIcon({className:"ic",html:`<div class="llama ${enc?"on":"off"}${tmp?" tmp":""}"><i></i>${FL}</div>`,iconSize:[44,44],iconAnchor:[22,22]}),zIndexOffset:enc?900:300}).bindPopup(pop,{minWidth:250}).bindTooltip((tmp?"Quema temporal":"Antorcha")+(enc?" encendida":" sin llama este mes"),{className:"tt",direction:"top",offset:[0,-14]}).addTo(tmp?g.tmp:g.ant);}
+  document.getElementById("n_ant").textContent=ANT?nenc+" de "+nant:"";document.getElementById("n_tmp").textContent=ntmp||"";document.getElementById("k_ant").textContent=nenc;
   const todos=document.getElementById("c_todos").checked;let np=0;const vista=map.getBounds().pad(0.15);
   for(const f of POZ.features){const p=f.properties;if(!p.perforacion)continue;if(OP&&p._op!==OP)continue;const antes=p.perforacion.slice(0,7)<=mes;if(!antes&&!todos)continue;np++;
     const [lon,lat]=f.geometry.coordinates;
@@ -500,7 +503,7 @@ Promise.all(["data/config.json","data/locaciones.geojson","data/pozos.geojson","
     const a=document.createElement("div");a.className="vent";a.innerHTML=`<b>${cfg.zonas[z].nombre}</b><span class="n">${nl}</span><div class="det">${nl} locaciones vistas${sp?`, ${sp} sin pozo`:""} · ${nf(pz.length)} pozos${cz?` · ${nf(cz.boed)} boe/d`:""}<br>${ops}</div>`;
     a.onclick=()=>{ficha(z);map.fitBounds(bounds);document.querySelectorAll(".vent").forEach(v=>v.classList.toggle("on",v===a));for(const k in RAD)RAD[k].setStyle(k===z?{weight:3,opacity:1,dashArray:null}:{weight:1.2,opacity:.7,dashArray:"2 6"});};
     RAD[z]=ring;zdiv.appendChild(a);}
-  toggle("c_ant",g.ant);toggle("c_decl",g.decl);
+  toggle("c_ant",g.ant);toggle("c_tmp",g.tmp);toggle("c_decl",g.decl);
   // cortina: a la izquierda la primera imagen de cada ventana, a la derecha la del año elegido
   const CT=document.createElement("div");CT.id="cortina";CT.innerHTML='<div class="raya"></div><div class="et a">2020</div><div class="et b"></div><div class="ag">⇆</div>';map.getContainer().appendChild(CT);
   for(const z in cfg.overlays){const o=cfg.overlays[z][0];if(o)L.imageOverlay(o.img,o.bounds,{interactive:false,pane:"antes"}).addTo(g.antes);}
@@ -526,13 +529,13 @@ Promise.all(["data/config.json","data/locaciones.geojson","data/pozos.geojson","
   const capa=(id,on)=>{const c=document.getElementById(id);if(c.checked!==on)c.click();};
   const ult=meses.length-1;
   const PASOS=[
-    {t:"Enero de 2020. Así se veía Vaca Muerta desde el satélite.",v:[[-38.36,-68.72],10],f:async()=>{capa("c_ant",false);capa("c_pozos",false);irMes(0);await esp(3200);}},
+    {t:"Enero de 2020. Así se veía Vaca Muerta desde el satélite.",v:[[-38.36,-68.72],10],f:async()=>{capa("c_ant",false);capa("c_tmp",false);capa("c_pozos",false);irMes(0);await esp(3200);}},
     {t:"Cada cuadrado celeste es una locación nueva: el satélite la marca el mes en que aparece.",v:[[-38.215,-68.635],13],f:async()=>{await esp(1800);await correr(0,ult,95);await esp(1200);}},
     {t:"Las torres rosas son los pozos del registro oficial. Llegan después: el satélite los anticipa unos dos meses.",v:null,f:async()=>{capa("c_pozos",true);irMes(18);await esp(1500);await correr(18,ult,95);await esp(1200);}},
-    {t:"Las llamas son antorchas, vistas con las bandas infrarrojas. Se prenden y se apagan mes a mes.",v:[[-38.33,-68.62],12],f:async()=>{capa("c_ant",true);await esp(1800);await correr(Math.max(0,ult-30),ult,170);await esp(1500);}},
+    {t:"Las llamas son antorchas, vistas con las bandas infrarrojas. Se prenden y se apagan mes a mes.",v:[[-38.33,-68.62],12],f:async()=>{capa("c_ant",true);capa("c_tmp",true);await esp(1800);await correr(Math.max(0,ult-30),ult,170);await esp(1500);}},
     {t:"Con las locaciones ya construidas, el tablero proyecta los pozos, la arena y los camiones que va a pedir 2027.",v:[[-38.36,-68.72],10],f:async()=>{document.body.classList.remove("sin-der");document.getElementById("demanda").classList.add("luz");elegirAnio("2027");await esp(5200);document.getElementById("demanda").classList.remove("luz");if(innerWidth<820&&!document.body.classList.contains("sin-der"))plegar("der");}},
   ];
-  const finGuia=()=>{guiaOn=false;G.style.display="none";document.body.classList.remove("guiando");capa("c_ant",true);capa("c_pozos",true);};
+  const finGuia=()=>{guiaOn=false;G.style.display="none";document.body.classList.remove("guiando");capa("c_ant",true);capa("c_tmp",true);capa("c_pozos",true);};
   const guia=async()=>{if(guiaOn)return;ev("recorrido");if(playing){clearInterval(playing);playing=null;document.getElementById("play").textContent="▶";}
     guiaOn=true;document.body.classList.add("guiando");G.style.display="flex";G.querySelector(".pts").innerHTML=PASOS.map(()=>"<i></i>").join("");
     for(let k=0;k<PASOS.length&&guiaOn;k++){const ps=PASOS[k];G.querySelector(".tx").textContent=ps.t;G.querySelectorAll(".pts i").forEach((e,j)=>e.classList.toggle("on",j<=k));
@@ -540,7 +543,7 @@ Promise.all(["data/config.json","data/locaciones.geojson","data/pozos.geojson","
     if(guiaOn){irMes(ult);finGuia();}};
   document.getElementById("guia_salir").onclick=()=>{finGuia();irMes(ult);};document.getElementById("b_guia").onclick=guia;
   const cuenta=(id,n)=>{const el=document.getElementById(id);const t0=performance.now();const paso=t=>{const f=Math.min(1,(t-t0)/1100);el.textContent=nf(n*(1-Math.pow(1-f,3)));if(f<1)requestAnimationFrame(paso);};requestAnimationFrame(paso);};
-  const nPre=Object.values(cfg.zonas).reduce((a,z)=>a+(z.n_locaciones||0),0);cuenta("pc_loc",nPre||loc.features.filter(f=>f.properties.tipo==="locacion").length);cuenta("pc_poz",poz.features.length);cuenta("pc_ant",ant?ant.features.length:0);
+  const nPre=Object.values(cfg.zonas).reduce((a,z)=>a+(z.n_locaciones||0),0);cuenta("pc_loc",nPre||loc.features.filter(f=>f.properties.tipo==="locacion").length);cuenta("pc_poz",poz.features.length);cuenta("pc_ant",ant?ant.features.filter(f=>!f.properties.temporal).length:0);
   const P=document.getElementById("portada");const cerrarPortada=()=>P.classList.add("fuera");document.getElementById("pb_ver").onclick=()=>{ev("explorar");cerrarPortada();};const bt=document.getElementById("pb_tour");bt.style.display="";bt.onclick=()=>{cerrarPortada();setTimeout(guia,500);};
   if(new URLSearchParams(location.search).has("recorrido"))setTimeout(guia,1500);
   if(new URLSearchParams(location.search).has("sinportada"))P.style.display="none";

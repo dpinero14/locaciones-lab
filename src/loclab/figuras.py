@@ -198,7 +198,7 @@ def antorchas_por_anio(tabla: pd.DataFrame, path) -> Path:
     return _save(fig, path)
 
 
-def antorchas_recortes(arriba: list, abajo: list, titulos: list[str], meses: list[str], path) -> Path:
+def antorchas_recortes(arriba: list, abajo: list, titulos: list[str], meses: list[str], path, titulo: str = "Cada antorcha está sobre una instalación") -> Path:
     """Las antorchas más constantes: arriba el color real a 10 m, abajo las bandas infrarrojas a 20 m de la misma escena."""
     plt = _plt()
     n = len(arriba)
@@ -210,6 +210,59 @@ def antorchas_recortes(arriba: list, abajo: list, titulos: list[str], meses: lis
         axes[1, j].set_title(f"infrarrojo, {meses[j]}", color=MUTED, fontsize=9)
     for ax in np.ravel(axes):
         ax.axis("off")
-    _titles(fig, "Cada antorcha está sobre una instalación", "recortes de 800 m · arriba el color real, abajo las bandas infrarrojas (B12, B11, B8A) de la misma escena: la llama es el punto claro", FUENTE_ANT)
+    _titles(fig, titulo, "recortes de 800 m · arriba el color real, abajo las bandas infrarrojas (B12, B11, B8A) de la misma escena: la llama es el punto claro", FUENTE_ANT)
     fig.subplots_adjust(top=0.84, bottom=0.05, left=0.01, right=0.99, hspace=0.16, wspace=0.04)
+    return _save(fig, path)
+
+
+FUENTE_IA = "locaciones-lab · Copernicus Sentinel-2 L2A (ESA), 82 escenas mensuales · etiquetas: puntos de venteo declarados (Secretaría de Energía) y casco de Añelo"
+
+
+def llamas_probabilidad(t: pd.DataFrame, path, p_llama: float = 0.7) -> Path:
+    """La probabilidad de llama que el modelo le da a cada foco, por grupo: los dos de entrenamiento y los dos de prueba."""
+    plt = _plt()
+    techos_mano = ("galpon", "zona urbana", "base de servicios", "techos de planta")
+    grupos = [("Llamas: junto a un punto de venteo declarado", t[t.etiqueta == 1], CIAN, "entrenamiento, validación cruzada"),
+              ("Techos: casco de Añelo", t[t.etiqueta == 0], GRIS, "entrenamiento, validación cruzada"),
+              ("Antorchas firmes sin punto declarado cerca", t[t.firme & (t.km_declarado > 0.5) & t.p.notna()], VERDE, "prueba: el modelo no las vio"),
+              ("Techos descartados en la revisión a mano", t[t.revision.isin(techos_mano) & t.p.notna()], ROJO, "prueba: el modelo no los vio")]
+    fig, ax = plt.subplots(figsize=(11, 5.6), facecolor=BG)
+    _style(ax, grid="x")
+    rng = np.random.default_rng(0)
+    for k, (nombre, g, color, nota) in enumerate(grupos):
+        y = len(grupos) - 1 - k
+        ax.scatter(g.p, y + rng.uniform(-0.2, 0.2, len(g)), s=46, color=color, alpha=0.8, edgecolors=BG, linewidths=0.6, zorder=3)
+        ax.text(-0.02, y + 0.12, nombre, color=INK, fontsize=10.5, ha="right", va="center")
+        ax.text(-0.02, y - 0.16, f"{len(g)} focos · {nota}", color=MUTED, fontsize=8.5, ha="right", va="center")
+    for u, txt in ((0.5, "0,5"), (p_llama, f"{p_llama:.1f}".replace(".", ","))):
+        ax.axvline(u, color=MUTED, lw=1, ls=(0, (4, 4)), zorder=2)
+        ax.text(u - 0.008, len(grupos) - 0.42, txt, color=MUTED, fontsize=9, ha="right")
+    ax.set_xlim(-0.01, 1.01)
+    ax.set_ylim(-0.6, len(grupos) - 0.3)
+    ax.set_yticks([])
+    ax.set_xlabel("probabilidad de llama según el modelo", color=MUTED)
+    _titles(fig, "El modelo separa llamas de techos, también en los casos que no vio al aprender",
+            "cada punto es un foco · las dos filas de abajo son la prueba: no se usaron para entrenar", FUENTE_IA)
+    fig.subplots_adjust(top=0.84, bottom=0.13, left=0.36, right=0.97)
+    return _save(fig, path)
+
+
+def llamas_comparacion(filas: list[tuple[str, int, int, int]], path) -> Path:
+    """Aciertos del modelo contra la regla a mano: `filas` trae (nombre, total, aciertos del modelo, aciertos de la regla)."""
+    plt = _plt()
+    fig, ax = plt.subplots(figsize=(11, 5.2), facecolor=BG)
+    _style(ax, grid="x")
+    for k, (nombre, total, modelo, regla) in enumerate(filas):
+        y = len(filas) - 1 - k
+        for dy, v, color, quien in ((0.19, modelo, CIAN, "modelo"), (-0.19, regla, GRIS, "regla a mano")):
+            ax.barh(y + dy, v / total * 100, height=0.34, color=color, zorder=3)
+            ax.text(v / total * 100 + 1.2, y + dy, f"{v} de {total} · {quien}", color=INK if quien == "modelo" else MUTED, fontsize=10, va="center")
+        ax.text(-2, y, nombre, color=INK, fontsize=10.5, ha="right", va="center")
+    ax.set_xlim(0, 128)
+    ax.set_xticks([0, 25, 50, 75, 100])
+    ax.set_yticks([])
+    ax.set_xlabel("aciertos, %", color=MUTED)
+    _titles(fig, "Donde más gana el modelo es en lo que antes había que mirar a mano",
+            "la regla va sin el filtro de distancia a Añelo, para comparar en igualdad · umbral del modelo: 0,5", FUENTE_IA)
+    fig.subplots_adjust(top=0.84, bottom=0.13, left=0.36, right=0.97)
     return _save(fig, path)

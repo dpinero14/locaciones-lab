@@ -419,6 +419,7 @@ const PUBLICO=true;
 map.createPane("antes");map.getPane("antes").style.zIndex=340;map.createPane("imgs");map.getPane("imgs").style.zIndex=350;
 const g={antes:L.layerGroup(),img:L.layerGroup().addTo(map),loc:L.layerGroup().addTo(map),otras:L.layerGroup(),pozos:L.layerGroup().addTo(map),gas:L.layerGroup().addTo(map),comp:L.layerGroup().addTo(map),ant:L.layerGroup().addTo(map),decl:L.layerGroup(),arena:L.layerGroup(),zonas:L.layerGroup().addTo(map)};
 const fmt=d=>d?d:"—";
+const nomZ=z=>((CFG&&CFG.zonas[z]||{}).nombre||z.replaceAll("_"," ")).replace(/\s*\(.*\)\s*$/,"");
 function estadoTxt(p){
   if(p.estado==="llego_despues")return `<span class="r">Llegó un pozo</span> a los ${p.espera_meses} meses (perforación ${fmt(p.drill_cercano)})`;
   if(p.estado==="ya_perforado")return "Ya había un pozo perforado al lado";
@@ -433,7 +434,7 @@ function dibujar(){
     const [lon,lat]=f.geometry.coordinates;const lado=Math.max(60,Math.sqrt(p.area_ha*1e4))/2;
     const b=L.latLngBounds([lat-lado/111000,lon-lado/(111000*Math.cos(lat*Math.PI/180))],[lat+lado/111000,lon+lado/(111000*Math.cos(lat*Math.PI/180))]);
     const nuevo=(parseInt(mes.slice(0,4))*12+parseInt(mes.slice(5)))-(parseInt(p.mes_txt.slice(0,4))*12+parseInt(p.mes_txt.slice(5)))<3;
-    const pop=`<b>${p.tipo==="locacion"?"Locación nueva":"Obra detectada"}</b> · ${p.zona.replaceAll("_"," ")}<br>Vista por el satélite en <b>${p.mes_txt}</b> · ${p.area_ha} ha<br>${estadoTxt(p)}${p.verificacion_visual_oct2026&&!PUBLICO?`<br>en octubre 2026: <b>${p.verificacion_visual_oct2026}</b>`:""}`;
+    const pop=`<b>${p.tipo==="locacion"?"Locación nueva":"Obra detectada"}</b> · ${nomZ(p.zona)}<br>Vista por el satélite en <b>${p.mes_txt}</b> · ${p.area_ha} ha<br>${estadoTxt(p)}${p.verificacion_visual_oct2026&&!PUBLICO?`<br>en octubre 2026: <b>${p.verificacion_visual_oct2026}</b>`:""}`;
     const lejos=map.getZoom()<14;
     if(p.tipo==="locacion"){vistas++;if(p.estado==="sin_pozo")sinpozo++;
       (lejos?L.marker([lat,lon],{icon:ico("pad"+(p.estado==="sin_pozo"?" llena":"")+(nuevo?" nueva":""),IC_PAD,nuevo?18:14)})
@@ -443,7 +444,7 @@ function dibujar(){
   g.ant.clearLayers();let nant=0,nenc=0;const FL='<svg viewBox="0 0 24 24"><path class="f1" d="M12 1.5c.6 3.6 5.6 6.2 5.6 11.6a5.6 5.6 0 0 1-11.2 0c0-2.3 1-3.9 2.2-5 .1 1.9.8 3 1.9 3.3C10.300 8 9.8 4.700 12 1.5z"/><path class="f2" d="M12 11.500c.3 1.600 2.300 2.500 2.300 4.600a2.300 2.300 0 0 1-4.600 0c0-1.800 1.600-2.600 2.300-4.600z"/></svg>';
   if(ANT)for(const f of ANT.features){const p=f.properties;if(p.primero>mes)continue;if(OP&&p._op&&p._op!==OP)continue;nant++;const [lon,lat]=f.geometry.coordinates;const enc=p.meses.includes(mes);if(enc)nenc++;
     const tira=meses.map(m=>`<i class="${p.meses.includes(m)?"s":""}${m===mes?" h":""}"></i>`).join("");
-    const pop=`<div class="pa"><h4><span class="lg">${FL}</span>Antorcha <span class="est${enc?"":" no"}">${enc?"Encendida este mes":"Sin llama este mes"}</span></h4>${p.zona.replaceAll("_"," ")}<div class="tira">${tira}</div><div class="ej"><span>${meses[0].slice(0,4)}</span><span>${meses[meses.length-1].slice(0,4)}</span></div><span class="gr">${p.n}</span> de ${meses.length} imágenes mensuales con llama<br>Primera vez ${p.primero} · última ${p.ultimo}${PUBLICO?"":`<br>Pozo más cercano: ${p.empresa}`}${p.declarado?`<br>Punto de venteo declarado a ${p.declarado_m} m`:(PUBLICO?"":"<br><b>Sin punto de venteo declarado</b> a menos de 500 m")}</div>`;
+    const pop=`<div class="pa"><h4><span class="lg">${FL}</span>Antorcha <span class="est${enc?"":" no"}">${enc?"Encendida este mes":"Sin llama este mes"}</span></h4>${nomZ(p.zona)}<div class="tira">${tira}</div><div class="ej"><span>${meses[0].slice(0,4)}</span><span>${meses[meses.length-1].slice(0,4)}</span></div><span class="gr">${p.n}</span> de ${meses.length} imágenes mensuales con llama<br>Primera vez ${p.primero} · última ${p.ultimo}${PUBLICO?"":`<br>Pozo más cercano: ${p.empresa}`}${p.declarado?`<br>Punto de venteo declarado a ${p.declarado_m} m`:(PUBLICO?"":"<br><b>Sin punto de venteo declarado</b> a menos de 500 m")}</div>`;
     L.marker([lat,lon],{icon:L.divIcon({className:"ic",html:`<div class="llama ${enc?"on":"off"}"><i></i>${FL}</div>`,iconSize:[44,44],iconAnchor:[22,22]}),zIndexOffset:enc?900:300}).bindPopup(pop,{minWidth:250}).bindTooltip(enc?"Antorcha encendida":"Antorcha sin llama este mes",{className:"tt",direction:"top",offset:[0,-14]}).addTo(g.ant);}
   document.getElementById("n_ant").textContent=ANT?nenc+" de "+nant:"";document.getElementById("k_ant").textContent=nenc;
   const todos=document.getElementById("c_todos").checked;let np=0;const vista=map.getBounds().pad(0.15);

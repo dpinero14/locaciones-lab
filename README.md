@@ -192,6 +192,14 @@ que el modelo no vio al aprender.
 
 ![El modelo separa llamas de techos, también en los casos que no vio](docs/figures/llamas_probabilidad.png)
 
+**En una zona que no vio.** El modelo se aplicó sin tocarlo a Cutral Có y Plaza Huincul (`scripts/zona_nueva.py`),
+una ventana con dos ciudades y chimeneas de quema declaradas alrededor. De 191 focos a menos de 2 km del centro de
+alguna de las dos ciudades, pasan 2; la regla a mano dejaba pasar 13. Esos 2 están rodeados de tanques, en lo que parece
+la refinería de Plaza Huincul: lo más probable es que sean antorchas de verdad, que no figuran en los registros de
+quema de los yacimientos. Del lado de las llamas la prueba es chica: de los tres sitios que ve el satélite nocturno en
+la ventana, el modelo reconoce dos; el tercero es una llama débil, de un solo píxel. Y se equivoca con un foco de
+cuatro meses dentro de la ciudad.
+
 **Las llamas cortas.** Con probabilidad de 0,7 o más, donde ya no pasa ningún techo de Añelo, el modelo marca
 doce focos que la regla descartaba por durar poco: de dos a seis escenas, sobre locaciones de pozo o plantas.
 Dos están junto a un punto de venteo declarado. Lo más probable es que sean quemas temporales de un pozo en
@@ -239,8 +247,8 @@ como conteo por ventana.
   cada dos o tres días: en un mes dado, la escena elegida pierde las que estuvieron encendidas otros días. Acá no se mide cuánto gas se
   quema, solo dónde y cuándo hay llama. Las fosas de quema casi no se ven. Y la regla pierde algunas
   reales: descarta focos que sí tienen un punto declarado al lado.
-- **El clasificador aprendió techos de un solo pueblo.** Los diez de la prueba están en otras zonas y los
-  rechazó, pero son pocos. El umbral de 0,7 se eligió mirando los resultados y falta validarlo con datos
+- **El clasificador aprendió techos de un solo pueblo.** En una ventana nueva, con dos ciudades, siguió rechazando
+  los techos; pero allí había pocas llamas para medir si las reconoce. El umbral de 0,7 se eligió mirando los resultados y falta validarlo con datos
   nuevos. Entre 0,5 y 0,7 confunde quemas en chacras con antorchas. Y "quema temporal" es una lectura: el
   satélite ve una llama corta sobre una locación, no por qué se encendió.
 - **La operadora de una antorcha no se publica.** Se podría atribuir por el pozo más cercano, pero la

@@ -26,13 +26,15 @@ público de pozos, y la responde con una prueba hacia atrás, no con un ejemplo.
 | `02_el_detector_a_ciegas` | Busca locaciones sin mirar el padrón, en toda la serie, con el contraste local de cada píxel. Clasifica qué es locación y qué es camino, planta, pueblo o barda, con 48 detecciones etiquetadas a mano. Prueba hacia atrás: en el mes en que el satélite vio la obra, ¿había un pozo perforado al lado? Si no, ¿llegó uno después? Y verifica las locaciones del último año que todavía no tienen pozo registrado. |
 | `03_las_antorchas` | Busca las antorchas en las bandas infrarrojas de la misma escena mensual, en quince ventanas. Muestra por qué un píxel caliente no alcanza (los techos de Añelo brillan en invierno), arma la regla, revisa una por una las dudosas y cruza el resultado con los puntos de venteo que las empresas declaran a la Secretaría de Energía. |
 | `04_el_clasificador` | Reemplaza la regla a mano de las antorchas por un modelo. Describe cada foco con dieciocho números sacados de las 82 escenas y entrena un bosque aleatorio con verdad independiente: llamas junto a puntos de venteo declarados contra techos del casco de Añelo. Lo prueba contra la revisión a mano, que no usa para aprender, y encuentra las llamas cortas que la regla descartaba. |
+| `05_los_equipos` | Busca los equipos de perforación con el radar de Sentinel-1, que ve con nubes y de noche: una torre de metal es un punto muy brillante que despolariza. Detector a ciegas pasada por pasada, regla elegida en una ventana y probada en otras dos contra las fechas de perforación del padrón, conteo de equipos por mes y los que siguen trabajando en la última pasada. |
 
 Las funciones están en `src/loclab/`: `escenas.py` busca y baja la serie mensual del STAC público
 de Sentinel-2 y elige la escena limpia de cada mes; `padron.py` lee los pozos, sus fechas y las
 locaciones multipozo; `senal.py` mide el contraste de una locación y fecha su construcción;
 `ciego.py` es el detector a ciegas, la regla de clasificación y la prueba hacia atrás;
 `antorchas.py` baja las bandas infrarrojas, marca los píxeles calientes, los agrupa en focos y aplica
-la regla de antorcha; `llamas.py` es el clasificador que separa llamas de techos; `figuras.py`, las figuras.
+la regla de antorcha; `llamas.py` es el clasificador que separa llamas de techos; `radar.py` baja el radar de Sentinel-1, busca los
+equipos, arma las campañas y las mide contra el padrón; `figuras.py`, las figuras.
 
 ## Qué encontramos
 
@@ -207,6 +209,49 @@ ensayo. En el tablero van como una capa aparte y no se suman a las 83 antorchas.
 
 ![Las llamas cortas también están sobre una instalación](docs/figures/llamas_temporales.png)
 
+## Los equipos de perforación
+
+Entre la locación que se construye y el pozo que produce hay una etapa que la imagen óptica mensual no ve:
+cuándo llega el equipo que perfora y cuándo se va. El radar de Sentinel-1 sí: no depende del sol ni de las
+nubes, y un equipo de perforación, una torre de metal de unos 40 metros, es un punto muy brillante sobre una
+locación que antes era oscura. Además despolariza: también brilla en el canal cruzado (VH), cosa que el suelo
+y casi todo lo demás no hacen (`scripts/radar.py`, notebook 05).
+
+Sin detector, sobre las locaciones del padrón de tres ventanas desde 2023, el punto más brillante supera
+5 dB en el 72 % de las pasadas mientras se perfora, en el 19 % durante la terminación y en el 1 % antes de
+perforar o en producción.
+
+![Mientras se perfora, la locación brilla en el radar](docs/figures/radar_fases.png)
+
+El detector es a ciegas: pasada por pasada busca puntos que se encienden sobre su brillo de siempre, los
+sigue en el tiempo y se queda con los que despolarizan, están sobre una locación (un pozo del padrón, una
+locación vista por Sentinel-2 o un rectángulo claro en la última imagen óptica) y lejos de Añelo. La regla se
+eligió mirando solo Loma Campana este; las otras dos ventanas son la prueba, sin tocar nada.
+
+| | Ajuste: Loma Campana este | Prueba: Bajada del Palo y Bandurria, Bajada del Palo este |
+|---|---:|---:|
+| Locaciones perforadas enteras en el período | 23 | 97 |
+| Con un equipo encima mientras se perforaba | 20 (87 %) | 86 (89 %) |
+| Llegada del equipo menos inicio de perforación, mediana | 14 días | 13 días |
+| Salida del equipo menos fin de perforación, mediana | 2 días | 1 día |
+| Equipos detectados hasta febrero de 2026 | 42 | 135 |
+| De ellos, sobre una locación en perforación o terminación | 38 (90 %) | 129 (96 %) |
+
+El equipo aparece unas dos semanas después del inicio que dice el padrón: parte es la revisita, y parte es que
+en Vaca Muerta primero un equipo chico hace la boca de todos los pozos de la locación y después llega el grande.
+
+![El equipo llega y se va](docs/figures/radar_caso.png)
+
+Juntando los eventos de cada locación en campañas se pueden contar equipos por mes. Con una pasada cada 6
+días (de abril de 2025 a febrero de 2026) el radar cuenta 14,2 equipos por mes y el padrón 13,1 locaciones en
+perforación, con correlación 0,69. Con una pasada cada 12 días se le escapan: 10,9 contra 16,0.
+
+![Con una pasada cada 6 días, el radar cuenta los equipos como el padrón](docs/figures/radar_conteo.png)
+
+En la pasada del 15 de noviembre de 2026, en las quince ventanas, siguen trabajando 19 equipos. Casi todos
+están sobre locaciones que el padrón todavía no tiene, lo esperable con su demora de seis meses; esas
+coordenadas no se publican.
+
 ## El tablero
 
 <https://dpinero14.github.io/locaciones-lab/tablero/>
@@ -222,13 +267,15 @@ dos pestañas:
 - **Finanzas:** la producción nueva por operadora con la curva tipo de la cuenca, y la facturación y las
   regalías al precio que elija quien lo mira.
 
-También muestra las antorchas, que se prenden y se apagan con la línea de tiempo, las quemas temporales
+También muestra los equipos de perforación que ve el radar, con la fecha en que llegaron y en que se fueron y
+los que siguen trabajando en la última pasada; las antorchas, que se prenden y se apagan con la línea de tiempo, las quemas temporales
 que reconoce el clasificador y los puntos de venteo declarados; en el cartel de cada antorcha, en cuántas
 pasadas sin nubes de 2025 y 2026 tenía llama; un filtro por operadora, una ficha por ventana, la comparación con la imagen de 2020 y un
 recorrido guiado de un minuto.
 
 Es la versión pública: las locaciones que todavía no tienen pozo registrado no se publican, entran solo
-como conteo por ventana.
+como conteo por ventana. Lo mismo los equipos que trabajan sobre ellas: cuentan en la cifra del mes, pero
+no se dibujan.
 
 ## Limitaciones
 
@@ -251,6 +298,11 @@ como conteo por ventana.
   los techos; pero allí había pocas llamas para medir si las reconoce. El umbral de 0,7 se eligió mirando los resultados y falta validarlo con datos
   nuevos. Entre 0,5 y 0,7 confunde quemas en chacras con antorchas. Y "quema temporal" es una lectura: el
   satélite ve una llama corta sobre una locación, no por qué se encendió.
+- **El radar ve una torre, no qué equipo es.** No distingue uno de perforación de uno de reparación, y la
+  terminación también enciende la locación. Con una pasada cada 12 días (2023, 2024 y desde julio de 2026)
+  pierde equipos. La regla se probó en dos ventanas de la misma zona norte; en las otras doce solo hay radar
+  desde agosto de 2025 y se revisaron a ojo los activos de hoy, con algunos dudosos (obras, instalaciones
+  nuevas). El contraste óptico que reconoce una locación nueva se eligió mirando esos mismos casos.
 - **La operadora de una antorcha no se publica.** Se podría atribuir por el pozo más cercano, pero la
   dueña de la instalación puede ser otra.
 
@@ -270,6 +322,8 @@ python -m venv .venv
 .venv\Scripts\python.exe scripts/comparar_viirs.py
 .venv\Scripts\python.exe scripts/clasificar.py
 .venv\Scripts\python.exe -m jupyter nbconvert --to notebook --execute --inplace notebooks/04_el_clasificador.ipynb
+.venv\Scripts\python.exe scripts/radar.py --bajar --detectar
+.venv\Scripts\python.exe -m jupyter nbconvert --to notebook --execute --inplace notebooks/05_los_equipos.ipynb
 ```
 
 La serie de Sentinel-2 son unas 80 escenas por zona recortadas a la ventana, unos 3 GB y 40 minutos
@@ -286,6 +340,9 @@ por zona. En Linux, en lugar de `.venv\Scripts\python.exe`, `.venv/bin/python`.
 - Zhizhin, M., Ghosh, T., Gleason, G., Elvidge, C. D. y Bazilian, M. (2026), *VIIRS Nightfire upstream
   gas-flaring volumes, 2012-2025 (MYC25Q4)*, DOI 10.5281/zenodo.23091822, CC BY-NC 4.0: solo para comparar.
   No se redistribuye; `scripts/comparar_viirs.py` lo baja de Zenodo.
+- Copernicus Sentinel-1 RTC, corregido por terreno por Catalyst, en Microsoft Planetary Computer, CC BY 4.0:
+  <https://planetarycomputer.microsoft.com/dataset/sentinel-1-rtc>. Contiene datos modificados de Copernicus Sentinel.
+  `scripts/radar.py --bajar` recorta cada pasada a la ventana (unos 30 MB por pasada).
 - Liu, Y. et al. (2021), *Automatic extraction of offshore platforms and gas flares using Sentinel-2
   thermal anomaly index*: de ahí sale el índice TAI.
 - `data/antorchas_revision.csv`: los once focos que pasaron la regla y se descartaron mirándolos.

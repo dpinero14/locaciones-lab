@@ -118,3 +118,36 @@ def test_tiempo_encendida(tmp_path):
     ant = pd.DataFrame({"zona": ["z"], "foco": [0], "x": [500000.0 + 10.5 * 20], "y": [5800000.0 - 10.5 * 20]})
     t = antorchas.tiempo_encendida(ant, tmp_path)
     assert t[["pasadas", "vistas", "encendida", "ultima", "pct"]].iloc[0].tolist() == [4, 2, 1, "2025-01-01", 50.0]
+
+
+def test_radar_equipo_sintetico(tmp_path):
+    from loclab import radar
+
+    # doce pasadas cada 6 días sobre suelo oscuro (-12 dB): un equipo brilla en (20, 20) en las pasadas 4 a 7 y
+    # despolariza; una instalación brilla en (5, 5) siempre (su brillo de siempre es alto: no es un equipo)
+    d = tmp_path / "z" / "radar"
+    d.mkdir(parents=True)
+    np.save(d / "transform.npy", np.array([10.0, 0.0, 500000.0, 0.0, -10.0, 5800000.0]))   # Affine: a, b, c, d, e, f
+    q = lambda db: np.uint8(round((db + 25) * 5))  # noqa: E731
+    fechas = pd.date_range("2025-01-01", periods=12, freq="6D")
+    for i, f in enumerate(fechas):
+        vv, vh = np.full((40, 40), q(-12)), np.full((40, 40), q(-20))
+        vv[4:7, 4:7] = q(10)
+        if 4 <= i <= 7:
+            vv[19:22, 19:22], vh[19:22, 19:22] = q(10), q(0)
+        np.savez(d / f"{f:%Y-%m-%d}.npz", vv=vv, vh=vh)
+    e = radar.eventos("z", raw=tmp_path)
+    eq = radar.equipos(e)
+    assert len(eq) == 1
+    r = eq.iloc[0]
+    assert (r.pasadas, r.llegada, r.salida) == (4, fechas[4], fechas[7])
+    assert abs(r.x - (500000 + 20.5 * 10)) < 1 and abs(r.y - (5800000 - 20.5 * 10)) < 1 and r.vh > radar.VH_MIN
+    # el mismo equipo visto desde dos ventanas que se pisan cuenta una vez; una campaña de más de DIAS_MAX no es un equipo
+    base = dict(x=0.0, y=0.0, lon=-68.5, lat=-38.3, pasadas=5, vv=10.0, vh=0.0, ultima_pasada=pd.Timestamp("2025-12-31"))
+    eqs = pd.DataFrame([dict(base, zona="a", llegada=pd.Timestamp("2025-03-01"), salida=pd.Timestamp("2025-05-01")),
+                        dict(base, zona="b", llegada=pd.Timestamp("2025-03-07"), salida=pd.Timestamp("2025-05-01")),
+                        dict(base, zona="a", lon=-68.0, x=40000.0, llegada=pd.Timestamp("2025-01-01"), salida=pd.Timestamp("2025-12-31"))])
+    c = radar.campanias(eqs)
+    assert len(c) == 1 and c.iloc[0].dias == 61 and not c.iloc[0].activa
+    t = radar.conteo_mensual(c, pd.DataFrame({"perf_ini": [pd.Timestamp("2025-04-10")], "perf_fin": [pd.Timestamp("2025-06-10")]}), "2025-02", "2025-06")
+    assert t.radar.tolist() == [0, 1, 1, 1, 0] and t.padron.tolist() == [0, 0, 1, 1, 1]

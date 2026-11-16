@@ -292,3 +292,74 @@ def antorchas_contra_viirs(por_anio: pd.DataFrame, path) -> Path:
             "quince ventanas de la cuenca · a la izquierda lo que ve Sentinel-2 de día, a la derecha el volumen que estima el satélite nocturno", FUENTE_VIIRS)
     fig.subplots_adjust(top=0.80, bottom=0.11, left=0.05, right=0.98, wspace=0.14)
     return _save(fig, path)
+
+
+FUENTE_RADAR = ("locaciones-lab · Copernicus Sentinel-1 RTC (ESA; procesado por Catalyst, Microsoft Planetary Computer, CC BY 4.0), "
+                "órbita 18 ascendente · fechas de perforación: Secretaría de Energía, Capítulo IV")
+VIOLETA = "#b388ff"
+
+
+def radar_fases(s: pd.DataFrame, path, umbral: float = 5.0) -> Path:
+    """Qué fracción de las pasadas pasa el umbral sobre la locación, según la fase del padrón."""
+    plt = _plt()
+    orden = ["antes", "perforación", "espera", "terminación", "producción"]
+    g = s.groupby("fase").vv_max
+    pct = (g.apply(lambda x: (x > umbral).mean() * 100)).reindex(orden)
+    n = g.size().reindex(orden)
+    fig, ax = plt.subplots(figsize=(10, 5.2), facecolor=BG)
+    fig.subplots_adjust(left=0.07, right=0.97, top=0.8, bottom=0.14)
+    _style(ax)
+    cols = [GRIS, VIOLETA, GRIS, CIAN, GRIS]
+    ax.bar([o.capitalize() for o in orden], pct.values, color=cols, width=0.62, zorder=3)
+    for i, (v, k) in enumerate(zip(pct.values, n.values)):
+        ax.text(i, v + 2, f"{v:.0f} %", ha="center", color=INK, fontsize=13, fontweight="bold")
+        ax.text(i, -9, f"{k:,} pasadas".replace(",", "."), ha="center", color=MUTED, fontsize=9)
+    ax.set_ylim(-12, 100)
+    ax.set_yticks([0, 25, 50, 75, 100])
+    ax.tick_params(axis="x", colors=INK, labelsize=11, pad=16)
+    _titles(fig, f"Mientras se perfora, la locación brilla en el radar", f"Pasadas en que el punto más brillante de la locación supera {umbral:.0f} dB, según la fase que dice el padrón", FUENTE_RADAR)
+    return _save(fig, path)
+
+
+def radar_conteo(t: pd.DataFrame, path, corte: str | None = None, seis: tuple = ("2025-04-01", "2026-06-30")) -> Path:
+    """Equipos por mes según el radar contra locaciones en perforación según el padrón."""
+    plt = _plt()
+    fig, ax = plt.subplots(figsize=(11, 5.2), facecolor=BG)
+    fig.subplots_adjust(left=0.06, right=0.97, top=0.8, bottom=0.12)
+    _style(ax)
+    x = pd.to_datetime(t.mes)
+    ax.plot(x, t.padron, color=CIAN, lw=2.4, label="Locaciones en perforación según el padrón", zorder=3)
+    ax.plot(x, t.radar, color=VIOLETA, lw=2.4, label="Equipos vistos por el radar", zorder=4)
+    ax.axvspan(pd.Timestamp(seis[0]), pd.Timestamp(seis[1]), color=VIOLETA, alpha=0.08, lw=0, zorder=1)
+    ax.text(pd.Timestamp(seis[0]) + pd.Timedelta(days=10), 1.2, "una pasada cada 6 días", color=VIOLETA, fontsize=9)
+    ax.text(x.min() + pd.Timedelta(days=10), 1.2, "una pasada cada 12 días", color=MUTED, fontsize=9)
+    if corte:
+        ax.axvspan(pd.Timestamp(corte), x.max() + pd.Timedelta(days=31), color=RULE, alpha=0.6, lw=0, zorder=1)
+        ax.text(pd.Timestamp(corte) + pd.Timedelta(days=12), ax.get_ylim()[1] * 0.92, "el padrón todavía\nno cargó todo", color=MUTED, fontsize=9, va="top")
+    ax.legend(loc="upper left", frameon=False, labelcolor=INK, fontsize=10)
+    ax.set_ylim(0, max(t.radar.max(), t.padron.max()) * 1.25)
+    _titles(fig, "Con una pasada cada 6 días, el radar cuenta los equipos como el padrón",
+            "Por mes, en las tres ventanas con serie desde 2023. Con una pasada cada 12 días se le escapan equipos.", FUENTE_RADAR)
+    return _save(fig, path)
+
+
+def radar_caso(recortes: list, titulos: list[str], serie: pd.DataFrame, perf: tuple, path, titulo: str) -> Path:
+    """Una locación: tres recortes del radar (antes, con el equipo, después) y la serie contra las fechas del padrón."""
+    plt = _plt()
+    fig = plt.figure(figsize=(11, 7.4), facecolor=BG)
+    for i, (r, t) in enumerate(zip(recortes, titulos)):
+        ax = fig.add_axes([0.03 + i * 0.32, 0.36, 0.3, 0.45])
+        ax.imshow(r, cmap="gray", vmin=-15, vmax=10)
+        ax.set_xticks([]), ax.set_yticks([])
+        ax.set_title(t, color=VIOLETA if i == 1 else INK, fontsize=12, fontweight="bold", loc="left")
+        h = r.shape[0] / 2
+        ax.add_patch(plt.Circle((h, h), r.shape[0] * 0.12, fill=False, color=VERDE, lw=1.6))
+    ax = fig.add_axes([0.06, 0.08, 0.91, 0.22])
+    _style(ax)
+    ax.axvspan(perf[0], perf[1], color=VERDE, alpha=0.18, lw=0)
+    ax.plot(serie.fecha, serie.vv_max, "-o", color=VIOLETA, lw=2, ms=3.5, zorder=3)
+    ax.text(perf[0] + (perf[1] - perf[0]) / 2, serie.vv_max.max() + 1, "perforación según el padrón", color=VERDE, ha="center", fontsize=10)
+    ax.set_ylabel("VV máximo, dB", color=MUTED, fontsize=9)
+    ax.set_ylim(serie.vv_max.min() - 3, serie.vv_max.max() + 6)
+    _titles(fig, titulo, "Recortes de 900 m del radar Sentinel-1; el círculo marca los pozos", FUENTE_RADAR)
+    return _save(fig, path)

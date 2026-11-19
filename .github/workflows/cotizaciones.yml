@@ -1,0 +1,28 @@
+name: Cotizaciones de la cinta
+
+# Actualiza el Brent y las acciones que muestra la cinta del tablero.
+# Corre los días hábiles después del cierre de Nueva York, y también a mano desde la pestaña Actions.
+on:
+  schedule:
+    - cron: "40 21 * * 1-5"   # 21:40 UTC, 18:40 en Argentina
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  cotizaciones:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Bajar las cotizaciones
+        run: python scripts/cotizaciones.py
+      - name: Guardar si cambiaron
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/tablero/data/cotizaciones.json
+          git diff --cached --quiet || (git commit -m "Cotizaciones del día" && git push)

@@ -2,7 +2,7 @@
 
 Baja un año de cierres diarios de cada una y escribe un JSON chico con el último precio, la variación del día, del mes
 y del año, y la serie para dibujar. No es tiempo real: son los últimos datos disponibles, con la demora de la fuente.
-Solo usa la biblioteca estándar, para que corra igual en la PC y en una tarea programada.
+Solo usa la biblioteca estándar, para que corra igual en la PC y en la tarea diaria de GitHub.
 
 Fuente: el servicio de gráficos de Yahoo Finance, que no es una API oficial y puede dejar de responder. Si falla una
 cotización, se conserva la que ya estaba en el archivo de salida.

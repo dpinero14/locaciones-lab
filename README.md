@@ -272,7 +272,8 @@ tres secciones además del mapa:
 - **Zonas:** una tarjeta por ventana, con sus locaciones nuevas por año y su ficha.
 
 Arriba corre una cinta con el Brent y las acciones de YPF, Vista, Pampa y TGS. `scripts/cotizaciones.py` baja el
-último dato disponible; por ahora se corre a mano, así que la cinta muestra la fecha de su último dato.
+último dato disponible y una tarea de GitHub (`.github/workflows/cotizaciones.yml`) lo actualiza los días hábiles,
+después del cierre de Nueva York. La cinta muestra la fecha de su último dato.
 El Brent con que abre Finanzas es ese último dato. La sección de empresas suma una lectura escrita con
 inteligencia artificial a partir de los datos de la página, con fecha: es una opinión general, no asesoramiento.
 

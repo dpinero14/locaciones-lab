@@ -271,6 +271,11 @@ tres secciones además del mapa:
   medidos sobre lo que cada una opera, no recomendaciones de inversión.
 - **Zonas:** una tarjeta por ventana, con sus locaciones nuevas por año y su ficha.
 
+Arriba corre una cinta con el Brent y las acciones de YPF, Vista, Pampa y TGS. `scripts/cotizaciones.py` baja el
+último dato disponible; por ahora se corre a mano, así que la cinta muestra la fecha de su último dato.
+El Brent con que abre Finanzas es ese último dato. La sección de empresas suma una lectura escrita con
+inteligencia artificial a partir de los datos de la página, con fecha: es una opinión general, no asesoramiento.
+
 También muestra los equipos de perforación que ve el radar, con la fecha en que llegaron y en que se fueron y
 los que siguen trabajando en la última pasada; las antorchas, que se prenden y se apagan con la línea de tiempo, las quemas temporales
 que reconoce el clasificador y los puntos de venteo declarados; en el cartel de cada antorcha, en cuántas
@@ -352,6 +357,8 @@ por zona. En Linux, en lugar de `.venv\Scripts\python.exe`, `.venv/bin/python`.
 - Copernicus Sentinel-1 RTC, corregido por terreno por Catalyst, en Microsoft Planetary Computer, CC BY 4.0:
   <https://planetarycomputer.microsoft.com/dataset/sentinel-1-rtc>. Contiene datos modificados de Copernicus Sentinel.
   `scripts/radar.py --bajar` recorta cada pasada a la ventana (unos 30 MB por pasada).
+- Cotizaciones del Brent y de las acciones: Yahoo Finance, último dato disponible con demora. No es una fuente
+  oficial ni tiempo real, y el servicio puede dejar de responder; el tablero muestra entonces el último dato guardado.
 - Liu, Y. et al. (2021), *Automatic extraction of offshore platforms and gas flares using Sentinel-2
   thermal anomaly index*: de ahí sale el índice TAI.
 - `data/antorchas_revision.csv`: los once focos que pasaron la regla y se descartaron mirándolos.

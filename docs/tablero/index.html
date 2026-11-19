@@ -16,13 +16,13 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://dpinero14.github.io/locaciones-lab/tablero/img/og.jpg">
 <meta name="theme-color" content="#0c1116">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://unpkg.com; img-src 'self' data: https://server.arcgisonline.com https://unpkg.com https://www.google-analytics.com https://www.googletagmanager.com; connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://unpkg.com; img-src 'self' data: https://server.arcgisonline.com https://unpkg.com https://www.google-analytics.com https://www.googletagmanager.com; connect-src 'self' https://raw.githubusercontent.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 <style>
 :root{--bg:#ece6d8;--panel:#f9f6ee;--ink:#17212b;--muted:#5d6974;--rule:#d6cdb9;--acento:#0b6b7a;--pozo:#d02e7f;--infra:#17212b;--gris:#8a8f94;--acento2:#7b2cbf;--mapa:#19d3ff}
 *{box-sizing:border-box}html,body{height:100%;margin:0}
 body{background:var(--bg);color:var(--ink);font-family:"Segoe UI",system-ui,sans-serif;font-size:14px}
-:root{--izq:320px;--der:0px;--top:50px}body.sin-izq{--izq:0px}body.sin-der{--der:0px}
+:root{--izq:320px;--der:0px;--bar:50px;--cin:30px;--top:calc(var(--bar) + var(--cin))}body.sin-izq{--izq:0px}body.sin-der{--der:0px}
 #app{display:grid;grid-template-columns:var(--izq) 1fr var(--der);grid-template-rows:var(--top) minmax(0,1fr);height:100%;transition:grid-template-columns .3s ease}
 #panel,#demanda{min-width:0;transition:padding .3s}body.sin-izq #panel{padding-left:0;padding-right:0;overflow:hidden;border:0}body.sin-der #demanda{padding-left:0;padding-right:0;overflow:hidden;border:0}
 .tog{position:absolute;top:calc(var(--top) + 12px);z-index:1100;width:26px;height:38px;padding:0;border-radius:4px;background:var(--panel);color:var(--acento);border:1px solid var(--rule);font-size:18px;line-height:1;box-shadow:0 1px 6px rgba(0,0,0,.25);transition:left .3s,right .3s}
@@ -237,7 +237,7 @@ details.grp .nota{margin-top:0}#nov{margin-bottom:12px}
 .vista .vent{position:relative}.vista .vent b{font-size:15px;display:block;margin-right:48px;line-height:1.25}.vista .vent .n{position:absolute;right:16px;top:11px;float:none;font-size:22px;font-weight:600;font-family:inherit}.vista .vent .det{margin-right:8px}
 .vista .vent .det{font-size:12px;margin-top:6px;line-height:1.45}.vista .vent svg.sp{margin-top:8px}.vista .vent svg.sp text{font-size:9px}.spl{font-size:10px;color:var(--muted);margin-top:2px}
 @media(max-width:820px){
-  :root{--top:92px}
+  :root{--bar:92px}
   #barra{flex-wrap:wrap;align-content:center;gap:6px 8px;padding:6px 10px}#barra h1{font-size:15px;flex:1;overflow:hidden;text-overflow:ellipsis}
   #barra .vistas{order:5;flex:1 1 100%;margin:0}#barra .vistas button{flex:1;padding:7px 4px}#barra .bl a.wa span{display:none}#barra .bl a.wa{padding:7px}
   .vista .in{padding:16px 14px 28px}.vista .precios{display:grid;grid-template-columns:1fr;gap:7px}.vista .precios label{display:grid;grid-template-columns:1fr 68px 74px}.vt{font-size:21px}.vc select{min-width:0;width:100%}
@@ -261,6 +261,23 @@ details.grp .nota{margin-top:0}#nov{margin-bottom:12px}
 .emp .eh{border-left:5px solid var(--acento);padding:2px 0 2px 12px;margin-bottom:12px}.emp .eh b{display:block;font-size:30px;line-height:1.1;color:var(--acento);font-weight:600}
 .emp .eh span{font-size:13px}.emp .eh i{display:block;font-style:normal;font-size:12px;color:var(--muted);margin-top:3px;line-height:1.4}
 .emp .kpis{margin-bottom:12px}.emp .fila{padding:6px 0;gap:10px}.emp .fila span:last-child{color:var(--ink);text-align:right}.emp .sup a{color:var(--acento)}
+#barra{height:var(--bar);align-self:start}
+#cinta{position:absolute;left:0;right:0;top:var(--bar);height:var(--cin);z-index:1700;background:#0f161d;border-top:1px solid rgba(255,255,255,.09);color:#dfe5ea;display:flex;align-items:center;overflow:hidden;font-size:12.5px;white-space:nowrap}
+#cinta .fijo{flex:none;height:100%;display:flex;align-items:center;padding:0 12px 0 14px;color:#8f9ba3;font-size:11px;letter-spacing:.08em;text-transform:uppercase;background:#0f161d;border-right:1px solid rgba(255,255,255,.12);position:relative;z-index:1}
+#cinta .pista{display:flex;animation:cinta 60s linear infinite;will-change:transform}#cinta:hover .pista{animation-play-state:paused}
+#cinta .it{padding:0 22px;cursor:pointer;display:inline-flex;gap:7px;align-items:baseline}#cinta .it b{font-weight:600;color:#fff}#cinta .it i{font-style:normal;font-weight:600}
+#cinta .it .up{color:#36d399}#cinta .it .dn{color:#ff8fa3}#cinta .it small{color:#8f9ba3;font-size:11px}
+@keyframes cinta{to{transform:translateX(-50%)}}
+@media(prefers-reduced-motion:reduce){#cinta .pista{animation:none}}
+.cots{display:grid;grid-template-columns:repeat(auto-fit,minmax(176px,1fr));gap:12px;margin-bottom:12px}
+.cot .cn{display:flex;justify-content:space-between;align-items:baseline;gap:6px}.cot .cn b{font-size:14px}.cot .cn span{font-family:"Cascadia Mono",Consolas,monospace;font-size:10px;color:var(--muted)}
+.cot .cp{font-size:24px;font-weight:600;line-height:1.2;margin-top:2px}.cot .cp small{font-size:11px;font-weight:400;color:var(--muted)}
+.cot .cv{display:flex;gap:4px 12px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:2px 0 6px}.cot .cv b{color:var(--ink);font-weight:600}.cot .cv .up{color:#0a7d55}.cot .cv .dn{color:#b3261e}
+.cot .cr{font-size:10px;color:var(--muted);margin-top:3px}
+.ia{border-left:5px solid var(--acento2)}.ia h3{font-size:15px}.ia p{font-size:13px;line-height:1.55;margin:0 0 6px}.ia .sup{font-size:11px;margin:6px 0 0}
+.iae{background:var(--bg);border-radius:6px;padding:9px 11px;margin:0 0 12px;border-left:4px solid var(--acento2)}.iae h4{margin:0 0 4px;font-size:12px;font-weight:600}
+.iae .t{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--acento2);font-weight:600;margin-bottom:5px}
+.iae ul{margin:0 0 7px;padding-left:16px}.iae li{font-size:12px;line-height:1.45;margin-bottom:2px}.iae p{font-size:12px;line-height:1.45;margin:0}
 </style>
 </head>
 <body class="v-mapa">
@@ -279,6 +296,7 @@ details.grp .nota{margin-top:0}#nov{margin-bottom:12px}
   <nav class="vistas"><button data-v="mapa" class="on">Mapa</button><button data-v="demanda">Demanda</button><button data-v="finanzas">Finanzas</button><button data-v="zonas">Zonas</button></nav>
   <nav class="bl"><a href="https://github.com/dpinero14/locaciones-lab#readme" target="_blank" rel="noopener" data-ev="como_se_hizo">Cómo se hizo</a><a href="https://www.linkedin.com/in/dpinero/" target="_blank" rel="noopener" data-ev="contacto">Contacto</a><a class="wa" href="https://whatsapp.com/channel/0029VbDhfzIB4hdKBOmHzr0u" target="_blank" rel="noopener" title="Sumate al canal de WhatsApp"><img src="img/whatsapp.png" alt=""><span>Canal de WhatsApp</span></a></nav>
 </header>
+<div id="cinta"><span class="fijo">Cotizaciones</span></div>
 <div id="panel">
   <div class="filtros">
     <input id="f_buscar" list="dl_areas" placeholder="Buscar un área o yacimiento..." autocomplete="off"><datalist id="dl_areas"></datalist>
@@ -334,7 +352,7 @@ details.grp .nota{margin-top:0}#nov{margin-bottom:12px}
 <div class="vista" id="v_finanzas"><div class="in">
   <div class="vh"><div><div class="vt">Finanzas</div><p class="vs">Cuánto producen y facturan los pozos que vienen, y cuánto rinde un pozo. Cambiá un supuesto y se recalcula todo.</p></div></div>
   <div class="precios"><div class="tt2">Tus supuestos</div>
-    <label>Brent<input type="number" id="p_bbl" value="60" step="1" min="0"><i>US$/bbl</i></label>
+    <label>Brent<input type="number" id="p_bbl" value="90" step="1" min="0"><i>US$/bbl</i></label>
     <label>Gas<input type="number" id="p_gas" value="3.5" step="0.1" min="0"><i>US$/MMBtu</i></label>
     <label>Costo del pozo<input type="number" id="p_capex" value="13.5" step="0.5" min="0"><i>MUS$</i></label>
     <label>Costo operativo<input type="number" id="p_opex" value="5" step="0.5" min="0"><i>US$/boe</i></label>
@@ -370,7 +388,10 @@ details.grp .nota{margin-top:0}#nov{margin-bottom:12px}
   <div class="carta" style="margin-top:12px"><div class="tablaG" id="eq_tabla"></div><p class="sup" id="eq_nota" style="margin:10px 0 0"></p></div>
   </div>
   <div id="emp_sec" style="display:none">
-  <div class="sec">Las empresas que cotizan<small>Lo que el satélite y el registro oficial muestran de cada una. Son hechos medidos sobre lo que opera en las zonas; no es una recomendación de compra ni de venta.</small></div>
+  <div class="sec">Las empresas que cotizan<small>Cómo vienen sus acciones y qué muestran de cada una el satélite y el registro oficial. Son hechos medidos y una opinión general; no es una recomendación de compra ni de venta.</small></div>
+  <div class="gt" style="margin-top:0">Cómo vienen las acciones y el Brent</div>
+  <div class="cots" id="cot_fila"></div>
+  <div class="carta ia" id="ia_carta" style="margin-bottom:12px"></div>
   <div class="g3" id="emp_cartas" style="margin-top:0"></div>
   <p class="sup" id="emp_nota" style="margin:10px 0 0"></p>
   </div>
@@ -590,12 +611,20 @@ function finanzas(){
   // --- las empresas que cotizan: hechos medidos por operadora
   {const S=document.getElementById("emp_sec"),EM=FIN.empresas;S.style.display=EM?"":"none";
    if(EM){const boe=(p,q)=>p*M3_BBL+q*MMBTU_M3/MMBTU_BOE,rt=retenc(),eqZ={};FZ.forEach(q=>eqZ[q.z]=q);const pct=v=>(v>=0?"+":"−")+nf(Math.abs(v)*100)+" %";
+    const LI=FIN.lectura_ia||null,fl=v=>`<b class="${v>=0?"up":"dn"}">${v>=0?"▲":"▼"} ${n1(Math.abs(v)*100)} %</b>`;
+    const spark=q=>{const mn=Math.min(...q),mx=Math.max(...q),W=200,H=44;return `<svg viewBox="0 0 ${W} ${H}"><polyline fill="none" stroke="#0b6b7a" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" points="${q.map((v,i)=>(i/(q.length-1)*W).toFixed(1)+","+(H-4-(v-mn)/((mx-mn)||1)*(H-8)).toFixed(1)).join(" ")}"/></svg>`;};
+    document.getElementById("cot_fila").innerHTML=COT&&COT.items?COT.items.map(x=>`<div class="carta cot"><div class="cn"><b>${x.nombre}</b><span>${x.tipo==="accion"?"NYSE: "+x.simbolo:"futuro"}</span></div><div class="cp">${precioC(x)} <small>${x.unidad} · ${fechaC(x.fecha).slice(0,5)}</small></div>
+      <div class="cv"><span>Día ${fl(x.var_dia)}</span><span>Mes ${fl(x.var_mes)}</span><span>Año ${fl(x.var_anio)}</span></div>${spark(x.serie)}<div class="cr">Un año: de ${n1(x.minimo_anio)} a ${n1(x.maximo_anio)} ${x.unidad}</div></div>`).join("")
+      :'<p class="sup" style="margin:0">Las cotizaciones no están disponibles en este momento.</p>';
+    const IC=document.getElementById("ia_carta");IC.style.display=LI?"":"none";
+    if(LI)IC.innerHTML=`<h3>La lectura de la IA</h3><p>${LI.general}</p>${LI.otras?`<p>${LI.otras}</p>`:""}<p class="sup">Escrita con inteligencia artificial el ${fechaC(LI.fecha)}, a partir de los datos de esta página; no se actualiza sola con cada cotización. Es una opinión general: no es asesoramiento ni una recomendación de compra o de venta. ${COT&&COT.fuente?"Cotizaciones: "+COT.fuente+".":""}</p>`;
+    const lia=k=>{const q=LI&&LI.empresas&&LI.empresas[k];return q?`<div class="iae"><div class="t">Lectura de la IA · ${fechaC(LI.fecha).slice(0,5)}</div><h4>A favor</h4><ul>${q.favor.map(v=>`<li>${v}</li>`).join("")}</ul><h4>En contra</h4><ul>${q.contra.map(v=>`<li>${v}</li>`).join("")}</ul><h4>Qué mirar</h4><p>${q.mirar}</p></div>`:"";};
     document.getElementById("emp_cartas").innerHTML=Object.entries(EM).map(([k,e])=>{const o=FIN.operadoras[k],hoy=boe(o.pet_m3d_hoy,o.gas_m3d_hoy),meses=e.pozos_12m?o.piso.pozos/e.pozos_12m*12:null;
       const zs=Object.entries(e.sin_pozo_por_zona).slice(0,3).map(([z,n])=>{const q=eqZ[z];return `<div class="fila"><span>${nomz(z)}</span><span>${n} ${n===1?"locación":"locaciones"}${q?` · equilibrio ${q.t==="gas"?n1(q.E.eqGas)+" US$/MMBtu":nf(q.E.eq)+" US$/bbl"}`:""}</span></div>`;}).join("");
       return `<div class="carta emp"><div class="en"><b>${e.nombre}</b><span>${e.ticker}</span></div>
         <div class="eh"><b>${meses==null?"—":n1(meses)+" meses"}</b><span>de pozos ya tiene construidos</span><i>${o.locaciones_sin_pozo} locaciones sin pozo vistas por el satélite, unos ${nf(o.piso.pozos)} pozos, contra su ritmo de ${e.pozos_12m} pozos por año</i></div>
         <div class="kpis">${K(nf(hoy/1000)+" mil",`boe por día opera hoy · ${pct(e.cambio_12m)} en 12 meses`)}${K(e.pozos_12m,`Pozos nuevos en 12 meses · ${e.pozos_12m_ant} el año anterior`)}${K(pct(e.declino_real_12m),"Lo que cayeron en un año sus pozos de hace un año")}${K("± "+nf(o.pet_m3d_hoy*M3_BBL*365*10*(1-rt)/1e6),"MUS$ por año por cada 10 US$ de Brent")}</div>
-        <h3>Producción de los pozos que hoy opera, mil boe/d</h3><svg id="emp_g_${k}"></svg><div class="lect" id="emp_g_${k}_l"></div>
+        ${lia(k)}<h3>Producción de los pozos que hoy opera, mil boe/d</h3><svg id="emp_g_${k}"></svg><div class="lect" id="emp_g_${k}_l"></div>
         <h3 style="margin-top:12px">Dónde están sus locaciones sin pozo</h3>${zs||'<p class="sup" style="margin:0">Ninguna a la vista.</p>'}
         <h3 style="margin-top:12px">Lo que informó: ${e.balance.periodo}</h3>${e.balance.datos.map(d=>`<div class="fila"><span>${d[0]}</span><span>${d[1]}</span></div>`).join("")}
         <p class="sup" style="margin-top:8px">${e.nota} Fuente del balance: <a href="${e.balance.url}" target="_blank" rel="noopener">${e.balance.fuente}</a>.</p></div>`;}).join("");
@@ -603,18 +632,36 @@ function finanzas(){
       base:`Hoy <b>${nf(v[v.length-1])} mil boe/d</b>, contando el 100 % de lo que opera en las zonas`,lect:i=>`${mesC(h[i].m)} · <b>${n1(v[i])}</b> mil boe/d`});});
     document.getElementById("emp_nota").innerHTML=`Cuenta el 100 % de lo que cada empresa opera dentro de las zonas del tablero: no reparte por participación ni mira lo que tiene afuera. Los meses ya construidos dependen de cuánto tarda el registro oficial en cargar los pozos, que no es igual para todas las empresas. No mira deuda, riesgo país, tipo de cambio ni el precio de la acción. No tienen acciones en bolsa: PAE, Tecpetrol, Pluspetrol y Phoenix. Shell y TotalEnergies cotizan, pero Vaca Muerta pesa poco en sus números. TGS transporta gas y no opera pozos: el tablero todavía no la mide.`;}}
   // --- escenarios de precio: referencias con fecha y fuente (prep/escenarios.py), no pronósticos propios
-  {const EC=FIN.escenarios||{},ES=EC.lista||[],rt=retenc(),eqz=FZ.filter(q=>q.t==="pet").map(q=>q.E.eq),bbl=document.getElementById("p_bbl");
+  {const EC=FIN.escenarios||{},bh=brentHoy(),cb=cotDe("brent"),ES=(EC.lista||[]).map(e=>e.id==="hoy"&&bh?{...e,brent:bh,fuente:cb?`Último dato del Brent: ${precioC(cb)} US$ el ${fechaC(cb.fecha)}.`:e.fuente}:e),rt=retenc(),eqz=FZ.filter(q=>q.t==="pet").map(q=>q.E.eq),bbl=document.getElementById("p_bbl");
    document.getElementById("escs").innerHTML=ES.length?`<span>Escenarios de precio</span>`+ES.map(e=>`<button data-b="${e.brent}" class="${e.brent===pb?"on":""}" data-tip="${e.fuente}">${e.nombre} · ${e.brent}</button>`).join(""):"";
    document.getElementById("esc_tabla").innerHTML=`<table><tr><th>Escenario</th><th>Brent, US$/bbl</th><th>Queda tras retenciones</th><th>VAN del pozo, MUS$</th><th>Repago del pozo</th><th>Facturación 2027 de los pozos que vienen, MUS$</th><th>Regalías, MUS$</th><th>Zonas de petróleo que se pagan</th></tr>`+
      ES.map(e=>{const X=pozoTipo(e.brent,pg,capex,opex,tasa),T=finTot("piso",e.brent,pg,capex).T;return `<tr data-b="${e.brent}" class="${e.brent===pb?"act":""}" data-tip="${e.fuente}"><td>${e.nombre}</td><td>${e.brent}</td><td>${n1(e.brent*(1-rt))}</td><td>${n1(X.van)}</td><td>${X.rep<0?"No repaga":X.rep+" meses"}</td><td>${nf(T.fact)}</td><td>${nf(T.reg)}</td><td>${eqz.filter(v=>v<=e.brent).length} de ${eqz.length}</td></tr>`;}).join("")+`</table>`;
-   const fe=EC.fecha?EC.fecha.slice(8,10)+"/"+EC.fecha.slice(5,7)+"/"+EC.fecha.slice(0,4):"";
+   const fe=cb?fechaC(cb.fecha):EC.fecha?fechaC(EC.fecha):"";
    document.getElementById("esc_nota").innerHTML=`Son referencias para probar, con su fuente al pasar el mouse; no son pronósticos nuestros. Precio de hoy al ${fe}. El crudo de Vaca Muerta paga ${EC.retenciones_pct||8} % de retenciones sobre el precio de exportación, y el tablero supone que todo el crudo se vende a ese precio neto. El gas queda en el precio que elegiste: el conflicto también mueve el gas natural licuado, pero el gas de Vaca Muerta se vende sobre todo en el mercado interno.`;
-   const aplicar=e=>{const t=e.target.closest("[data-b]");if(t){bbl.value=t.dataset.b;finanzas();}};document.getElementById("escs").onclick=aplicar;document.getElementById("esc_tabla").onclick=aplicar;}
+   const aplicar=e=>{const t=e.target.closest("[data-b]");if(t){brentTocado=true;bbl.value=t.dataset.b;finanzas();}};document.getElementById("escs").onclick=aplicar;document.getElementById("esc_tabla").onclick=aplicar;}
   const c=FIN.curva_pet_m3d;
   document.getElementById("fin_sup").innerHTML=`<b>Los pozos que vienen.</b> Cada locación vista se atribuye a la operadora del pozo más cercano a menos de 2 km. Pozos que vienen: ${FIN.supuestos.pozos_por_locacion} por locación. Cada pozo produce según la curva tipo de las ventanas (${FIN.n_curva} pozos con primera producción 2023-2025): ${nf(c[0]*M3_BBL)} bbl/d el primer mes, pico de ${nf(Math.max(...c)*M3_BBL)} en el mes ${c.indexOf(Math.max(...c))+1}, ${nf(c[12]*M3_BBL)} al año. Arranca ${FIN.supuestos.meses_a_produccion} meses después de verse la locación. Facturación a boca de pozo con el precio elegido; regalías ${REGALIA*100} %. Solo cuentan las locaciones vistas sin pozo en los últimos ${FIN.supuestos.validez_meses} meses (las más viejas: padrón incompleto o falso positivo). Las atrasadas, que ya deberían producir, se reparten en los 12 meses desde ${FIN.meses[0]}; por el atraso del padrón algunas pueden estar ya fracturadas. Producción actual: Capítulo IV, ${FIN.ultimo_mes_produccion}.<br><br><b>La economía de un pozo.</b> El pozo tipo es la mediana mensual de petróleo y de gas de esos ${FIN.n_curva} pozos, extendida a ${ANIOS_POZO} años con un declino que se suaviza hasta 0,8 % mensual. Flujo de cada mes: (petróleo × Brent + gas × su precio) × (1 − regalías ${REGALIA*100} %) − costo operativo por barril equivalente. La inversión entra entera en el mes 0. El petróleo se valúa al Brent menos las retenciones que pongas arriba. Es antes del impuesto a las ganancias y no descuenta ingresos brutos ni la diferencia de calidad y de transporte contra el Brent: el número real es más ajustado. Como referencia, Aleph Energy (2025) estimó un equilibrio de 45 US$/bbl con TIR de 15 % para un pozo de 14 MUS$ con costo operativo de 5 US$/bbl.`;
 }
 ["p_bbl","p_gas","p_capex","p_opex","p_tasa","p_ret"].forEach(id=>document.getElementById(id).addEventListener("input",finanzas));
-fetch("data/finanzas.json").then(r=>r.json()).then(j=>{FIN=j;finanzas();});
+let COT=null,brentTocado=false;
+const cotDe=id=>COT&&COT.items?COT.items.find(x=>x.id===id):null;
+const fechaC=f=>f.slice(8,10)+"/"+f.slice(5,7)+"/"+f.slice(0,4);
+const pctS=v=>v==null?"—":(v>=0?"+":"−")+n1(Math.abs(v)*100)+" %";
+const precioC=x=>x.ultimo.toLocaleString("es-AR",{minimumFractionDigits:2,maximumFractionDigits:2});
+// el Brent de hoy: el último dato de la cinta; si no llegó, el del escenario "hoy" que quedó escrito
+const brentHoy=()=>{const b=cotDe("brent");if(b)return Math.round(b.ultimo);const h=FIN&&FIN.escenarios&&(FIN.escenarios.lista||[]).find(e=>e.id==="hoy");return h?h.brent:null;};
+function ponerBrentHoy(){if(brentTocado)return;const b=brentHoy();if(b)document.getElementById("p_bbl").value=b;}
+document.getElementById("p_bbl").addEventListener("input",()=>{brentTocado=true;});
+function cinta(){const C=document.getElementById("cinta");if(!COT||!COT.items||!COT.items.length)return;const f=COT.items.map(x=>x.fecha).sort().pop();
+  const una=COT.items.map(x=>`<span class="it" data-tip="<b>${x.nombre}</b>: ${precioC(x)} ${x.unidad} el ${fechaC(x.fecha)}<br>En el día ${pctS(x.var_dia)} · en un mes ${pctS(x.var_mes)} · en un año ${pctS(x.var_anio)}<br>Tocá para ver el detalle"><b>${x.nombre}</b>${precioC(x)}<i class="${x.var_dia>=0?"up":"dn"}">${x.var_dia>=0?"▲":"▼"} ${n1(Math.abs(x.var_dia)*100)} %</i><small>mes ${pctS(x.var_mes)}</small></span>`).join("");
+  C.innerHTML=`<span class="fijo" title="${COT.fuente||""}">Último dato · ${fechaC(f).slice(0,5)}</span><div class="pista">${una.repeat(6)}</div>`;
+  C.onclick=e=>{if(!e.target.closest(".it"))return;ver("finanzas");setTimeout(()=>{const s=document.getElementById("emp_sec");if(s)s.scrollIntoView({behavior:"smooth",block:"start"});},80);};}
+{const local="data/cotizaciones.json",repo="https://raw.githubusercontent.com/dpinero14/locaciones-lab/main/docs/tablero/data/cotizaciones.json";
+ const traer=u=>fetch(u,{cache:"no-store"}).then(r=>{if(!r.ok)throw new Error(r.status);return r.json();});
+ // en la página pública se lee del repo, que una tarea diaria mantiene al día; si no responde, la copia de la página
+ (location.hostname.endsWith("github.io")?traer(repo).catch(()=>traer(local)):traer(local)).then(j=>{COT=j;cinta();ponerBrentHoy();finanzas();})
+   .catch(()=>{document.getElementById("cinta").innerHTML='<span class="fijo">Cotizaciones no disponibles</span>';});}
+fetch("data/finanzas.json").then(r=>r.json()).then(j=>{FIN=j;ponerBrentHoy();finanzas();});
 function elegirAnio(a){anioSel=a;tablero();if(typeof meses!=="undefined"&&meses.length){const obj=a==="2027"?meses[meses.length-1]:(a+"-12"<=meses[meses.length-1]?a+"-12":meses[meses.length-1]);idx=Math.max(0,meses.indexOf(obj));document.getElementById("slider").value=idx;dibujar();}}
 fetch("data/demanda.json").then(r=>r.json()).then(j=>{DEM=j;const sel=document.getElementById("ambito");
   sel.innerHTML=`<option value="__ventanas__">${j.zonas.__ventanas__.nombre}</option>`+Object.keys(j.zonas).filter(z=>z!=="__ventanas__").map(z=>`<option value="${z}">${j.zonas[z].nombre}</option>`).join("")+`<option value="__cuenca__">${j.cuenca.nombre}</option>`;

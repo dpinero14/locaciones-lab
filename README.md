@@ -260,12 +260,16 @@ El detector corrido sobre quince ventanas de la cuenca (`scripts/detectar.py`), 
 cada locación aparece cuando el satélite la ve y el pozo del padrón cuando llega. Suma los gasoductos
 troncales y las plantas compresoras de ENARGAS, la ruta de la arena de
 [arena-lab](https://github.com/dpinero14/arena-lab), un mapa de calor de producción contra exploración y
-dos pestañas:
+tres secciones además del mapa:
 
 - **Demanda:** pozos fracturados, etapas, arena, agua, camiones y equipos por año desde 2019, del
   Adjunto IV de fracturas, con la proyección de 2027 a partir de las locaciones que ya se ven.
 - **Finanzas:** la producción nueva por operadora con la curva tipo de la cuenca, y la facturación y las
-  regalías al precio que elija quien lo mira.
+  regalías al precio que elija quien lo mira. Suma la economía de un pozo tipo (VAN, TIR, repago y precio de
+  equilibrio), el precio de equilibrio zona por zona, escenarios de precio del petróleo con las retenciones al
+  crudo, y lo que se ve de las empresas que cotizan y operan en las ventanas (YPF, Vista y Pampa): hechos
+  medidos sobre lo que cada una opera, no recomendaciones de inversión.
+- **Zonas:** una tarjeta por ventana, con sus locaciones nuevas por año y su ficha.
 
 También muestra los equipos de perforación que ve el radar, con la fecha en que llegaron y en que se fueron y
 los que siguen trabajando en la última pasada; las antorchas, que se prenden y se apagan con la línea de tiempo, las quemas temporales
@@ -303,6 +307,11 @@ no se dibujan.
   pierde equipos. La regla se probó en dos ventanas de la misma zona norte; en las otras doce solo hay radar
   desde agosto de 2025 y se revisaron a ojo los activos de hoy, con algunos dudosos (obras, instalaciones
   nuevas). El contraste óptico que reconoce una locación nueva se eligió mirando esos mismos casos.
+- **La economía del pozo es una cuenta gruesa.** Es antes del impuesto a las ganancias y supone el mismo
+  costo de pozo y de operación en todas las zonas, así que el precio de equilibrio real es más alto y no es
+  igual en todas. Los escenarios de precio son referencias con su fuente, no pronósticos. Las empresas se
+  miden por lo que operan al 100 % dentro de las ventanas, no por su participación; probé proyectar su
+  producción de 2027 y lo saqué, porque mirando un año atrás el método erraba demasiado.
 - **La operadora de una antorcha no se publica.** Se podría atribuir por el pozo más cercano, pero la
   dueña de la instalación puede ser otra.
 

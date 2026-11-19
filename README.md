@@ -267,7 +267,7 @@ tres secciones además del mapa:
 - **Finanzas:** la producción nueva por operadora con la curva tipo de la cuenca, y la facturación y las
   regalías al precio que elija quien lo mira. Suma la economía de un pozo tipo (VAN, TIR, repago y precio de
   equilibrio), el precio de equilibrio zona por zona, escenarios de precio del petróleo con las retenciones al
-  crudo, y lo que se ve de las empresas que cotizan y operan en las ventanas (YPF, Vista y Pampa): hechos
+  crudo y el costo de transporte y evacuación como supuestos, y lo que se ve de las empresas que cotizan y operan en las ventanas (YPF, Vista y Pampa): hechos
   medidos sobre lo que cada una opera, no recomendaciones de inversión.
 - **Zonas:** una tarjeta por ventana, con sus locaciones nuevas por año y su ficha.
 

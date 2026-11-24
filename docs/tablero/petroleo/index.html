@@ -726,7 +726,7 @@ function cinta(){const C=document.getElementById("cinta");if(!COT||!COT.items||!
   const una=COT.items.map(x=>`<span class="it" data-tip="<b>${x.nombre}</b>: ${precioC(x)} ${x.unidad} el ${fechaC(x.fecha)}<br>En el día ${pctS(x.var_dia)} · en un mes ${pctS(x.var_mes)} · en un año ${pctS(x.var_anio)}<br>Tocá para ver el detalle"><b>${x.nombre}</b>${precioC(x)}<i class="${x.var_dia>=0?"up":"dn"}">${x.var_dia>=0?"▲":"▼"} ${n1(Math.abs(x.var_dia)*100)} %</i><small>mes ${pctS(x.var_mes)}</small></span>`).join("");
   C.innerHTML=`<span class="fijo" title="${COT.fuente||""}">Último dato · ${fechaC(f).slice(0,5)}</span><div class="pista">${una.repeat(6)}</div>`;
   C.onclick=e=>{if(!e.target.closest(".it"))return;ver("finanzas");setTimeout(()=>{const s=document.getElementById("emp_sec");if(s)s.scrollIntoView({behavior:"smooth",block:"start"});},80);};}
-{const local="data/cotizaciones.json",repo="https://raw.githubusercontent.com/dpinero14/locaciones-lab/main/docs/tablero/data/cotizaciones.json";
+{const local="data/cotizaciones.json",repo="https://raw.githubusercontent.com/dpinero14/locaciones-lab/main/docs/tablero/petroleo/data/cotizaciones.json";
  const traer=u=>fetch(u,{cache:"no-store"}).then(r=>{if(!r.ok)throw new Error(r.status);return r.json();});
  // en la página pública se lee del repo, que una tarea diaria mantiene al día; si no responde, la copia de la página
  (location.hostname.endsWith("github.io")?traer(repo).catch(()=>traer(local)):traer(local)).then(j=>{COT=j;cinta();ponerBrentHoy();finanzas();})

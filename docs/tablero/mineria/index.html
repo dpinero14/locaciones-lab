@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Litio desde el satélite</title>
+<meta name="description" content="Las piletas de litio de la Argentina medidas desde el satélite, mes a mes, y el mapa de la cartera minera oficial.">
+<meta name="theme-color" content="#0c1116">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline' https://unpkg.com; img-src 'self' data: https://server.arcgisonline.com https://unpkg.com; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+<style>
+:root{--bg:#ece6d8;--panel:#f9f6ee;--ink:#17212b;--muted:#5d6974;--rule:#d6cdb9;--acento:#0b6b7a;--acento2:#7b2cbf;--rosa:#d02e7f;--agua:#19d3ff;--bar:50px;--cin:30px;--sube:#0a7d55;--baja:#b3261e}
+*{box-sizing:border-box}html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:"Segoe UI",system-ui,sans-serif;font-size:14px;display:flex;flex-direction:column}
+.mono{font-family:"Cascadia Mono",Consolas,monospace}
+button{font-family:inherit;cursor:pointer}
+a{color:var(--acento)}
+
+/* Barra y cinta */
+#barra{flex:none;height:var(--bar);display:flex;align-items:center;gap:14px;padding:0 14px;background:var(--ink);color:#f9f6ee;min-width:0;z-index:1700}
+#barra h1{font-size:16px;margin:0;white-space:nowrap;font-weight:600}
+#barra .tag{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;background:rgba(255,255,255,.16);padding:2px 7px;border-radius:10px;margin-left:6px;vertical-align:2px}
+#barra .vistas{display:flex;gap:2px;margin-left:10px}
+#barra .vistas button{background:transparent;color:#c9d1d7;border:0;border-radius:6px;padding:7px 15px;font-weight:500;font-size:14px}
+#barra .vistas button:hover{color:#fff;background:rgba(255,255,255,.08)}#barra .vistas button.on{background:#f9f6ee;color:#17212b;font-weight:600}
+#barra .bl{display:flex;align-items:center;gap:16px;margin-left:auto;white-space:nowrap}
+.wa{display:inline-flex;align-items:center;gap:8px;background:#25d366;color:#07261a;font-weight:600;font-size:12px;padding:6px 11px;border-radius:6px;text-decoration:none}.wa:hover{background:#4ae08a}.wa img{width:15px;height:15px}
+#cinta{flex:none;height:var(--cin);background:#0f161d;border-top:1px solid rgba(255,255,255,.09);color:#dfe5ea;display:flex;align-items:center;overflow:hidden;font-size:12.5px;white-space:nowrap;z-index:1600}
+#cinta .fijo{flex:none;height:100%;display:flex;align-items:center;padding:0 12px 0 14px;color:#8f9ba3;font-size:11px;letter-spacing:.08em;text-transform:uppercase;background:#0f161d;border-right:1px solid rgba(255,255,255,.12);position:relative;z-index:1}
+#cinta .pista{display:flex;animation:cinta 80s linear infinite;will-change:transform}#cinta:hover .pista{animation-play-state:paused}
+#cinta .it{padding:0 22px;cursor:pointer;display:inline-flex;gap:7px;align-items:baseline}#cinta .it b{font-weight:600;color:#fff}#cinta .it i{font-style:normal;font-weight:600}
+#cinta .up{color:#36d399}#cinta .dn{color:#ff8fa3}#cinta small{color:#8f9ba3;font-size:11px}
+@keyframes cinta{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media(prefers-reduced-motion:reduce){#cinta .pista{animation:none}}
+
+/* Vistas */
+main{flex:1;min-height:0;position:relative}
+.vista{display:none;height:100%;overflow-y:auto}
+body.v-indice #v_indice,body.v-proyectos #v_proyectos,body.v-finanzas #v_finanzas{display:block}body.v-mapa #v_mapa{display:grid}
+.ancho{max-width:1180px;margin:0 auto;padding:22px 20px 40px}
+.card{background:var(--panel);border:1px solid var(--rule);border-radius:8px;padding:16px 18px;margin-bottom:16px}
+.card>h3{margin:0 0 2px;font-size:15px}.card>.sup{margin:0 0 10px;color:var(--muted);font-size:12px}
+h2.rot{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--acento);margin:0 0 8px;font-weight:600}
+.pill{display:inline-block;font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;background:var(--ink);color:#f9f6ee;white-space:nowrap}
+.pill.c{background:var(--acento2)}.pill.o{background:var(--rule);color:var(--ink)}
+.up{color:var(--sube)}.dn{color:var(--baja)}
+.nota{font-size:12px;line-height:1.55;color:var(--muted)}.nota b{color:var(--ink)}
+
+/* Índice */
+.portada{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:18px;align-items:stretch;margin-bottom:16px}
+.cifra{background:var(--ink);color:#f9f6ee;border-radius:10px;padding:22px 24px;display:flex;flex-direction:column;justify-content:center}
+.cifra .eb{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--agua);font-weight:600}
+.cifra .n{display:flex;align-items:baseline;gap:10px;margin:6px 0 2px}.cifra .n b{font-size:clamp(64px,9vw,104px);line-height:.95;font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums}.cifra .n span{font-size:28px;font-weight:600;color:#c9d1d7}
+.cifra h2{font-size:clamp(18px,2.2vw,23px);margin:0 0 6px;font-weight:600;line-height:1.25}.cifra p{margin:0;color:#b8c3ca;font-size:14px;line-height:1.5}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.kpi{background:var(--panel);border:1px solid var(--rule);border-left:5px solid var(--acento);border-radius:6px;padding:12px 14px;display:flex;flex-direction:column;justify-content:center}
+.kpi b{font-size:28px;line-height:1.1;color:var(--acento);font-variant-numeric:tabular-nums}.kpi span{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.35}
+.kpi.v{border-left-color:var(--acento2)}.kpi.v b{color:var(--acento2)}
+.graf{position:relative}.graf svg{display:block;width:100%;height:auto;overflow:visible}
+.graf text{font-size:11px;fill:var(--muted);font-family:"Cascadia Mono",Consolas,monospace}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:#f9f6ee;border-radius:6px;padding:8px 10px;font-size:12px;line-height:1.45;box-shadow:0 4px 16px rgba(0,0,0,.3);z-index:5;white-space:nowrap;display:none}
+.tip b{font-size:14px}.tip .f{display:flex;justify-content:space-between;gap:14px;color:#c9d1d7}.tip .f span:last-child{color:#fff;font-variant-numeric:tabular-nums}.tip .t{color:#8f9ba3;font-size:11px;text-transform:uppercase;letter-spacing:.08em}
+table.rk{width:100%;border-collapse:collapse}
+table.rk th{font-size:11px;font-weight:600;color:var(--muted);text-align:left;padding:6px 10px;border-bottom:1px solid var(--rule);white-space:nowrap}
+table.rk td{padding:9px 10px;border-bottom:1px solid var(--rule);vertical-align:middle}
+table.rk tr:last-child td{border-bottom:0}table.rk tbody tr{cursor:pointer}table.rk tbody tr:hover{background:var(--bg)}
+table.rk .num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+table.rk .nom b{display:block;font-size:14px}table.rk .nom span{font-size:12px;color:var(--muted)}
+.barra-h{display:flex;align-items:center;gap:8px;min-width:150px}.barra-h i{display:block;height:8px;border-radius:0 4px 4px 0;background:var(--acento)}.barra-h b{font-variant-numeric:tabular-nums;min-width:38px;text-align:right}
+.ir{color:var(--acento);font-weight:700}
+.aviso{background:var(--bg);border-left:4px solid var(--acento2);border-radius:6px;padding:10px 12px;margin:0 0 14px;font-size:13px;line-height:1.5}
+.fuera{display:inline-block;font-size:10px;font-weight:600;color:var(--muted);border:1px solid var(--rule);border-radius:10px;padding:1px 7px;margin-left:6px;vertical-align:1px;white-space:nowrap}
+
+/* Proyectos */
+.proy{display:grid;grid-template-columns:230px minmax(0,1fr);gap:18px;align-items:start}
+#pl{display:flex;flex-direction:column;gap:4px;position:sticky;top:0}
+#pl button{display:flex;justify-content:space-between;align-items:baseline;gap:8px;text-align:left;background:transparent;border:1px solid transparent;border-radius:6px;padding:8px 10px;color:var(--ink);font-size:14px}
+#pl button span{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}#pl button:hover{background:var(--panel)}
+#pl button.on{background:var(--panel);border-color:var(--rule);border-left:4px solid var(--acento);font-weight:600}
+#pl_sel{display:none;width:100%;padding:9px 10px;border:1px solid var(--rule);border-radius:6px;background:var(--panel);color:var(--ink);font-family:inherit;font-size:15px;margin-bottom:12px}
+.fh{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:2px}.fh h2{font-size:26px;margin:0;letter-spacing:-.01em}
+.fs{color:var(--muted);margin:0 0 14px}
+.fk{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:16px}
+.g2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start}
+.sat{position:relative;background:#0c1116;border-radius:6px;overflow:hidden;width:100%;aspect-ratio:4/5;max-height:min(600px,72vh)}
+.sat img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}.sat img.m{pointer-events:none}
+.sat .et{position:absolute;left:10px;top:10px;background:rgba(12,17,22,.85);color:#f9f6ee;padding:4px 9px;border-radius:4px;font-size:13px;font-weight:600}
+.sat .et small{font-weight:400;color:#b8c3ca;margin-left:6px}
+.ctl{display:flex;align-items:center;gap:10px;margin-top:10px}.ctl input[type=range]{flex:1;accent-color:var(--acento);min-width:0}
+.ctl button{background:var(--acento);color:#fff;border:0;border-radius:5px;padding:6px 12px;font-weight:600;white-space:nowrap}
+.ctl .a{font-size:15px;min-width:44px;text-align:right;font-weight:600}
+.chk{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);margin-top:8px;cursor:pointer}.chk input{accent-color:var(--acento)}
+.due{display:grid;gap:7px}.due .d{display:grid;grid-template-columns:minmax(0,1fr) 120px 52px;gap:10px;align-items:center;font-size:13px}
+.due .d span small{color:var(--muted);display:block;font-size:11px}.due .d i{display:block;height:8px;background:var(--rule);border-radius:4px;overflow:hidden}.due .d i u{display:block;height:100%;background:var(--acento2);border-radius:4px}
+.due .d b{text-align:right;font-variant-numeric:tabular-nums}
+ul.lee{margin:0;padding-left:18px;line-height:1.6}
+
+/* Mapa */
+#v_mapa{grid-template-columns:300px minmax(0,1fr);height:100%;overflow:hidden}
+#mp{background:var(--bg);border-right:1px solid var(--rule);overflow-y:auto;padding:16px 16px 24px}
+#map{height:100%;background:#2b2a26}
+.capa{display:flex;align-items:center;gap:8px;padding:4px 0;cursor:pointer}.capa input{accent-color:var(--acento)}
+.dot{width:11px;height:11px;border-radius:50%;display:inline-block;flex:none;border:1px solid #0c1116}
+.capa .c{margin-left:auto;color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}
+#mp h2{margin-top:18px}#mp h2:first-child{margin-top:0}
+#mp input[type=search]{width:100%;padding:7px 9px;border:1px solid var(--rule);border-radius:5px;background:var(--panel);color:var(--ink);font-family:inherit;font-size:13px}
+.pais{display:grid;grid-template-columns:104px minmax(0,1fr) 26px;gap:8px;align-items:center;font-size:12px;padding:2px 0}.pais i{display:block;height:8px;background:var(--acento);border-radius:0 4px 4px 0}.pais b{text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
+.leaflet-popup-content-wrapper{background:var(--panel);color:var(--ink);border-radius:4px;border-left:4px solid var(--acento);font-family:"Segoe UI",sans-serif;font-size:13px}
+.leaflet-popup-tip{background:var(--panel)}.leaflet-container{font-family:inherit}
+.pop h4{margin:0 0 3px;font-size:15px}.pop .l{color:var(--muted);font-size:12px;margin-bottom:6px}.pop .dd{font-size:12px;line-height:1.5}
+.pop .pp{margin-top:8px;padding-top:8px;border-top:1px solid var(--rule)}.pop .pp b{color:var(--acento);font-size:18px}
+.pop button{background:var(--acento);color:#fff;border:0;border-radius:5px;padding:5px 10px;font-weight:600;font-size:12px;margin:6px 6px 0 0}
+.leaflet-tooltip.tt{background:#17212b;color:#f9f6ee;border:0;font-size:12px;padding:3px 7px}.leaflet-tooltip.tt::before{display:none}
+
+/* Finanzas */
+.cots{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;margin-bottom:6px}
+.cot{background:var(--panel);border:1px solid var(--rule);border-radius:8px;padding:12px 14px}
+.cot .cn{display:flex;justify-content:space-between;align-items:baseline;gap:6px}.cot .cn b{font-size:14px}.cot .cn span{font-family:"Cascadia Mono",Consolas,monospace;font-size:10px;color:var(--muted)}
+.cot .cp{font-size:24px;font-weight:600;line-height:1.2;margin-top:2px;font-variant-numeric:tabular-nums}.cot .cp small{font-size:11px;font-weight:400;color:var(--muted)}
+.cot .cv{display:flex;gap:4px 12px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:2px 0 6px}.cot .cv b{font-weight:600}
+.cot svg{display:block;width:100%;height:38px}.cot .cr{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.45}.cot .cr a{font-weight:600;text-decoration:none;cursor:pointer}
+
+@media(max-width:1000px){.portada,.g2{grid-template-columns:1fr}.fk{grid-template-columns:1fr 1fr}}
+@media(max-width:820px){
+  :root{--bar:92px}
+  #barra{flex-wrap:wrap;align-content:center;gap:6px 8px;padding:6px 10px}#barra h1{font-size:15px;flex:1;overflow:hidden;text-overflow:ellipsis}
+  #barra .vistas{order:5;flex:1 1 100%;margin:0}#barra .vistas button{flex:1;padding:7px 4px}.wa span{display:none}.wa{padding:7px}
+  .ancho{padding:14px 16px 32px}.kpi b{font-size:22px}
+  .proy{grid-template-columns:1fr}#pl{display:none}#pl_sel{display:block}
+  table.rk .ocu{display:none}.barra-h{min-width:90px}
+  #v_mapa{grid-template-columns:1fr;grid-template-rows:auto minmax(320px,1fr);overflow-y:auto}#mp{border-right:0;border-bottom:1px solid var(--rule);max-height:40vh}#map{min-height:60vh}
+}
+</style>
+<style>
+#barra .sect{display:flex;align-items:center;gap:2px;flex:none}
+#barra .sect a{display:inline-flex;align-items:center;color:#c9d1d7;text-decoration:none;font-size:11.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;padding:5px 11px;border-radius:14px;white-space:nowrap}
+#barra .sect a:hover{color:#fff;background:rgba(255,255,255,.1)}
+#barra .sect a.on{background:#0b6b7a;color:#fff}
+#barra .sect a.ini{padding:5px 7px}#barra .sect a.ini svg{width:16px;height:16px;display:block}
+#barra .sect+h1{padding-left:14px;border-left:1px solid rgba(255,255,255,.2)}
+@media(max-width:1240px) and (min-width:821px){#barra .sect+h1 .tag{display:none}}
+@media(max-width:1090px) and (min-width:821px){#barra .sect+h1{display:none}}
+
+@media(max-width:820px){
+  :root{--bar:130px}
+  #barra .sect{order:-1;flex:1 1 100%}
+  #barra .sect a{flex:1;justify-content:center;padding:6px 4px}#barra .sect a.ini{flex:none;padding:6px 9px}
+  #barra .sect+h1{padding-left:0;border-left:0}
+}
+</style>
+</head>
+<body class="v-indice">
+<header id="barra">
+  <nav class="sect" aria-label="Sectores"><a class="ini" href="../" title="Portada" aria-label="Portada"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 7.6 8 2.4l6 5.2V14H9.9v-3.9H6.1V14H2z" fill="currentColor"/></svg></a><a href="../petroleo/">Petróleo</a><a href="../gas/">Gas</a><a href="../mineria/" class="on">Minería</a></nav>
+  <h1>Litio desde el satélite</h1>
+  <nav class="vistas"><button data-v="indice" class="on">Índice</button><button data-v="proyectos">Proyectos</button><button data-v="mapa">Mapa</button><button data-v="finanzas">Finanzas</button></nav>
+  <nav class="bl"><a class="wa" href="https://whatsapp.com/channel/0029VbDhfzIB4hdKBOmHzr0u" target="_blank" rel="noopener" title="Sumate al canal de WhatsApp"><img src="img/whatsapp.png" alt=""><span>Canal de WhatsApp</span></a></nav>
+</header>
+<div id="cinta"><span class="fijo">Cotizaciones</span></div>
+<main>
+
+<section class="vista" id="v_indice"><div class="ancho">
+  <div class="portada">
+    <div class="cifra">
+      <div class="eb" id="ix_eb">Índice de piletas</div>
+      <div class="n"><b id="ix_num">·</b><span>km²</span></div>
+      <h2>De piletas con salmuera en los salares argentinos</h2>
+      <p id="ix_sub"></p>
+    </div>
+    <div class="kpis" id="ix_kpis"></div>
+  </div>
+  <div class="card">
+    <h3>Superficie de piletas con salmuera, mes a mes</h3>
+    <p class="sup" id="ix_gsup"></p>
+    <div class="graf" id="ix_graf"></div>
+  </div>
+  <div class="card" id="ix_pc" style="display:none">
+    <h3>Carbonato de litio producido en el país</h3>
+    <p class="sup" id="ix_psup"></p>
+    <div class="graf" id="ix_prod"></div>
+    <p class="nota" id="ix_pnota" style="margin:10px 0 0"></p>
+  </div>
+  <div class="card">
+    <h3>Proyecto por proyecto</h3>
+    <p class="sup">Tocá una fila para abrir la ficha con la imagen del satélite. Cada curva va en su propia escala.</p>
+    <div style="overflow-x:auto"><table class="rk"><thead><tr><th>Proyecto</th><th class="ocu">Provincia</th><th class="ocu">Estado</th><th>Piletas hoy, en km²</th><th class="num">En 12 meses</th><th class="ocu" id="rk_desde">Evolución</th><th></th></tr></thead><tbody id="rk"></tbody></table></div>
+  </div>
+  <div class="card nota" id="ix_nota"></div>
+</div></section>
+
+<section class="vista" id="v_proyectos"><div class="ancho">
+  <select id="pl_sel" aria-label="Proyecto"></select>
+  <div class="proy">
+    <aside id="pl"></aside>
+    <div id="pf"></div>
+  </div>
+</div></section>
+
+<section class="vista" id="v_mapa">
+  <aside id="mp">
+    <h2 class="rot">La cartera minera oficial</h2>
+    <div class="kpis" style="margin-bottom:12px"><div class="kpi"><b id="mp_n">·</b><span>Proyectos a la vista</span></div><div class="kpi v"><b id="mp_p">·</b><span>En producción</span></div></div>
+    <input type="search" id="mp_q" placeholder="Buscar proyecto o empresa" aria-label="Buscar proyecto o empresa">
+    <h2 class="rot">Mineral principal</h2><div id="mp_min"></div>
+    <h2 class="rot">Etapa</h2><div id="mp_eta"></div>
+    <h2 class="rot">De dónde es el capital</h2><div id="mp_pais"></div>
+    <p class="nota" style="margin-top:14px">País del primer controlante de cada proyecto a la vista. Las coordenadas de la cartera son aproximadas. En celeste, las piletas de litio medidas desde el satélite.<br><b>Fuente:</b> Secretaría de Minería, cartera de proyectos metalíferos y de litio.</p>
+  </aside>
+  <div id="map"></div>
+</section>
+
+<section class="vista" id="v_finanzas"><div class="ancho">
+  <h2 class="rot">Los metales</h2>
+  <div class="cots" id="fz_met"></div>
+  <p class="nota" style="margin:0 0 18px">El carbonato de litio no tiene una cotización abierta de bolsa con historia. Como referencia del sector va un fondo cotizado de empresas de litio y baterías.</p>
+  <h2 class="rot">Las dueñas que cotizan</h2>
+  <div class="cots" id="fz_acc"></div>
+  <p class="nota" style="margin:0 0 18px">Cada acción va en la moneda de su plaza principal. Rio Tinto, POSCO y Zijin son grupos diversificados: el litio argentino es una parte chica de su negocio.</p>
+  <div class="card">
+    <h3>Las piletas y la acción de quien las controla</h3>
+    <p class="sup">Lo que creció cada campo de piletas en 12 meses, al lado de lo que hizo la acción de su controlante.</p>
+    <div style="overflow-x:auto"><table class="rk"><thead><tr><th>Proyecto</th><th class="num">Piletas hoy</th><th class="num">Piletas en 12 meses</th><th>Controlante que cotiza</th><th class="num">Acción en el mes</th><th class="num">Acción en el año</th></tr></thead><tbody id="fz_tab"></tbody></table></div>
+  </div>
+  <p class="nota" id="fz_pie"></p>
+</div></section>
+
+</main>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const nf=(v,d=1)=>v==null||isNaN(v)?"·":v.toLocaleString("es-AR",{minimumFractionDigits:d,maximumFractionDigits:d});
+const sg=(v,d=1)=>(v>0?"+":v<0?"−":"")+nf(Math.abs(v),d);
+const pc=(v,d=1)=>v==null?"·":sg(v*100,d)+" %";
+const cls=v=>v>0?"up":v<0?"dn":"";
+const MES=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+const mesTxt=m=>`${MES[+m.slice(5,7)-1]} de ${m.slice(0,4)}`;
+const fechaTxt=f=>`${+f.slice(8,10)} de ${MES[+f.slice(5,7)-1]} de ${f.slice(0,4)}`;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const VISTAS=["indice","proyectos","mapa","finanzas"];
+const MIN={Litio:"#19d3ff",Cobre:"#ff3d9a",Oro:"#eaff3a",Plata:"#f9f6ee",Uranio:"#b388ff",Otros:"#8a8f94"};
+const ETAPAS=["Producción","Construcción","Estudios económicos","Exploración","Otros"];
+const RADIO={"Producción":8,"Construcción":7,"Estudios económicos":5.5,"Exploración":4,"Otros":4};
+const CABA=203;
+// Qué controlante de la cartera corresponde a cada acción de la cinta
+const DUENA={RIO:/Rio Tinto/,Ganfeng:/Ganfeng/,LAR:/^Lithium Argentina/,POSCO:/POSCO/,Zijin:/Zijin/,Eramet:/Eramet/,Galan:/Galan/,Lundin:/Lundin/,McEwen:/^McEwen Inc/};
+let P=null,C=null,H=null,Q=null,PR=null,actual=null,vista="indice",mapa=null,reproduce=null;
+
+function ver(v,clave){
+  vista=v;VISTAS.forEach(x=>document.body.classList.toggle("v-"+x,x===v));
+  document.querySelectorAll("#barra .vistas button").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
+  if(v==="proyectos"&&P){ficha(clave||actual||P.proyectos[0].clave)}
+  if(v==="mapa")iniMapa();
+  if(v==="indice"&&P)dibIndice();
+  if(v==="finanzas")dibFinanzas();
+  const h="#"+v+(v==="proyectos"&&actual?"/"+actual:"");if(location.hash!==h)history.replaceState(null,"",h);
+  if(v!=="proyectos")parar();
+}
+document.querySelectorAll("#barra .vistas button").forEach(b=>b.onclick=()=>ver(b.dataset.v));
+
+/* Gráficos */
+function paso(max){for(const s of[.1,.2,.25,.5,1,2,2.5,5,10,20,25,50,100])if(max/s<=5)return s;return 200}
+function curva(el,o){
+  // o: eje (meses), serie (valores o null), alto, desde (índice), marca (índice), detalle(i) → HTML
+  const W=Math.max(300,el.clientWidth),Ht=o.alto||280,m={l:34,r:16,t:14,b:24};
+  const idx=o.serie.map((v,i)=>v==null?-1:i).filter(i=>i>=0&&i>=(o.desde||0));
+  if(!idx.length){el.innerHTML="";return}
+  const i0=o.desde!=null?o.desde:idx[0],i1=o.eje.length-1;
+  const vmax=Math.max(...idx.map(i=>o.serie[i]),.5),ps=paso(vmax),tope=Math.ceil(vmax/ps-1e-9)*ps;
+  const x=i=>m.l+(i-i0)/Math.max(1,i1-i0)*(W-m.l-m.r),y=v=>m.t+(1-v/tope)*(Ht-m.t-m.b);
+  let s=`<svg viewBox="0 0 ${W} ${Ht}" role="img" aria-label="${esc(o.titulo||"")}">`;
+  for(let v=0;v<=tope+1e-9;v+=ps)s+=`<line x1="${m.l}" x2="${W-m.r}" y1="${y(v)}" y2="${y(v)}" stroke="${v?"#d6cdb9":"#8a8f94"}" stroke-width="1"/><text x="${m.l-6}" y="${y(v)+4}" text-anchor="end">${nf(v,ps%1?(ps*10%1?2:1):0)}</text>`;
+  const cada=W<520?2:1;
+  for(let i=i0;i<=i1;i++)if(o.eje[i].endsWith("-01")){const a=+o.eje[i].slice(0,4);s+=`<line x1="${x(i)}" x2="${x(i)}" y1="${Ht-m.b}" y2="${Ht-m.b+4}" stroke="#8a8f94"/>`;if(a%cada===0&&x(i)<W-m.r-24)s+=`<text x="${x(i)+3}" y="${Ht-6}">${a}</text>`}
+  const pts=idx.map(i=>`${x(i).toFixed(1)},${y(o.serie[i]).toFixed(1)}`);
+  s+=`<path d="M${x(idx[0]).toFixed(1)},${y(0)}L${pts.join("L")}L${x(idx[idx.length-1]).toFixed(1)},${y(0)}Z" fill="#0b6b7a" opacity=".12"/><path d="M${pts.join("L")}" fill="none" stroke="#0b6b7a" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
+  if(o.marca!=null&&o.marca>=i0)s+=`<line x1="${x(o.marca)}" x2="${x(o.marca)}" y1="${m.t}" y2="${Ht-m.b}" stroke="#7b2cbf" stroke-width="1.5" stroke-dasharray="4 3"/>`;
+  const u=idx[idx.length-1];s+=`<circle cx="${x(u)}" cy="${y(o.serie[u])}" r="4" fill="#0b6b7a" stroke="#f9f6ee" stroke-width="2"/>`;
+  s+=`<g class="cur" style="display:none"><line y1="${m.t}" y2="${Ht-m.b}" stroke="#17212b" stroke-width="1"/><circle r="4.5" fill="#f9f6ee" stroke="#17212b" stroke-width="2"/></g><rect x="${m.l}" y="${m.t}" width="${W-m.l-m.r}" height="${Ht-m.t-m.b}" fill="transparent" style="cursor:crosshair"/></svg><div class="tip"></div>`;
+  el.innerHTML=s;
+  const svg=el.querySelector("svg"),cur=el.querySelector(".cur"),tip=el.querySelector(".tip"),zona=el.querySelector("rect");
+  const mover=e=>{const r=svg.getBoundingClientRect(),px=(e.clientX-r.left)/r.width*W;let best=idx[0];for(const i of idx)if(Math.abs(x(i)-px)<Math.abs(x(best)-px))best=i;
+    cur.style.display="";cur.querySelector("line").setAttribute("x1",x(best));cur.querySelector("line").setAttribute("x2",x(best));cur.querySelector("circle").setAttribute("cx",x(best));cur.querySelector("circle").setAttribute("cy",y(o.serie[best]));
+    tip.innerHTML=o.detalle(best);tip.style.display="block";const tw=tip.offsetWidth,cx=x(best)/W*r.width;tip.style.left=Math.max(0,Math.min(r.width-tw,cx+(cx+tw+16>r.width?-tw-12:12)))+"px";tip.style.top=Math.max(0,y(o.serie[best])/Ht*r.height-tip.offsetHeight-10)+"px"};
+  zona.addEventListener("pointermove",mover);zona.addEventListener("pointerdown",mover);zona.addEventListener("pointerleave",()=>{cur.style.display="none";tip.style.display="none"});
+}
+const TRI=["Primer","Segundo","Tercer","Cuarto"],tri=k=>{const [a,q]=k.split("-").map(Number);return `${TRI[q-1].toLowerCase()} trimestre de ${a}`};
+function barras(el,o){
+  // o: eje (meses), desde (índice), trimestres [["2024-1",miles de t]], capacidad, arranque (mes), alto
+  const W=Math.max(300,el.clientWidth),Ht=o.alto||190,m={l:34,r:16,t:14,b:24},i0=o.desde,i1=o.eje.length-1;
+  const vmax=Math.max(o.capacidad||0,...o.trimestres.map(t=>t[1]))*1.08,ps=paso(vmax),tope=Math.ceil(vmax/ps-1e-9)*ps;
+  const x=i=>m.l+(i-i0)/Math.max(1,i1-i0)*(W-m.l-m.r),y=v=>m.t+(1-v/tope)*(Ht-m.t-m.b),dm=(W-m.l-m.r)/Math.max(1,i1-i0);
+  let s=`<svg viewBox="0 0 ${W} ${Ht}" role="img" aria-label="Producción informada por trimestre">`;
+  for(let v=0;v<=tope+1e-9;v+=ps)s+=`<line x1="${m.l}" x2="${W-m.r}" y1="${y(v)}" y2="${y(v)}" stroke="${v?"#d6cdb9":"#8a8f94"}" stroke-width="1"/><text x="${m.l-6}" y="${y(v)+4}" text-anchor="end">${nf(v,ps%1?(ps*10%1?2:1):0)}</text>`;
+  const cada=W<520?2:1;
+  for(let i=i0;i<=i1;i++)if(o.eje[i].endsWith("-01")){const a=+o.eje[i].slice(0,4);s+=`<line x1="${x(i)}" x2="${x(i)}" y1="${Ht-m.b}" y2="${Ht-m.b+4}" stroke="#8a8f94"/>`;if(a%cada===0&&x(i)<W-m.r-24)s+=`<text x="${x(i)+3}" y="${Ht-6}">${a}</text>`}
+  if(o.capacidad)s+=`<line x1="${m.l}" x2="${W-m.r}" y1="${y(o.capacidad)}" y2="${y(o.capacidad)}" stroke="#17212b" stroke-width="1" stroke-dasharray="5 4"/><text x="${m.l+4}" y="${y(o.capacidad)-5}" style="fill:#17212b">${o.capacidad_texto||""}</text>`;
+  if(o.sin_dato){const a=o.sin_dato.desde?Math.max(i0,o.eje.indexOf(o.sin_dato.desde)):i0,b=o.sin_dato.hasta?o.eje.indexOf(o.sin_dato.hasta):i1;
+    if(b>a)s+=`<rect x="${x(a)}" y="${m.t}" width="${x(b)-x(a)}" height="${Ht-m.t-m.b}" fill="#17212b" opacity=".05"/><text x="${(x(a)+x(b))/2}" y="${m.t+15}" text-anchor="middle">${esc(o.sin_dato.texto)}</text>`}
+  const ia=o.arranque?o.eje.indexOf(o.arranque):-1,der=!!(o.sin_dato&&o.sin_dato.desde);
+  if(ia>=i0)s+=`<line x1="${x(ia)}" x2="${x(ia)}" y1="${y(tope*.42)}" y2="${Ht-m.b}" stroke="#7b2cbf" stroke-width="1.5"/><text x="${x(ia)+(der?5:-5)}" y="${y(tope*.42)+4}" text-anchor="${der?"start":"end"}" style="fill:#17212b">${esc(o.arranque_texto||"Arranca la planta")}</text>`;
+  o.trimestres.forEach((t,k)=>{const [a,q]=t[0].split("-").map(Number),ia=o.eje.indexOf(`${a}-${String(q*3-2).padStart(2,"0")}`);if(ia<0)return;
+    const xa=x(ia)-dm/2+1,an=dm*3-2,ya=y(t[1]),r=Math.min(4,an/2);
+    s+=`<path class="b" data-k="${k}" d="M${xa},${y(0)}V${ya+r}q0,${-r} ${r},${-r}h${an-2*r}q${r},0 ${r},${r}V${y(0)}Z" fill="#7b2cbf"/>`});
+  el.innerHTML=s+`</svg><div class="tip"></div>`;
+  const svg=el.querySelector("svg"),tip=el.querySelector(".tip");
+  el.querySelectorAll("path.b").forEach(b=>{const t=o.trimestres[+b.dataset.k],[a,q]=t[0].split("-").map(Number);
+    const ver=e=>{const r=svg.getBoundingClientRect();tip.innerHTML=`<div class="t">${TRI[q-1]} trimestre de ${a}</div><b>${nf(t[1]*1000,0)} t</b>`;tip.style.display="block";b.setAttribute("fill","#5a1f8f");
+      const tw=tip.offsetWidth,cx=e.clientX-r.left;tip.style.left=Math.max(0,Math.min(r.width-tw,cx+(cx+tw+16>r.width?-tw-12:12)))+"px";tip.style.top=Math.max(0,e.clientY-r.top-tip.offsetHeight-12)+"px"};
+    b.addEventListener("pointermove",ver);b.addEventListener("pointerdown",ver);b.addEventListener("pointerleave",()=>{tip.style.display="none";b.setAttribute("fill","#7b2cbf")})});
+}
+function chispa(serie,w=132,h=30,color="#0b6b7a"){
+  const idx=serie.map((v,i)=>v==null?-1:i).filter(i=>i>=0);if(idx.length<2)return"";
+  const mx=Math.max(...idx.map(i=>serie[i]),.01),x=i=>2+(i-idx[0])/(idx[idx.length-1]-idx[0])*(w-8),y=v=>h-3-(v/mx)*(h-7),u=idx[idx.length-1];
+  return `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" aria-hidden="true"><path d="M${idx.map(i=>`${x(i).toFixed(1)},${y(serie[i]).toFixed(1)}`).join("L")}" fill="none" stroke="${color}" stroke-width="1.6" stroke-linejoin="round"/><circle cx="${x(u)}" cy="${y(serie[u])}" r="2.6" fill="${color}"/></svg>`;
+}
+
+/* Índice */
+function dibIndice(){
+  const t=P.total,n=t.length-1,i0=t.findIndex(v=>v!=null),hoy=t[n];
+  $("ix_num").textContent=nf(hoy,0);$("ix_eb").textContent="Índice de piletas · "+cap(mesTxt(P.mes));
+  const i5=P.eje.indexOf(`${+P.mes.slice(0,4)-5}${P.mes.slice(4)}`),ref=i5>=i0&&t[i5]!=null?i5:i0,i12=n-12;
+  const vz=hoy/t[ref];$("ix_sub").textContent=`En ${mesTxt(P.eje[ref])} eran ${nf(t[ref],0)} km²: desde entonces la superficie se multiplicó por ${nf(vz,Math.abs(vz-Math.round(vz))<.05?0:1)}. Es salmuera evaporándose, el paso previo a la planta de carbonato de litio.`;
+  const S=P.proyectos.filter(p=>p.suma),fuera=P.proyectos.filter(p=>!p.suma);
+  const d12=hoy-t[i12],crec=S.filter(p=>p.hace12!=null).map(p=>({p,d:p.hoy-p.hace12})).sort((a,b)=>b.d-a.d)[0];
+  $("ix_kpis").innerHTML=[
+    [sg(d12,1)+" km²",`En 12 meses (${pc(d12/t[i12],0)})`,""],
+    [S.length,"Proyectos suman al índice"+(fuera.length?`; ${fuera.map(p=>p.nombre).join(" y ")} se muestra aparte`:""),"v"],
+    [crec.p.nombre,`El que más creció en 12 meses: ${sg(crec.d,1)} km²`,""],
+    [nf(hoy/CABA*100,0)+" %","De la superficie de la Ciudad de Buenos Aires","v"]].map(k=>`<div class="kpi ${k[2]}"><b>${k[0]}</b><span>${k[1]}</span></div>`).join("");
+  $("ix_gsup").textContent=`Suma de los ${S.length} proyectos, desde ${mesTxt(P.eje[i0])}. Pasá el cursor para ver cuánto aporta cada uno.`;
+  curva($("ix_graf"),{eje:P.eje,serie:t,desde:i0,alto:300,titulo:"Superficie total de piletas con salmuera por mes",detalle:i=>{
+    const f=S.map(p=>[p.nombre,lleno(p)[i]]).filter(a=>a[1]!=null&&a[1]>=.05).sort((a,b)=>b[1]-a[1]);
+    return `<div class="t">${cap(mesTxt(P.eje[i]))}</div><b>${nf(t[i],1)} km²</b>`+f.map(a=>`<div class="f"><span>${a[0]}</span><span>${nf(a[1],1)}</span></div>`).join("")}});
+  const pa=PR.pais;
+  if(pa){$("ix_pc").style.display="";$("ix_psup").textContent=pa.unidad+". Mismo eje de tiempo que el gráfico de arriba.";
+    barras($("ix_prod"),{...pa,eje:P.eje,desde:i0,alto:210});$("ix_pnota").innerHTML=`${pa.lectura}<br><b>Fuente:</b> ${pa.fuente}.`}
+  const mx=Math.max(...P.proyectos.map(p=>p.hoy));
+  $("rk_desde").textContent="Desde "+P.eje[i0].slice(0,4);
+  $("rk").innerHTML=P.proyectos.map(p=>{const d=p.hace12==null?null:p.hoy-p.hace12;return `<tr data-c="${p.clave}"><td class="nom"><b>${p.nombre}${p.suma?"":'<span class="fuera" style="display:inline-block">No suma al índice</span>'}</b><span>${p.controla}</span></td><td class="ocu">${p.provincia}</td><td class="ocu">${pill(p.estado)}</td>
+    <td><div class="barra-h"><b>${nf(p.hoy,1)}</b><i style="width:${Math.max(2,p.hoy/mx*100)}px"></i></div></td><td class="num ${d==null?"":cls(Math.round(d*10))}">${d==null?"·":sg(d,1)}</td><td class="ocu">${chispa(p.serie.slice(i0))}</td><td class="ir">→</td></tr>`}).join("");
+  $("rk").querySelectorAll("tr").forEach(tr=>tr.onclick=()=>ver("proyectos",tr.dataset.c));
+  $("ix_nota").innerHTML=`<b>Cómo se mide.</b> Cada mes se toman hasta tres imágenes despejadas del satélite Sentinel-2 sobre cada campo de piletas, con píxeles de 20 metros. Un píxel cuenta como salmuera si el índice de agua lo marca en la mayoría de las fechas, y solo dentro de la huella de las piletas: así quedan afuera las inundaciones de verano del salar. Los meses sin imagen despejada se completan en línea recta entre los vecinos.<br><b>Qué no es.</b> El área de piletas no es producción: una pileta llena es salmuera en proceso, no carbonato vendido. Los proyectos de extracción directa, como Centenario-Ratones, casi no tienen piletas y no aparecen acá.<br><b>Fuentes.</b> Contiene datos modificados de Copernicus Sentinel · Secretaría de Minería, cartera de proyectos metalíferos y de litio.`;
+}
+const _ll={};function lleno(p){ // serie con los huecos completados en línea recta, como en el total
+  if(_ll[p.clave])return _ll[p.clave];const s=p.serie.slice(),k=s.map((v,i)=>v==null?-1:i).filter(i=>i>=0);
+  for(let a=0;a<k.length-1;a++)for(let i=k[a]+1;i<k[a+1];i++)s[i]=s[k[a]]+(s[k[a+1]]-s[k[a]])*(i-k[a])/(k[a+1]-k[a]);
+  for(let i=k[k.length-1]+1;i<s.length;i++)s[i]=s[k[k.length-1]];return _ll[p.clave]=s}
+const pill=e=>`<span class="pill ${e==="Producción"?"":e==="Construcción"?"c":"o"}">${e}</span>`;
+
+/* Proyectos */
+function parar(){if(reproduce){clearInterval(reproduce);reproduce=null;const b=$("f_play");if(b)b.textContent="Reproducir"}}
+function ficha(clave){
+  parar();const p=P.proyectos.find(q=>q.clave===clave)||P.proyectos[0];actual=p.clave;
+  $("pl").querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.c===p.clave));$("pl_sel").value=p.clave;
+  const d=p.hace12==null?null:p.hoy-p.hace12,i0=p.serie.findIndex(v=>v!=null);
+  const prim=!p.primera_agua?"Sin agua todavía":p.primera_agua===p.desde?"Antes de "+p.desde.slice(0,4):cap(mesTxt(p.primera_agua));
+  $("pf").innerHTML=`<div class="fh"><h2>${p.nombre}</h2>${pill(p.estado)}</div><p class="fs">Controla ${p.controla} · ${p.provincia}</p>${p.aviso?`<div class="aviso">${esc(p.aviso)}</div>`:""}
+  <div class="fk"><div class="kpi"><b>${nf(p.hoy,1)} km²</b><span>De piletas con salmuera en ${mesTxt(p.mes_hoy)}</span></div>
+    <div class="kpi"><b>${d==null?"·":sg(d,1)+" km²"}</b><span>En 12 meses${d==null||!p.hace12?"":` (${pc(d/p.hace12,0)})`}</span></div>
+    <div class="kpi v"><b style="font-size:20px">${prim}</b><span>Primera agua en las piletas</span></div>
+    <div class="kpi v"><b>${nf(p.maximo,1)} km²</b><span>Máximo, en ${mesTxt(p.mes_maximo)}</span></div></div>
+  <div class="g2">
+    <div class="card"><h3>Lo que ve el satélite</h3><p class="sup">Una imagen por año, en color real. Mové la barra para ver llenarse las piletas.</p>
+      <div class="sat" id="f_sat"><img id="f_img" alt="Imagen satelital de las piletas de ${esc(p.nombre)}"><img id="f_mas" class="m" alt="" style="display:none"><div class="et" id="f_et"></div></div>
+      <div class="ctl"><button id="f_play">Reproducir</button><input type="range" id="f_r" min="0" max="${p.imagenes.length-1}" value="${p.imagenes.length-1}" step="1" aria-label="Año de la imagen"><span class="a mono" id="f_a"></span></div>
+      <label class="chk"><input type="checkbox" id="f_chk">Marcar en celeste lo que se cuenta como pileta</label></div>
+    <div>
+      <div class="card"><h3>Piletas con salmuera, mes a mes</h3><p class="sup">En km². La línea violeta marca la fecha de la imagen.</p><div class="graf" id="f_graf"></div></div>
+      ${PR[p.clave]?`<div class="card"><h3>Producción informada por la empresa</h3><p class="sup">${PR[p.clave].unidad}. Mismo eje de tiempo que el gráfico de arriba.</p><div class="graf" id="f_prod"></div><p class="nota" style="margin:10px 0 0">${PR[p.clave].lectura||contraste(p)} ${PR[p.clave].notas}<br><b>Fuente:</b> ${PR[p.clave].fuente}.</p></div>`:""}
+      <div class="card"><h3>Quién lo controla</h3><p class="sup">Según la cartera de la Secretaría de Minería.</p><div class="due">${p.duenos.map(c=>`<div class="d"><span>${esc(c[0])}<small>${c[2]||"Sin dato de origen"}</small></span><i><u style="width:${c[1]||0}%"></u></i><b>${c[1]==null?"·":nf(c[1],c[1]%1?1:0)+" %"}</b></div>`).join("")}</div></div>
+      <div class="card"><h3>Lo que dice la curva</h3><ul class="lee">${lectura(p).map(l=>`<li>${l}</li>`).join("")}</ul>
+        <p style="margin:12px 0 0"><button id="f_mapa" style="background:var(--acento);color:#fff;border:0;border-radius:5px;padding:7px 12px;font-weight:600">Ver las piletas en el mapa</button></p></div>
+    </div>
+  </div>`;
+  const pone=k=>{const im=p.imagenes[k],base=`img/sat/${p.clave}_${im.anio}`;$("f_img").src=base+".jpg";$("f_mas").src=base+"_m.png";$("f_et").innerHTML=`${cap(fechaTxt(im.fecha))}<small>${nf(im.km2,1)} km²</small>`;$("f_a").textContent=im.anio;
+    curva($("f_graf"),{eje:P.eje,serie:p.serie,desde:i0,alto:230,marca:P.eje.indexOf(im.fecha.slice(0,7)),titulo:"Piletas de "+p.nombre+" por mes",detalle:i=>`<div class="t">${cap(mesTxt(P.eje[i]))}</div><b>${nf(p.serie[i],1)} km²</b>`})};
+  $("f_img").onload=e=>$("f_sat").style.aspectRatio=e.target.naturalWidth+"/"+e.target.naturalHeight;
+  $("f_r").oninput=e=>{parar();pone(+e.target.value)};
+  $("f_chk").onchange=e=>$("f_mas").style.display=e.target.checked?"":"none";
+  $("f_play").onclick=()=>{if(reproduce){parar();return}let k=+$("f_r").value>=p.imagenes.length-1?0:+$("f_r").value;$("f_r").value=k;pone(k);$("f_play").textContent="Pausar";
+    reproduce=setInterval(()=>{k++;if(k>=p.imagenes.length){parar();return}$("f_r").value=k;pone(k)},1100)};
+  $("f_mapa").onclick=()=>{ver("mapa");mapa.fitBounds([[p.caja[1],p.caja[0]],[p.caja[3],p.caja[2]]],{padding:[30,30]})};
+  pone(p.imagenes.length-1);
+  if(PR[p.clave])barras($("f_prod"),{eje:P.eje,desde:i0,...PR[p.clave]});
+  if(vista==="proyectos")history.replaceState(null,"","#proyectos/"+p.clave);
+}
+function contraste(p){
+  const r=PR[p.clave],s=lleno(p),ia=P.eje.indexOf(r.arranque),t=r.trimestres,a0=ia>=0?s[ia]:null;
+  if(a0==null)return"";
+  return `<b>Qué muestra.</b> Cuando arrancó la planta, en ${mesTxt(r.arranque)}, las piletas ya tenían ${nf(a0,1)} km²; hoy tienen ${nf(p.hoy,1)}. La producción, en cambio, pasó de ${nf(t[0][1]*1000,0)} t en el ${tri(t[0][0])} a ${nf(t[t.length-1][1]*1000,0)} en el ${tri(t[t.length-1][0])}. Las piletas anticiparon la puesta en marcha por años, pero no siguen la producción trimestre a trimestre.`;
+}
+function lectura(p){
+  const l=[],d=p.hace12==null?null:p.hoy-p.hace12;
+  if(p.primera_agua&&p.primera_agua!==p.desde)l.push(`La primera agua en las piletas aparece en ${mesTxt(p.primera_agua)}.`);else if(p.primera_agua)l.push(`Ya tenía piletas con salmuera cuando empieza la serie, en ${mesTxt(p.desde)}.`);
+  l.push(p.mes_maximo===p.mes_hoy?`Está en su máximo: ${nf(p.maximo,1)} km².`:`El máximo fue de ${nf(p.maximo,1)} km², en ${mesTxt(p.mes_maximo)}; hoy está en ${nf(p.hoy,1)}.`);
+  if(d!=null)l.push(Math.abs(d)<.3?"En los últimos 12 meses casi no cambió.":`En los últimos 12 meses ${d>0?"sumó":"perdió"} ${nf(Math.abs(d),1)} km² de salmuera a la vista.`);
+  l.push(`Hay ${p.meses_medidos} meses medidos desde ${mesTxt(p.desde)}; el resto no tuvo imagen despejada.`);
+  return l;
+}
+
+/* Mapa */
+const min=p=>MIN[p.m]?p.m:"Otros";
+function iniMapa(){
+  if(mapa){setTimeout(()=>mapa.invalidateSize(),50);return}
+  mapa=L.map("map",{zoomControl:true,preferCanvas:true}).fitBounds(C.proyectos.map(p=>[p.la,p.lo]),{padding:[20,20]});
+  L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{maxZoom:17,attribution:"Esri World Imagery · Copernicus Sentinel-2 · Secretaría de Minería"}).addTo(mapa);
+  L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",{maxZoom:17,opacity:.75}).addTo(mapa);
+  if(H)L.geoJSON(H,{style:{color:"#19d3ff",weight:1.5,fillColor:"#19d3ff",fillOpacity:.35},interactive:false}).addTo(mapa);
+  const medidos={};if(P)P.proyectos.forEach(p=>medidos[p.nombre]=p);
+  const orden=C.proyectos.slice().sort((a,b)=>RADIO[a.g]-RADIO[b.g]);
+  const marcas=orden.map(p=>{const pm=medidos[p.n],mk=L.circleMarker([p.la,p.lo],{radius:RADIO[p.g],fillColor:MIN[min(p)],fillOpacity:.95,color:pm?"#ffffff":"#0c1116",weight:pm?2.5:1});
+    mk.bindTooltip(p.n,{className:"tt",direction:"top",offset:[0,-6]});
+    mk.bindPopup(()=>`<div class="pop"><h4>${esc(p.n)}</h4><div class="l">${p.m} · ${p.p}<br>${p.e}</div><div class="dd">${p.c.length?p.c.map(c=>`${esc(c[0])}${c[1]==null?"":" · "+nf(c[1],c[1]%1?1:0)+" %"}${c[2]?" · "+c[2]:""}`).join("<br>"):"Sin controlante informado"}</div>${pm?`<div class="pp">Piletas con salmuera: <b>${nf(pm.hoy,1)} km²</b><br>${chispa(pm.serie)}<br><button data-f="${pm.clave}">Abrir la ficha</button><button data-z="${pm.clave}">Ver las piletas</button></div>`:""}</div>`,{maxWidth:280});
+    return {p,mk,t:(p.n+" "+p.c.map(c=>c[0]).join(" ")).toLowerCase()}});
+  mapa.on("popupopen",e=>{const el=e.popup.getElement();el.querySelectorAll("button[data-f]").forEach(b=>b.onclick=()=>ver("proyectos",b.dataset.f));
+    el.querySelectorAll("button[data-z]").forEach(b=>b.onclick=()=>{const q=P.proyectos.find(x=>x.clave===b.dataset.z);mapa.closePopup();mapa.fitBounds([[q.caja[1],q.caja[0]],[q.caja[3],q.caja[2]]],{padding:[30,30]})})});
+  const cuenta=(k,f)=>C.proyectos.filter(p=>f(p)===k).length;
+  $("mp_min").innerHTML=Object.keys(MIN).map(k=>`<label class="capa"><input type="checkbox" data-m="${k}" checked><span class="dot" style="background:${MIN[k]}"></span>${k}<span class="c">${cuenta(k,min)}</span></label>`).join("");
+  $("mp_eta").innerHTML=ETAPAS.map(k=>`<label class="capa"><input type="checkbox" data-e="${k}" checked><span class="dot" style="background:var(--muted);width:${RADIO[k]*1.6}px;height:${RADIO[k]*1.6}px;border:0"></span>${k}<span class="c">${cuenta(k,p=>p.g)}</span></label>`).join("");
+  const filtra=()=>{const ms=new Set([...document.querySelectorAll("#mp_min input:checked")].map(i=>i.dataset.m)),es=new Set([...document.querySelectorAll("#mp_eta input:checked")].map(i=>i.dataset.e)),q=$("mp_q").value.trim().toLowerCase();
+    const vis=marcas.filter(o=>{const ok=ms.has(min(o.p))&&es.has(o.p.g)&&(!q||o.t.includes(q));if(ok)o.mk.addTo(mapa);else o.mk.remove();return ok});
+    $("mp_n").textContent=vis.length;$("mp_p").textContent=vis.filter(o=>o.p.g==="Producción").length;
+    const pa={};vis.forEach(o=>{const k=(o.p.c[0]&&o.p.c[0][2])||"Sin dato";pa[k]=(pa[k]||0)+1});
+    const top=Object.entries(pa).sort((a,b)=>b[1]-a[1]),mx=top.length?top[0][1]:1,ver7=top.slice(0,7),resto=top.slice(7).reduce((s,a)=>s+a[1],0);if(resto)ver7.push(["Otros países",resto]);
+    $("mp_pais").innerHTML=ver7.map(a=>`<div class="pais"><span>${a[0]}</span><i style="width:${Math.max(3,a[1]/mx*100)}%"></i><b>${a[1]}</b></div>`).join("")||'<p class="nota">Ningún proyecto con esos filtros.</p>'};
+  document.querySelectorAll("#mp input").forEach(i=>i.addEventListener("input",filtra));filtra();
+  setTimeout(()=>mapa.invalidateSize(),50);
+}
+
+/* Finanzas y cinta */
+function tarjeta(x){
+  const s=x.serie||[],mn=Math.min(...s),mx=Math.max(...s),w=200,h=38,pt=s.map((v,i)=>`${(i/(s.length-1)*w).toFixed(1)},${(h-3-(v-mn)/(mx-mn||1)*(h-6)).toFixed(1)}`).join("L");
+  const rx=DUENA[x.id],pr=rx&&C?C.proyectos.filter(p=>p.c.some(c=>rx.test(c[0]))&&(p.g==="Producción"||p.g==="Construcción"||p.m==="Cobre")):[];
+  const med=P?Object.fromEntries(P.proyectos.map(p=>[p.nombre,p.clave])):{};
+  return `<div class="cot"><div class="cn"><b>${x.nombre}</b><span>${x.simbolo}</span></div><div class="cp">${nf(x.ultimo,2)} <small>${x.unidad}${x.plaza?" · "+x.plaza:""}</small></div>
+  <div class="cv"><span>Día <b class="${cls(x.var_dia)}">${pc(x.var_dia)}</b></span><span>Mes <b class="${cls(x.var_mes)}">${pc(x.var_mes)}</b></span><span>Año <b class="${cls(x.var_anio)}">${pc(x.var_anio)}</b></span></div>
+  <svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true"><path d="M${pt}" fill="none" stroke="#0b6b7a" stroke-width="1.6" vector-effect="non-scaling-stroke"/></svg>
+  ${pr.length?`<div class="cr">En la Argentina: ${pr.map(p=>med[p.n]?`<a data-f="${med[p.n]}">${p.n}</a>`:p.n).join(", ")}</div>`:""}</div>`;
+}
+function dibFinanzas(){
+  if(!Q){$("fz_met").innerHTML='<p class="nota">Las cotizaciones no están disponibles en este momento.</p>';return}
+  $("fz_met").innerHTML=Q.items.filter(x=>x.tipo!=="accion").map(tarjeta).join("");
+  $("fz_acc").innerHTML=Q.items.filter(x=>x.tipo==="accion").map(tarjeta).join("");
+  document.querySelectorAll("#v_finanzas a[data-f]").forEach(a=>a.onclick=()=>ver("proyectos",a.dataset.f));
+  if(P){$("fz_tab").innerHTML=P.proyectos.map(p=>{const d=p.hace12==null?null:p.hoy-p.hace12,ac=Q.items.filter(x=>DUENA[x.id]&&p.duenos.some(c=>DUENA[x.id].test(c[0]))),col=f=>ac.length?ac.map(f).join("<br>"):"·";
+    return `<tr data-c="${p.clave}"><td class="nom"><b>${p.nombre}</b><span>${p.provincia}</span></td><td class="num">${nf(p.hoy,1)} km²</td><td class="num">${d==null?"·":sg(d,1)+" km²"}${d==null||!p.hace12?"":` <span style="color:var(--muted)">(${pc(d/p.hace12,0)})</span>`}</td><td>${col(x=>x.nombre)}</td><td class="num">${col(x=>`<span class="${cls(x.var_mes)}">${pc(x.var_mes)}</span>`)}</td><td class="num">${col(x=>`<span class="${cls(x.var_anio)}">${pc(x.var_anio)}</span>`)}</td></tr>`}).join("");
+    $("fz_tab").querySelectorAll("tr").forEach(tr=>tr.onclick=()=>ver("proyectos",tr.dataset.c))}
+  $("fz_pie").innerHTML=`<b>Fuente:</b> ${Q.fuente}. Último dato: ${Q.items.map(x=>x.fecha).sort().pop().split("-").reverse().join("/")}. No es tiempo real. Esto no es una recomendación de compra ni de venta, ni asesoramiento de inversión.`;
+}
+function cinta(){
+  if(!Q)return;const it=Q.items.map(x=>`<span class="it" title="${esc(x.nombre)}">${x.corto||x.nombre} <b>${nf(x.ultimo,2)}</b><small>${x.unidad}</small><i class="${cls(x.var_dia)}">${x.var_dia>0?"▲":x.var_dia<0?"▼":""} ${pc(x.var_dia)}</i></span>`).join("");
+  const p=document.createElement("div");p.className="pista";p.innerHTML=it+it;$("cinta").appendChild(p);p.onclick=()=>ver("finanzas");
+}
+
+/* Arranque */
+const trae=u=>fetch(u).then(r=>r.ok?r.json():null).catch(()=>null);
+Promise.all(["data/piletas.json","data/proyectos.json","data/huellas.geojson","data/cotizaciones.json","data/produccion.json"].map(trae)).then(([p,c,h,q,pr])=>{
+  P=p;C=c;H=h;Q=q;PR=pr||{};cinta();
+  if(P){$("pl").innerHTML=P.proyectos.map(x=>`<button data-c="${x.clave}" title="${x.suma?"":"No suma al índice"}">${x.nombre}<span>${x.suma?"":"Aparte · "}${nf(x.hoy,1)}</span></button>`).join("");$("pl").querySelectorAll("button").forEach(b=>b.onclick=()=>ficha(b.dataset.c));
+    $("pl_sel").innerHTML=P.proyectos.map(x=>`<option value="${x.clave}">${x.nombre} · ${nf(x.hoy,1)} km²</option>`).join("");$("pl_sel").onchange=e=>ficha(e.target.value)}
+  const [v,k]=location.hash.slice(1).split("/");ver(VISTAS.includes(v)?v:"indice",k);
+});
+let _rz;window.addEventListener("resize",()=>{clearTimeout(_rz);_rz=setTimeout(()=>{if(!P)return;if(vista==="indice")dibIndice();if(vista==="proyectos"&&actual){const k=$("f_r")?+$("f_r").value:null;if(k!=null)$("f_r").dispatchEvent(new Event("input"));const q=P.proyectos.find(x=>x.clave===actual);if(PR[actual]&&$("f_prod"))barras($("f_prod"),{eje:P.eje,desde:q.serie.findIndex(v=>v!=null),...PR[actual]})}},150)});
+</script>
+</body>
+</html>

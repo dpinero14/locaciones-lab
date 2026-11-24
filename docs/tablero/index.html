@@ -3,860 +3,119 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Vaca Muerta desde el satélite</title>
-<meta name="description" content="Cada locación nueva, cada pozo y cada antorcha de Vaca Muerta, mes a mes desde 2020. Lo que el satélite ve antes de que llegue al registro oficial. Datos abiertos y código abierto.">
+<title>Energía y Minería desde el satélite</title>
+<meta name="description" content="Tres tableros con datos abiertos y satélites: el petróleo de Vaca Muerta, el gas del invierno y las piletas de litio de la Puna.">
+<meta name="theme-color" content="#0c1116">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://dpinero14.github.io/locaciones-lab/tablero/">
-<meta property="og:title" content="Vaca Muerta desde el satélite">
-<meta property="og:description" content="Cada locación nueva, cada pozo y cada antorcha de Vaca Muerta, mes a mes desde 2020. Lo que el satélite ve antes de que llegue al registro oficial. Datos abiertos y código abierto.">
-<meta property="og:image" content="https://dpinero14.github.io/locaciones-lab/tablero/img/og.jpg">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
+<meta property="og:title" content="Energía y Minería desde el satélite">
+<meta property="og:description" content="Tres tableros con datos abiertos y satélites: el petróleo de Vaca Muerta, el gas del invierno y las piletas de litio de la Puna.">
+<meta property="og:image" content="https://dpinero14.github.io/locaciones-lab/tablero/petroleo/img/og.jpg">
 <meta property="og:locale" content="es_AR">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://dpinero14.github.io/locaciones-lab/tablero/img/og.jpg">
-<meta name="theme-color" content="#0c1116">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://unpkg.com; img-src 'self' data: https://server.arcgisonline.com https://unpkg.com https://www.google-analytics.com https://www.googletagmanager.com; connect-src 'self' https://raw.githubusercontent.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<script>
+// Los enlaces viejos al tablero de Vaca Muerta (una vista, un recorrido o un punto del mapa) siguen andando: van a Petróleo.
+(function(){var q=new URLSearchParams(location.search),h=location.hash.slice(1);
+  if(["vista","recorrido","sinportada"].some(function(k){return q.has(k)})||h.split(",").length>=5)location.replace("petroleo/"+location.search+location.hash)})();
+</script>
 <style>
-:root{--bg:#ece6d8;--panel:#f9f6ee;--ink:#17212b;--muted:#5d6974;--rule:#d6cdb9;--acento:#0b6b7a;--pozo:#d02e7f;--infra:#17212b;--gris:#8a8f94;--acento2:#7b2cbf;--mapa:#19d3ff}
-*{box-sizing:border-box}html,body{height:100%;margin:0}
-body{background:var(--bg);color:var(--ink);font-family:"Segoe UI",system-ui,sans-serif;font-size:14px}
-:root{--izq:320px;--der:0px;--bar:50px;--cin:30px;--top:calc(var(--bar) + var(--cin))}body.sin-izq{--izq:0px}body.sin-der{--der:0px}
-#app{display:grid;grid-template-columns:var(--izq) 1fr var(--der);grid-template-rows:var(--top) minmax(0,1fr);height:100%;transition:grid-template-columns .3s ease}
-#panel,#demanda{min-width:0;transition:padding .3s}body.sin-izq #panel{padding-left:0;padding-right:0;overflow:hidden;border:0}body.sin-der #demanda{padding-left:0;padding-right:0;overflow:hidden;border:0}
-.tog{position:absolute;top:calc(var(--top) + 12px);z-index:1100;width:26px;height:38px;padding:0;border-radius:4px;background:var(--panel);color:var(--acento);border:1px solid var(--rule);font-size:18px;line-height:1;box-shadow:0 1px 6px rgba(0,0,0,.25);transition:left .3s,right .3s}
-#tog_izq{left:calc(var(--izq) + 10px)}.leaflet-top.leaflet-left .leaflet-control{margin-top:62px}#tog_der{right:calc(var(--der) + 10px)}.tog:hover{background:var(--acento);color:#fff}
-#panel{background:var(--bg);border-right:1px solid var(--rule);overflow-y:auto;padding:16px 16px 24px}
-#map{height:100%;background:#2b2a26}
-h1{font-size:17px;margin:0 0 2px}.sub{color:var(--muted);font-size:12px;margin:0 0 14px}
-h2{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--acento);margin:18px 0 8px;font-weight:600}
-.capa{display:flex;align-items:center;gap:8px;padding:5px 0;cursor:pointer}
-.capa input{accent-color:var(--acento)}
-.dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex:none}
-.sq{width:10px;height:10px;display:inline-block;flex:none;border:2px solid}
-.ln{width:18px;height:0;border-top:3px solid;display:inline-block;flex:none}
-.n{margin-left:auto;color:var(--muted);font-family:"Cascadia Mono",Consolas,monospace;font-size:12px}
-.kpis{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
-.kpi{background:var(--panel);border:1px solid var(--rule);border-left:4px solid var(--acento);border-radius:4px;padding:8px 10px}
-.kpi b{display:block;font-size:22px;color:var(--acento);font-variant-numeric:tabular-nums}.kpi.r b{color:var(--pozo)}.kpi.r{border-left-color:var(--pozo)}
-.kpi span{color:var(--muted);font-size:11px}
-#tiempo{position:absolute;left:calc(var(--izq) + 20px);right:calc(var(--der) + 20px);transition:left .3s,right .3s;bottom:18px;z-index:1000;background:rgba(249,246,238,.95);box-shadow:0 2px 12px rgba(0,0,0,.25);border:1px solid var(--rule);border-radius:8px;padding:10px 14px;display:flex;gap:12px;align-items:center}
-#tiempo input[type=range]{flex:1;accent-color:var(--acento)}
-#mes{font-family:"Cascadia Mono",Consolas,monospace;font-size:15px;min-width:92px}
-button{background:var(--acento);color:#fff;border:0;border-radius:5px;padding:6px 12px;font-weight:600;cursor:pointer;font-family:inherit}
-button.ghost{background:transparent;color:var(--ink);border:1px solid var(--rule)}
-.leaflet-popup-content-wrapper{background:var(--panel);color:var(--ink);border-radius:4px;border-left:4px solid var(--acento);font-family:"Segoe UI",sans-serif;font-size:13px}
-.leaflet-popup-tip{background:var(--panel)}.leaflet-popup-content b{color:var(--acento)}.leaflet-popup-content .r{color:var(--pozo)}
-.leaflet-container{font-family:inherit}
-.ic{background:none;border:0}
-.llama{position:relative;width:44px;height:44px}
-.llama i{position:absolute;left:10px;top:10px;width:24px;height:24px;border-radius:50%;background:#17212b;border:1.5px solid #eaff3a;box-shadow:0 1px 4px rgba(0,0,0,.55)}
-.llama svg{position:absolute;left:14px;top:13px;width:16px;height:16px}
-.llama .f1{fill:#eaff3a;stroke:none}.llama .f2{fill:#17212b;opacity:.55}
-.llama.on::before{content:"";position:absolute;left:4px;top:4px;width:36px;height:36px;border-radius:50%;background:radial-gradient(circle,rgba(234,255,58,.5),rgba(234,255,58,0) 70%);animation:halo 2.8s ease-in-out infinite}
-.llama.off i{left:14px;top:14px;width:16px;height:16px;background:rgba(23,33,43,.75);border:1px solid rgba(234,255,58,.7);box-shadow:none}
-.llama.off svg{left:17px;top:16.5px;width:10px;height:10px}.llama.off .f1{fill:rgba(234,255,58,.75)}.llama.off .f2{fill:none}
-.equipo{position:relative;width:40px;height:40px}.equipo i{position:absolute;left:9px;top:9px;width:22px;height:22px;border-radius:50%;background:#7b2cbf;border:1.5px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.55)}.equipo svg{position:absolute;left:13px;top:12.5px;width:14px;height:14px;fill:none;stroke:#fff;stroke-width:2;stroke-linejoin:round}.equipo.vivo::before{content:"";position:absolute;left:2px;top:2px;width:36px;height:36px;border-radius:50%;background:radial-gradient(circle,rgba(179,136,255,.65),rgba(179,136,255,0) 70%);animation:halo 2.2s ease-in-out infinite}.equipo.sp i{background:#17212b;border-color:#b388ff}.lgq{display:inline-block;width:16px;height:16px;border-radius:50%;background:#7b2cbf;vertical-align:-3px;margin-right:6px;position:relative}.lgq svg{position:absolute;left:3px;top:3px;width:10px;height:10px;fill:none;stroke:#fff;stroke-width:2.4}.kpi.q{border-left-color:#7b2cbf}.kpi.q b{color:#7b2cbf}
-@keyframes halo{0%,100%{transform:scale(.8);opacity:.5}50%{transform:scale(1.25);opacity:1}}
-.decl{width:8px;height:8px;transform:rotate(45deg);background:#17212b;border:2px solid #eaff3a;box-shadow:0 0 0 1px #17212b}
-.lg{width:16px;height:16px;flex:none;display:inline-block}
-.lg.tmpl{border:1px dashed #7a8791;border-radius:50%}
-.llama.tmp i{border-style:dashed}.lg .f1{fill:#eaff3a;stroke:#17212b;stroke-width:1.4}.lg .f2{fill:#fff}
-.lgd{width:9px;height:9px;flex:none;display:inline-block;transform:rotate(45deg);background:#17212b;border:2px solid #b9cc10;margin:0 3px}
-.kpi.f{border-left-color:#17212b;background:#17212b}.kpi.f b{color:#eaff3a}.kpi.f span{color:#c9cfd4}
-.capa .n{white-space:nowrap}
-.pa h4{margin:0 0 4px;font-size:15px;color:var(--ink);display:flex;align-items:center;gap:6px}.pa .est{display:inline-block;font-size:11px;font-weight:600;padding:2px 7px;border-radius:10px;background:#17212b;color:#eaff3a}.pa .est.no{background:var(--rule);color:var(--muted)}
-.pa .tira{display:flex;gap:1px;margin:8px 0 3px;height:16px}.pa .tira i{flex:1;background:var(--rule);border-radius:1px}.pa .tira i.s{background:#17212b}.pa .tira i.h{outline:2px solid var(--pozo)}
-.pa .ej{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);font-family:"Cascadia Mono",Consolas,monospace}.pa .gr{font-size:22px;font-weight:700;color:var(--ink)}
-.leaflet-tooltip.tt{background:#17212b;color:#f9f6ee;border:0;font-size:12px;padding:3px 7px}.leaflet-tooltip.tt::before{display:none}
-#portada{position:fixed;inset:0;z-index:3000;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 40%,rgba(11,107,122,.55),rgba(12,17,22,.93) 70%);backdrop-filter:blur(5px);color:#f9f6ee;transition:opacity .6s;padding:20px}
-#portada.fuera{opacity:0;pointer-events:none}
-#portada .in{max-width:940px;text-align:center}
-#portada .eb{font-family:"Cascadia Mono",Consolas,monospace;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#19d3ff}
-#portada h1{font-size:clamp(34px,5.4vw,62px);line-height:1.05;margin:14px 0 14px;letter-spacing:-.02em;color:#fff}
-#portada p{font-size:clamp(15px,1.7vw,19px);line-height:1.5;color:#d5dde2;margin:0 auto 26px;max-width:600px}
-#portada .cifras{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-bottom:30px}
-#portada .cifra{min-width:150px;padding:14px 16px;border:1px solid rgba(255,255,255,.18);border-radius:10px;background:rgba(255,255,255,.06)}
-#portada .cifra b{display:block;font-size:34px;font-variant-numeric:tabular-nums;line-height:1.1}
-#portada .cifra span{font-size:12px;color:#b8c3ca}
-#portada .cifra.a b{color:#19d3ff}#portada .cifra.b b{color:#ff3d9a}#portada .cifra.c b{color:#eaff3a}
-#portada .bot{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-#portada button{font-size:16px;padding:13px 26px;border-radius:8px}
-#portada button.pri{background:#19d3ff;color:#0c1116}#portada button.pri:hover{background:#6fe4ff}
-#portada button.sec{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.4)}#portada button.sec:hover{background:rgba(255,255,255,.1)}
-#portada .pie{margin-top:26px;font-size:11px;color:#8f9ba3}
-.ico svg{width:100%;height:100%;fill:none;stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round;filter:drop-shadow(0 0 1.5px #0c1116) drop-shadow(0 1px 1px #0c1116)}
-.ico.torre svg{stroke:#ff3d9a}.ico.torre.fut svg{stroke:#b89aa8}.ico.pad svg{stroke:#19d3ff}.ico.pad.llena rect{fill:rgba(25,211,255,.75)}.ico.pad.nueva svg{stroke-width:3.2}
-.ico.comp svg{stroke:#17212b;fill:#f9f6ee;stroke-width:1.8;filter:drop-shadow(0 1px 2px rgba(0,0,0,.6))}
-.lgi{width:16px;height:16px;flex:none;display:inline-block}.lgi svg{width:100%;height:100%;fill:none;stroke-width:2.4;stroke-linejoin:round;stroke-linecap:round}
-#guia{position:absolute;left:calc(var(--izq) + 70px);right:calc(var(--der) + 70px);top:calc(var(--top) + 14px);z-index:1200;display:none;justify-content:center;pointer-events:none}
-#guia .caja{pointer-events:auto;max-width:640px;background:rgba(12,17,22,.92);color:#f9f6ee;border-radius:12px;padding:16px 20px 12px;box-shadow:0 6px 26px rgba(0,0,0,.45);border-left:5px solid #19d3ff}
-#guia .tx{font-size:19px;line-height:1.35;font-weight:500;min-height:52px}
-#guia .ab{display:flex;align-items:center;justify-content:space-between;margin-top:10px}
-#guia .pts{display:flex;gap:6px}#guia .pts i{width:22px;height:4px;border-radius:2px;background:rgba(255,255,255,.25)}#guia .pts i.on{background:#19d3ff}
-#guia button{background:transparent;color:#b8c3ca;border:1px solid rgba(255,255,255,.3);padding:4px 10px;font-size:12px}
-body.guiando #demanda.luz{box-shadow:inset 0 0 0 3px #7b2cbf}
-.heroes{display:grid;gap:8px;margin:6px 0 10px}.hero{background:var(--panel);border:1px solid var(--rule);border-left:5px solid var(--acento);border-radius:6px;padding:10px 12px;cursor:pointer;transition:transform .15s}.hero:hover{transform:translateX(3px)}
-.hero b{display:block;font-size:32px;line-height:1.05;font-variant-numeric:tabular-nums;color:var(--acento)}.hero span{font-size:12px;color:var(--muted)}.hero i{display:block;font-style:normal;font-size:12px;color:var(--acento2);font-weight:600;margin-top:2px}
-details.mas{margin:4px 0 8px}details.mas summary{cursor:pointer;color:var(--acento);font-size:12px;font-weight:600;padding:6px 0;list-style:none}details.mas summary::before{content:"+ "}details.mas[open] summary::before{content:"- "}details.mas summary::-webkit-details-marker{display:none}
-.wa{display:flex;align-items:center;gap:8px;justify-content:center;background:#25d366;color:#07261a;font-weight:600;font-size:13px;padding:8px 10px;border-radius:6px;text-decoration:none;margin:0 0 12px}.wa:hover{background:#4ae08a}.wa img{width:18px;height:18px}
-#portada a.wa{display:inline-flex;margin:16px auto 0;font-size:14px;padding:9px 16px}
-.filtros{display:grid;gap:6px;margin:0 0 10px}.filtros select,.filtros input{width:100%;padding:7px 8px;border:1px solid var(--rule);border-radius:5px;background:var(--panel);color:var(--ink);font-family:inherit;font-size:13px}
-.filtros label{font-size:11px;color:var(--muted)}
-#nov{background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:9px 11px;margin:0 0 4px;font-size:12px;line-height:1.5}#nov b{color:var(--ink)}#nov .t{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--acento);font-weight:600;margin-bottom:3px}
-#nov .mas{color:var(--acento);font-weight:700}#nov .ros{color:var(--pozo);font-weight:700}#nov .lla{background:#17212b;color:#eaff3a;font-weight:700;padding:0 5px;border-radius:3px}
-#ficha{display:none;position:fixed;inset:0;z-index:2500;background:rgba(12,17,22,.55);align-items:center;justify-content:center;padding:14px}
-#ficha .caja{background:var(--bg);border-radius:10px;max-width:760px;width:100%;max-height:92vh;overflow:auto;padding:20px 22px;box-shadow:0 10px 40px rgba(0,0,0,.5);border-top:6px solid var(--acento)}
-#ficha h3{margin:0;font-size:22px}#ficha .ops{color:var(--muted);font-size:13px;margin:2px 0 12px}
-#ficha .fk{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:14px}#ficha .fk div{background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:9px 11px}
-#ficha .fk b{display:block;font-size:24px;font-variant-numeric:tabular-nums;color:var(--acento)}#ficha .fk span{font-size:11px;color:var(--muted)}#ficha .fk .r b{color:var(--pozo)}#ficha .fk .f{background:#17212b}#ficha .fk .f b{color:#eaff3a}#ficha .fk .f span{color:#c9cfd4}#ficha .fk .v b{color:var(--acento2)}
-#ficha .gs{display:grid;grid-template-columns:1fr 1fr;gap:16px}#ficha .gs h4{margin:0 0 4px;font-size:12px;color:var(--muted);font-weight:600}#ficha svg{width:100%;height:auto}#ficha svg text{font-size:10px;fill:#5d6974;font-family:"Cascadia Mono",Consolas,monospace}
-#ficha .pie{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:14px}
-@media(max-width:640px){#ficha .gs{grid-template-columns:1fr}}
-#cortina{position:absolute;top:0;bottom:0;width:0;z-index:950;display:none;pointer-events:none}
-#cortina .raya{position:absolute;top:0;bottom:0;left:-1.5px;width:3px;background:#f9f6ee;box-shadow:0 0 6px rgba(0,0,0,.6)}
-#cortina .ag{position:absolute;top:50%;left:-22px;width:44px;height:44px;margin-top:-22px;border-radius:50%;background:#f9f6ee;color:#17212b;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;cursor:ew-resize;pointer-events:auto;box-shadow:0 2px 10px rgba(0,0,0,.5);touch-action:none;user-select:none}
-#cortina .et{position:absolute;top:70px;font-family:"Cascadia Mono",Consolas,monospace;font-size:13px;font-weight:700;background:rgba(12,17,22,.85);color:#f9f6ee;padding:3px 8px;border-radius:4px;white-space:nowrap}#cortina .et.a{right:10px}#cortina .et.b{left:10px}
-#aviso{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#17212b;color:#f9f6ee;padding:9px 16px;border-radius:20px;font-size:13px;z-index:2600;opacity:0;transition:opacity .3s;pointer-events:none}#aviso.on{opacity:1}
-@media(max-width:820px){
-  body{--izq:0px!important;--der:0px!important}#app{grid-template-columns:1fr!important}
-  #panel,#demanda{position:fixed;top:var(--top);bottom:0;width:88vw;max-width:350px;z-index:1500;transition:transform .3s;padding:16px!important;overflow-y:auto!important;box-shadow:0 0 30px rgba(0,0,0,.5)}
-  #panel{left:0;border-right:1px solid var(--rule)!important}#demanda{right:0;border-left:1px solid var(--rule)!important}
-  body.sin-izq #panel{transform:translateX(-105%)}body.sin-der #demanda{transform:translateX(105%)}
-  #map{grid-column:1}#app{height:100dvh}
-  .tog{z-index:1600;width:40px;height:40px;top:calc(var(--top) + 8px);font-size:20px}#tog_izq{left:10px}#tog_der{right:10px}
-  body:not(.sin-izq) #tog_izq{left:min(88vw,350px)}body:not(.sin-der) #tog_der{right:min(88vw,350px)}
-  .leaflet-top.leaflet-left .leaflet-control{margin-top:60px}
-  #tiempo{left:8px;right:8px;bottom:8px;flex-wrap:wrap;gap:6px 8px;padding:8px 10px}#tiempo input[type=range]{order:5;flex:1 1 100%}#mes{min-width:0;font-size:14px}#tiempo button{padding:6px 9px;font-size:12px}
-  #guia{left:56px;right:56px;top:calc(var(--top) + 6px)}#guia .tx{font-size:15px;min-height:0}
-  #graf{left:0;right:0}
-  #portada{padding:12px}#portada h1{margin:8px 0 10px}#portada p{margin-bottom:16px}#portada .eb{font-size:10px;letter-spacing:.14em}
-  #portada .cifras{gap:8px;flex-wrap:nowrap;margin-bottom:18px}#portada .cifra{min-width:0;flex:1;padding:9px 4px}#portada .cifra b{font-size:23px}#portada .cifra span{font-size:10px;line-height:1.25;display:block}
-  #portada button{font-size:15px;padding:11px 18px}#portada .pie{display:none}
-}
-.cta{margin:18px 0 6px;padding:14px;border-radius:8px;background:#17212b;color:#f9f6ee}.cta b{display:block;font-size:15px;margin-bottom:3px}.cta span{display:block;font-size:12px;color:#c9cfd4;line-height:1.45;margin-bottom:10px}
-.cta a{display:inline-block;background:#19d3ff;color:#0c1116;font-weight:600;font-size:13px;padding:8px 14px;border-radius:6px;text-decoration:none}.cta a:hover{background:#6fe4ff}
-.como{display:inline-block;margin-top:8px;color:var(--acento);font-weight:600;font-size:12px}
-#portada .pie a{color:#b8c3ca}
-#nov .pend{color:var(--muted);font-style:italic}
-.nota{color:var(--muted);font-size:11px;line-height:1.45;margin-top:14px}
-.tag{display:inline-block;font-family:"Cascadia Mono",Consolas,monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#fff;background:var(--ink);padding:2px 6px;border-radius:3px;margin-left:6px;vertical-align:middle}
-#demanda{background:var(--bg);border-left:1px solid var(--rule);overflow-y:auto;padding:16px}
-.anios{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 12px}
-.anios button{background:var(--panel);color:var(--ink);border:1px solid var(--rule);padding:5px 9px;font-weight:500;font-family:"Cascadia Mono",Consolas,monospace;font-size:12px}
-.anios button.on{background:var(--acento);color:#fff;border-color:var(--acento)}
-.anios button.p{border-color:var(--acento2);color:var(--acento2)}.anios button.p.on{background:var(--acento2);color:#fff}
-select{width:100%;background:var(--panel);color:var(--ink);border:1px solid var(--rule);border-radius:5px;padding:6px 8px;font-family:inherit;font-size:13px}
-.fila{display:flex;justify-content:space-between;align-items:baseline;padding:7px 0;border-bottom:1px solid var(--rule)}
-.fila span{color:var(--muted);font-size:12px}.fila b{font-size:19px;font-variant-numeric:tabular-nums;font-weight:600}
-.fila.dos b{font-size:15px}.fila .piso{color:var(--acento)}.fila .ritmo{color:var(--acento2);margin-left:10px}
-svg text{font-family:"Cascadia Mono",Consolas,monospace;font-size:9px;fill:var(--muted)}
-.sup{color:var(--muted);font-size:11px;line-height:1.45;margin-top:12px}
-.tabs{display:flex;gap:6px;margin-bottom:10px}.tab{background:transparent;color:var(--muted);border:1px solid var(--rule);padding:6px 12px}.tab.on{background:var(--acento);color:#fff;border-color:var(--acento)}
-.precios{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}.precios label{font-size:10px;color:var(--muted);display:grid;gap:3px}
-.precios input{width:100%;background:var(--panel);color:var(--ink);border:1px solid var(--rule);border-radius:4px;padding:5px 6px;font-family:"Cascadia Mono",Consolas,monospace;font-size:12px}
-.anios button.esc.on{background:var(--acento);color:#fff;border-color:var(--acento)}.anios button.esc.p.on{background:var(--acento2);border-color:var(--acento2);color:#fff}
-.tabla{overflow-x:auto}#fin_tabla{border-collapse:collapse;width:100%;font-size:10px;font-variant-numeric:tabular-nums}#fin_tabla th,#fin_tabla td{padding:3px 3px;border-bottom:1px solid var(--rule);text-align:right;white-space:nowrap}#fin_tabla th:first-child,#fin_tabla td:first-child{text-align:left}#fin_tabla th{color:var(--muted);font-weight:500}#fin_tabla tr.tot td{font-weight:600;color:var(--acento)}
-.calorbar{width:18px;height:10px;flex:none;border-radius:2px;background:linear-gradient(90deg,#0b6b7a,#7b2cbf)}
-#graf{display:none;position:fixed;left:var(--izq);right:var(--der);top:0;bottom:0;z-index:1400;background:rgba(23,33,43,.45);align-items:center;justify-content:center}
-#graf .caja{background:var(--panel);border-radius:6px;padding:16px 18px;width:min(960px,94%);box-shadow:0 8px 30px rgba(0,0,0,.35);border-top:4px solid var(--acento)}
-#graf h3{margin:0 0 8px;font-size:15px}#graf svg{width:100%;height:auto;display:block}#graf svg text{font-size:11px}#graf svg text.v{fill:var(--ink);font-weight:600;font-size:10px}
-#graf .pie{display:flex;justify-content:space-between;align-items:flex-end;gap:12px}#graf .pie .sup{margin-top:8px}
-.fila.clic{cursor:pointer}.fila.clic span:first-child{border-bottom:1px dotted var(--acento)}.fila.clic:hover{background:rgba(11,107,122,.07)}
-.fila.clic:hover span:first-child::after{content:" · ver gráfico";color:var(--acento);border:0}
-.vent{padding:6px 0;border-bottom:1px solid var(--rule);cursor:pointer}.vent b{font-weight:600;font-size:13px}.vent .det{color:var(--muted);font-size:11px;margin-top:2px;line-height:1.35}
-.vent.on b{color:var(--acento)}.vent .n{float:right;color:var(--acento);font-family:"Cascadia Mono",Consolas,monospace;font-size:12px}
-.barrido{transform-box:view-box;transform-origin:50% 50%;animation:girar 7s linear infinite}@keyframes girar{to{transform:rotate(360deg)}}
+:root{--bg:#ece6d8;--panel:#f9f6ee;--ink:#17212b;--muted:#5d6974;--rule:#d6cdb9;--acento:#0b6b7a;--acento2:#7b2cbf;--rosa:#d02e7f;--agua:#19d3ff;--bar:50px}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:"Segoe UI",system-ui,sans-serif;font-size:14px;min-height:100vh;display:flex;flex-direction:column}
+a{color:var(--acento)}
+#barra{position:sticky;top:0;flex:none;min-height:var(--bar);display:flex;align-items:center;gap:14px;padding:0 14px;background:var(--ink);color:#f9f6ee;min-width:0;z-index:10}
+#barra h1{font-size:16px;margin:0;white-space:nowrap;font-weight:600}
+#barra .bl{display:flex;align-items:center;gap:16px;margin-left:auto;white-space:nowrap}
+.wa{display:inline-flex;align-items:center;gap:8px;background:#25d366;color:#07261a;font-weight:600;font-size:12px;padding:6px 11px;border-radius:6px;text-decoration:none}.wa:hover{background:#4ae08a}.wa img{width:15px;height:15px}
+.ancho{max-width:1180px;width:100%;margin:0 auto;padding:34px 20px 40px;flex:1}
+.intro .eb{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--acento);font-weight:600}
+.intro h2{font-size:clamp(26px,3.6vw,40px);line-height:1.12;letter-spacing:-.02em;margin:8px 0 10px;max-width:24ch}
+.intro p{font-size:16px;color:var(--muted);margin:0 0 26px;max-width:62ch;line-height:1.5}
+.puertas{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.puerta{display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--rule);border-radius:10px;overflow:hidden;text-decoration:none;color:var(--ink);transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease}
+.puerta:hover,.puerta:focus-visible{transform:translateY(-3px);box-shadow:0 10px 26px rgba(23,33,43,.16);border-color:var(--acento);outline:none}
+.puerta .im{position:relative;aspect-ratio:16/9;background:#0c1116}.puerta .im img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.puerta .im span{position:absolute;left:12px;bottom:12px;background:rgba(12,17,22,.88);color:#f9f6ee;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;padding:4px 10px;border-radius:12px}
+.puerta .tx{padding:16px 18px 18px;display:flex;flex-direction:column;flex:1}
+.puerta h3{font-size:19px;margin:0 0 10px;letter-spacing:-.01em}
+.puerta .n{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}.puerta .n b{font-size:56px;line-height:.95;font-weight:700;letter-spacing:-.03em;color:var(--acento);font-variant-numeric:tabular-nums}.puerta .n i{font-style:normal;font-size:18px;font-weight:600;color:var(--ink)}
+.puerta .q{margin:6px 0 0;font-size:14px;line-height:1.4}.puerta .s{margin:6px 0 0;font-size:13px;color:var(--muted);line-height:1.45;min-height:2.9em}
+.puerta .sec{margin:14px 0 0;padding-top:12px;border-top:1px solid var(--rule);font-size:12px;color:var(--muted)}
+.puerta .ir{margin-top:14px;font-weight:600;color:var(--acento);font-size:15px}
+.pie{margin-top:26px;font-size:12px;color:var(--muted);line-height:1.6}.pie b{color:var(--ink)}
 
-/* --- front ordenado: barra superior, capas en grupos, finanzas */
-#panel,#demanda,#map{min-height:0}#panel{padding:14px 16px 20px}#demanda{padding:14px 16px 20px}
-#barra{grid-column:1/-1;display:flex;align-items:center;gap:14px;padding:0 14px;background:var(--ink);color:#f9f6ee;min-width:0;z-index:1700}
-#barra h1{font-size:16px;margin:0;white-space:nowrap;font-weight:600}#barra .tag{background:rgba(255,255,255,.16)}
-#barra .filtros{display:flex;gap:8px;margin:0 auto;flex:1;max-width:520px;min-width:0}
-#barra .filtros select,#barra .filtros input{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.2);color:#f9f6ee;padding:6px 9px;min-width:0}
-#barra .filtros input::placeholder{color:#aab4bc}#barra select option{color:#17212b;background:#f9f6ee}
-#barra .bl{display:flex;align-items:center;gap:16px;margin-left:auto;white-space:nowrap}#barra .bl a{color:#c9d1d7;font-size:13px;text-decoration:none}#barra .bl a:hover{color:#fff}
-#barra .bl a.wa{margin:0;padding:6px 11px;font-size:12px;color:#07261a}#barra .bl a.wa img{width:15px;height:15px}
-@media(max-width:1180px){#barra .bl a:not(.wa){display:none}}
-.pt{font-size:16px;font-weight:600;margin:0 0 8px}.pt small{display:block;font-size:11px;font-weight:400;color:var(--muted);margin-top:1px}
-.kpis .kpi{position:relative;border:1px solid var(--rule);border-radius:6px;background:var(--panel);padding:9px 10px 8px}
-.kpis .kpi b{color:var(--ink);font-size:23px;font-weight:600;line-height:1.15;font-variant-numeric:normal}.kpis .kpi>span{display:block;color:var(--muted);font-size:11px;line-height:1.3}
-.kpis .kpi em{position:absolute;right:8px;top:9px;line-height:0;font-style:normal}.kpis .kpi em .lgq{margin:0;vertical-align:0}.kpis.pub .kpi.q{grid-column:1/-1}.capa .lgq{flex:none;margin-right:0}
-details.grp{border-top:1px solid var(--rule)}details.grp[open]{padding-bottom:8px}
-details.grp>summary{list-style:none;cursor:pointer;display:flex;align-items:center;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--acento);font-weight:600;padding:11px 0 8px}
-details.grp>summary::-webkit-details-marker{display:none}details.grp>summary::after{content:"+";margin-left:auto;font-size:16px;line-height:1;letter-spacing:0;color:var(--muted);font-weight:400}
-details.grp[open]>summary::after{content:"\2013"}details.grp>summary .n{margin-left:8px;letter-spacing:0;text-transform:none}
-details.grp .nota{margin-top:0}#nov{margin-bottom:12px}
-.tabs{gap:0;padding:3px;border:1px solid var(--rule);border-radius:8px;background:var(--panel);margin-bottom:12px}
-.tabs .tab{flex:1;border:0;border-radius:6px;padding:7px 0;font-size:13px}
-#demanda svg{width:100%;height:auto;display:block}#demanda svg text{font-size:10px}#demanda svg text.v{fill:var(--ink);font-weight:600;font-family:"Segoe UI",system-ui,sans-serif}
-#demanda h2{margin:20px 0 8px}#demanda h2 small{display:block;text-transform:none;letter-spacing:0;color:var(--muted);font-weight:400;font-size:11px;margin-top:2px}
-.precios{grid-template-columns:1fr;gap:5px;background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:9px 10px}
-.precios .tt2{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--acento);font-weight:600;margin-bottom:2px}
-.precios label{display:grid;grid-template-columns:1fr 66px 64px;align-items:center;gap:7px;font-size:12px;color:var(--ink)}
-.precios label i{font-style:normal;color:var(--muted);font-size:11px}.precios input{text-align:right;padding:4px 6px;font-size:12px}
-.ley{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:11px;color:var(--muted);margin:0 0 8px}.ley span{display:inline-flex;align-items:center;gap:5px}.ley i{width:10px;height:10px;border-radius:2px;display:inline-block}
-.lect{font-size:11px;color:var(--muted);min-height:17px;margin-top:3px}.lect b{color:var(--ink);font-weight:600}
-.gt{font-size:12px;font-weight:600;margin:12px 0 4px}
-.op{display:grid;grid-template-columns:76px 1fr 56px;align-items:center;gap:8px;padding:4px 0;font-size:12px;cursor:default}.op:hover{background:rgba(11,107,122,.07)}
-.op .tr{display:flex;gap:2px;height:10px}.op .tr i{background:#0b6b7a;border-radius:0 3px 3px 0;min-width:1px}.op .tr u{background:#7b2cbf;border-radius:0 3px 3px 0}
-.op b{text-align:right;font-weight:600;font-variant-numeric:tabular-nums}.op span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#fin_tabla_b{margin-top:8px;font-size:12px;font-weight:500;color:var(--acento);border-color:var(--acento)}
-#tip{position:fixed;z-index:2700;display:none;pointer-events:none;background:#17212b;color:#f9f6ee;font-size:12px;line-height:1.45;padding:7px 10px;border-radius:6px;max-width:260px;box-shadow:0 4px 14px rgba(0,0,0,.35)}#tip b{color:#fff}
-.tablaG{overflow-x:auto}.tablaG table{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}
-.tablaG th,.tablaG td{padding:6px 8px;border-bottom:1px solid var(--rule);text-align:right;white-space:nowrap}.tablaG tr:first-child th:first-child,.tablaG td:first-child{text-align:left}.vista .tablaG table{max-width:1020px}
-.tablaG th{color:var(--muted);font-weight:600;font-size:11px;vertical-align:bottom}.tablaG tr.tot td{font-weight:700;border-bottom:0}.tablaG th.g{text-align:right;border-bottom:0;padding-bottom:0;color:var(--ink)}
-#barra .vistas{display:flex;gap:2px;margin-left:10px}
-#barra .vistas button{background:transparent;color:#c9d1d7;border-radius:6px;padding:7px 15px;font-weight:500;font-size:14px}
-#barra .vistas button:hover{color:#fff;background:rgba(255,255,255,.08)}#barra .vistas button.on{background:#f9f6ee;color:#17212b;font-weight:600}
-#panel .filtros{margin:0 0 14px}
-#graf{z-index:2400}body:not(.v-mapa) #graf{left:0}#guia{z-index:1680}body:not(.v-mapa) #guia{left:70px}
-.vista{display:none;position:absolute;left:0;right:0;top:var(--top);bottom:0;z-index:1650;background:var(--bg);overflow-y:auto}.vista.on{display:block}
-.vista .in{max-width:1320px;margin:0 auto;padding:22px 28px 36px}
-.vh{display:flex;align-items:flex-end;justify-content:space-between;gap:14px 24px;flex-wrap:wrap;margin-bottom:16px}
-.vt{font-size:24px;font-weight:600;line-height:1.15}.vs{color:var(--muted);font-size:13px;margin:4px 0 0;max-width:640px}
-.vc{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.vc select{width:auto;min-width:230px}.vc .anios{margin:0}
-.sec{font-size:16px;font-weight:600;margin:26px 0 10px}.sec small{display:block;font-size:12px;font-weight:400;color:var(--muted);margin-top:2px}.sec .piso{color:var(--acento)}.sec .ritmo{color:var(--acento2)}
-.vista .heroes{grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:12px;margin:0}.vista .hero{border-radius:10px;padding:12px 14px}.vista .hero b{font-variant-numeric:normal}
-.hero.fijo{cursor:default}.hero.fijo:hover{transform:none}
-.ctx{font-size:13px;color:var(--muted);margin:10px 0 0;line-height:1.5}.ctx b{color:var(--ink)}
-.carta{background:var(--panel);border:1px solid var(--rule);border-radius:10px;padding:14px 16px;min-width:0}.carta h3{font-size:13px;font-weight:600;margin:0 0 8px}
-.carta .kpis{margin:0 0 10px}.carta .kpis .kpi{background:var(--bg)}
-.g2,.g3{display:grid;gap:12px;margin-top:12px}.g2{grid-template-columns:2fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}
-@media(max-width:1000px){.g2,.g3{grid-template-columns:1fr}}
-.vista svg{width:100%;height:auto;display:block}.vista svg text{font-size:12px}.vista svg text.v{fill:var(--ink);font-weight:600;font-family:"Segoe UI",system-ui,sans-serif}
-.vista svg [data-a]{cursor:pointer}
-.vista .precios{display:flex;flex-wrap:wrap;align-items:center;gap:10px 22px;padding:11px 14px;border-radius:10px}.vista .precios .tt2{margin:0}
-.vista .precios label{display:flex;align-items:center;gap:7px;font-size:13px}.vista .precios input{width:68px}
-.ley i.lk{width:18px;height:0;border-radius:0;border-top:3px solid;background:none!important}.ley i.lk.d{border-top-style:dashed}
-.vista .op{grid-template-columns:86px 1fr 60px;font-size:13px;padding:5px 0}
-.vista .mas{margin-top:18px}.vista .cta{margin-top:26px;display:flex;align-items:center;gap:8px 20px;flex-wrap:wrap}.vista .cta span{margin:0;flex:1;min-width:240px}.vista .cta b{margin:0}
-.vista #zonas{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:12px}
-.vista .vent{background:var(--panel);border:1px solid var(--rule);border-radius:10px;padding:14px 16px 10px;transition:border-color .15s}.vista .vent:hover{border-color:var(--acento)}
-.vista .vent{position:relative}.vista .vent b{font-size:15px;display:block;margin-right:48px;line-height:1.25}.vista .vent .n{position:absolute;right:16px;top:11px;float:none;font-size:22px;font-weight:600;font-family:inherit}.vista .vent .det{margin-right:8px}
-.vista .vent .det{font-size:12px;margin-top:6px;line-height:1.45}.vista .vent svg.sp{margin-top:8px}.vista .vent svg.sp text{font-size:9px}.spl{font-size:10px;color:var(--muted);margin-top:2px}
+#barra .sect{display:flex;align-items:center;gap:2px;flex:none}
+#barra .sect a{display:inline-flex;align-items:center;color:#c9d1d7;text-decoration:none;font-size:11.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;padding:5px 11px;border-radius:14px;white-space:nowrap}
+#barra .sect a:hover{color:#fff;background:rgba(255,255,255,.1)}
+#barra .sect a.on{background:#0b6b7a;color:#fff}
+#barra .sect a.ini{padding:5px 7px}#barra .sect a.ini svg{width:16px;height:16px;display:block}
+#barra .sect+h1{padding-left:14px;border-left:1px solid rgba(255,255,255,.2)}
+@media(max-width:1240px) and (min-width:821px){#barra .sect+h1 .tag{display:none}}
+@media(max-width:1090px) and (min-width:821px){#barra .sect+h1{display:none}}
+
+@media(max-width:900px){.puertas{grid-template-columns:1fr;max-width:520px}.puerta .s{min-height:0}}
+@media(max-width:820px){.ancho{padding:22px 16px 32px}.wa span{display:none}.wa{padding:7px}}
+
 @media(max-width:820px){
-  :root{--bar:92px}
-  #barra{flex-wrap:wrap;align-content:center;gap:6px 8px;padding:6px 10px}#barra h1{font-size:15px;flex:1;overflow:hidden;text-overflow:ellipsis}
-  #barra .vistas{order:5;flex:1 1 100%;margin:0}#barra .vistas button{flex:1;padding:7px 4px}#barra .bl a.wa span{display:none}#barra .bl a.wa{padding:7px}
-  .vista .in{padding:16px 14px 28px}.vista .precios{display:grid;grid-template-columns:1fr;gap:7px}.vista .precios label{display:grid;grid-template-columns:1fr 68px 74px}.vt{font-size:21px}.vc select{min-width:0;width:100%}
+  :root{--bar:130px}
+  #barra .sect{order:-1;flex:1 1 100%}
+  #barra .sect a{flex:1;justify-content:center;padding:6px 4px}#barra .sect a.ini{flex:none;padding:6px 9px}
+  #barra .sect+h1{padding-left:0;border-left:0}
 }
-.eqs{position:relative;padding-top:22px;--nw:248px;--vw:42px}
-.eq{display:grid;grid-template-columns:var(--nw) 1fr var(--vw);align-items:center;gap:8px;padding:5px 0;font-size:13px;cursor:pointer;position:relative}.eq:hover{background:rgba(11,107,122,.07)}
-.eq span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.eq .tr{height:10px}.eq .tr i{display:block;height:100%;min-width:2px;background:#0b6b7a;border-radius:0 3px 3px 0}
-.eq.no .tr i{background:#b9b09a}.eq b{text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
-.eqm{position:absolute;top:2px;bottom:0;width:0;border-left:1px dashed var(--ink);left:calc(var(--nw) + 8px + (100% - var(--nw) - var(--vw) - 16px) * var(--pf));pointer-events:none}
-.eqm span{position:absolute;top:-2px;left:5px;font-size:11px;font-weight:600;white-space:nowrap}.eqm.der span{left:auto;right:5px}
-@media(min-width:1001px){.g2.g22{grid-template-columns:1fr 1fr}}
-@media(max-width:1180px){.eqs{--nw:136px}.eq span{white-space:normal;line-height:1.2}}
-#eq_tabla tr[data-z]{cursor:pointer}#eq_tabla tr[data-z]:hover td{background:rgba(11,107,122,.07)}
-#eco_zona{max-width:440px;margin:0 0 10px}
-.escs{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:10px 0 0}.escs span{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--acento);font-weight:600;margin-right:6px}
-.escs button{background:var(--panel);color:var(--ink);border:1px solid var(--rule);font-weight:500;font-size:13px;padding:6px 12px;border-radius:16px}.escs button:hover{border-color:var(--acento)}
-.escs button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
-#esc_tabla tr[data-b]{cursor:pointer}#esc_tabla tr[data-b]:hover td{background:rgba(11,107,122,.07)}#esc_tabla tr.act td{font-weight:700;background:rgba(11,107,122,.1)}
-.emp .en{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:10px}.emp .en b{font-size:17px}
-.emp .en span{font-family:"Cascadia Mono",Consolas,monospace;font-size:11px;color:var(--muted);text-align:right}
-.emp .eh{border-left:5px solid var(--acento);padding:2px 0 2px 12px;margin-bottom:12px}.emp .eh b{display:block;font-size:30px;line-height:1.1;color:var(--acento);font-weight:600}
-.emp .eh span{font-size:13px}.emp .eh i{display:block;font-style:normal;font-size:12px;color:var(--muted);margin-top:3px;line-height:1.4}
-.emp .kpis{margin-bottom:12px}.emp .fila{padding:6px 0;gap:10px}.emp .fila span:last-child{color:var(--ink);text-align:right}.emp .sup a{color:var(--acento)}
-#barra{height:var(--bar);align-self:start}
-#cinta{position:absolute;left:0;right:0;top:var(--bar);height:var(--cin);z-index:1700;background:#0f161d;border-top:1px solid rgba(255,255,255,.09);color:#dfe5ea;display:flex;align-items:center;overflow:hidden;font-size:12.5px;white-space:nowrap}
-#cinta .fijo{flex:none;height:100%;display:flex;align-items:center;padding:0 12px 0 14px;color:#8f9ba3;font-size:11px;letter-spacing:.08em;text-transform:uppercase;background:#0f161d;border-right:1px solid rgba(255,255,255,.12);position:relative;z-index:1}
-#cinta .pista{display:flex;animation:cinta 60s linear infinite;will-change:transform}#cinta:hover .pista{animation-play-state:paused}
-#cinta .it{padding:0 22px;cursor:pointer;display:inline-flex;gap:7px;align-items:baseline}#cinta .it b{font-weight:600;color:#fff}#cinta .it i{font-style:normal;font-weight:600}
-#cinta .it .up{color:#36d399}#cinta .it .dn{color:#ff8fa3}#cinta .it small{color:#8f9ba3;font-size:11px}
-@keyframes cinta{to{transform:translateX(-50%)}}
-@media(prefers-reduced-motion:reduce){#cinta .pista{animation:none}}
-.cots{display:grid;grid-template-columns:repeat(auto-fit,minmax(176px,1fr));gap:12px;margin-bottom:12px}
-.cot .cn{display:flex;justify-content:space-between;align-items:baseline;gap:6px}.cot .cn b{font-size:14px}.cot .cn span{font-family:"Cascadia Mono",Consolas,monospace;font-size:10px;color:var(--muted)}
-.cot .cp{font-size:24px;font-weight:600;line-height:1.2;margin-top:2px}.cot .cp small{font-size:11px;font-weight:400;color:var(--muted)}
-.cot .cv{display:flex;gap:4px 12px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:2px 0 6px}.cot .cv b{color:var(--ink);font-weight:600}.cot .cv .up{color:#0a7d55}.cot .cv .dn{color:#b3261e}
-.cot .cr{font-size:10px;color:var(--muted);margin-top:3px}
-.ia{border-left:5px solid var(--acento2)}.ia h3{font-size:15px}.ia p{font-size:13px;line-height:1.55;margin:0 0 6px}.ia .sup{font-size:11px;margin:6px 0 0}
-.iae{background:var(--bg);border-radius:6px;padding:9px 11px;margin:0 0 12px;border-left:4px solid var(--acento2)}.iae h4{margin:0 0 4px;font-size:12px;font-weight:600}
-.iae .t{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--acento2);font-weight:600;margin-bottom:5px}
-.iae ul{margin:0 0 7px;padding-left:16px}.iae li{font-size:12px;line-height:1.45;margin-bottom:2px}.iae p{font-size:12px;line-height:1.45;margin:0}
+
+@media(max-width:820px){:root{--bar:50px}#barra{flex-wrap:wrap;gap:6px 8px;padding:8px 10px}#barra h1{font-size:15px;flex:1;overflow:hidden;text-overflow:ellipsis}}
 </style>
 </head>
-<body class="v-mapa">
-<div id="portada"><div class="in">
-  <div class="eb">Datos abiertos · Sentinel-2 · Secretaría de Energía</div>
-  <h1>Vaca Muerta desde el satélite</h1>
-  <p>Cada locación nueva, cada pozo y cada antorcha de la cuenca, mes a mes desde 2020. Lo que el satélite ve antes de que llegue al registro oficial.</p>
-  <div class="cifras"><div class="cifra a"><b id="pc_loc">·</b><span>Locaciones nuevas detectadas</span></div><div class="cifra b"><b id="pc_poz">·</b><span>Pozos del padrón oficial</span></div><div class="cifra c"><b id="pc_ant">·</b><span>Antorchas vistas en el infrarrojo</span></div></div>
-  <div class="bot"><button class="pri" id="pb_ver">Explorar el mapa</button><button class="sec" id="pb_tour" style="display:none">Mostrame en un minuto</button></div>
-  <a class="wa" href="https://whatsapp.com/channel/0029VbDhfzIB4hdKBOmHzr0u" target="_blank" rel="noopener"><img src="img/whatsapp.png" alt="">Sumate al canal de WhatsApp</a>
-  <div class="pie">Contiene datos modificados de Copernicus Sentinel · Capítulo IV y puntos de venteo, Secretaría de Energía · ENARGAS · <a href="https://github.com/dpinero14/locaciones-lab#readme" target="_blank" rel="noopener" data-ev="como_se_hizo">Cómo se hizo</a></div>
-</div></div>
-<div id="app">
+<body>
 <header id="barra">
-  <h1>Vaca Muerta desde el satélite <span class="tag" id="tag">privado</span></h1>
-  <nav class="vistas"><button data-v="mapa" class="on">Mapa</button><button data-v="demanda">Demanda</button><button data-v="finanzas">Finanzas</button><button data-v="zonas">Zonas</button></nav>
-  <nav class="bl"><a href="https://github.com/dpinero14/locaciones-lab#readme" target="_blank" rel="noopener" data-ev="como_se_hizo">Cómo se hizo</a><a href="https://www.linkedin.com/in/dpinero/" target="_blank" rel="noopener" data-ev="contacto">Contacto</a><a class="wa" href="https://whatsapp.com/channel/0029VbDhfzIB4hdKBOmHzr0u" target="_blank" rel="noopener" title="Sumate al canal de WhatsApp"><img src="img/whatsapp.png" alt=""><span>Canal de WhatsApp</span></a></nav>
+  <nav class="sect" aria-label="Sectores"><a class="ini on" href="./" title="Portada" aria-label="Portada"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 7.6 8 2.4l6 5.2V14H9.9v-3.9H6.1V14H2z" fill="currentColor"/></svg></a><a href="./petroleo/">Petróleo</a><a href="./gas/">Gas</a><a href="./mineria/">Minería</a></nav>
+  <h1>Energía y Minería desde el satélite</h1>
+  <nav class="bl"><a class="wa" href="https://whatsapp.com/channel/0029VbDhfzIB4hdKBOmHzr0u" target="_blank" rel="noopener" title="Sumate al canal de WhatsApp"><img src="img/whatsapp.png" alt=""><span>Canal de WhatsApp</span></a></nav>
 </header>
-<div id="cinta"><span class="fijo">Cotizaciones</span></div>
-<div id="panel">
-  <div class="filtros">
-    <input id="f_buscar" list="dl_areas" placeholder="Buscar un área o yacimiento..." autocomplete="off"><datalist id="dl_areas"></datalist>
-    <select id="f_op" title="Filtrar por operadora"><option value="">Todas las operadoras</option></select>
+<div class="ancho">
+  <div class="intro">
+    <div class="eb">Tablero abierto</div>
+    <h2>Petróleo, gas y minería de la Argentina, medidos con datos abiertos y satélites</h2>
+    <p>Tres tableros que se actualizan con cada dato nuevo. Elegí por dónde entrar.</p>
   </div>
-  <div class="pt"><span id="pt_mes">·</span><small>Lo que se ve en el mes de la línea de tiempo</small></div>
-  <div class="kpis">
-    <div class="kpi"><em><span class="lgi" style="stroke:var(--acento)"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M12 8v8M8 12h8"/></svg></span></em><b id="k_vistas">0</b><span>Locaciones vistas hasta ese mes</span></div>
-    <div class="kpi r"><em><span class="lgi" style="stroke:var(--acento)"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2" style="fill:rgba(11,107,122,.35)"/><path d="M12 8v8M8 12h8"/></svg></span></em><b id="k_sinpozo">0</b><span>De ellas, sin pozo registrado todavía</span></div>
-    <div class="kpi f"><em><span class="lg"><svg viewBox="0 0 24 24"><path class="f1" d="M12 1.5c.6 3.6 5.6 6.2 5.6 11.6a5.6 5.6 0 0 1-11.2 0c0-2.3 1-3.9 2.2-5 .1 1.9.8 3 1.9 3.3C10.300 8 9.8 4.700 12 1.5z"/></svg></span></em><b id="k_ant">0</b><span>Antorchas encendidas ese mes</span></div>
-    <div class="kpi q"><em><span class="lgq"><svg viewBox="0 0 24 24"><path d="M12 2 6 22h12L12 2zM8.700 13h6.600M10.200 8h3.600"/></svg></span></em><b id="k_eq">0</b><span id="k_eq_t">Equipos trabajando ese mes (radar)</span></div>
+  <div class="puertas">
+    <a class="puerta" href="petroleo/">
+      <div class="im"><img src="img/puerta_petroleo.jpg" alt="Locaciones y caminos de Vaca Muerta vistos desde el satélite" width="800" height="450"><span>Petróleo</span></div>
+      <div class="tx"><h3>Vaca Muerta desde el satélite</h3>
+        <div class="n"><b id="p_n">·</b><i>mil barriles por día</i></div>
+        <p class="q" id="p_q"></p><p class="s" id="p_s"></p>
+        <p class="sec">Mapa · Demanda · Finanzas · Zonas</p><div class="ir">Entrar →</div></div>
+    </a>
+    <a class="puerta" href="gas/">
+      <div class="im"><img src="img/puerta_gas.jpg" alt="La red troncal de gasoductos de la Argentina" width="800" height="450"><span>Gas</span></div>
+      <div class="tx"><h3>¿Alcanza el gas?</h3>
+        <div class="n"><b id="g_n">·</b><i>% importado</i></div>
+        <p class="q" id="g_q"></p><p class="s" id="g_s"></p>
+        <p class="sec">Invierno · Red · Producción</p><div class="ir">Entrar →</div></div>
+    </a>
+    <a class="puerta" href="mineria/">
+      <div class="im"><img src="img/puerta_mineria.jpg" alt="Piletas de litio de Olaroz, Jujuy, vistas desde el satélite" width="800" height="450"><span>Minería</span></div>
+      <div class="tx"><h3>Litio desde el satélite</h3>
+        <div class="n"><b id="m_n">·</b><i>km² de piletas</i></div>
+        <p class="q" id="m_q"></p><p class="s" id="m_s"></p>
+        <p class="sec">Índice · Proyectos · Mapa · Finanzas</p><div class="ir">Entrar →</div></div>
+    </a>
   </div>
-  <div id="nov"></div>
-  <details class="grp" open><summary>Satélite</summary>
-  <label class="capa"><input type="checkbox" id="c_img" checked><span class="sq" style="border-color:var(--gris)"></span>Imagen Sentinel-2 del año elegido<span class="n" id="n_img"></span></label>
-  <label class="capa"><input type="checkbox" id="c_loc" checked><span class="lgi" style="stroke:var(--acento)"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M12 8v8M8 12h8"/></svg></span>Locaciones nuevas detectadas<span class="n" id="n_loc"></span></label>
-  <label class="capa"><input type="checkbox" id="c_otras"><span class="sq" style="border-color:var(--gris)"></span>Otras obras detectadas (caminos, plantas)<span class="n" id="n_otras"></span></label>
-  <label class="capa"><input type="checkbox" id="c_comp2"><span class="sq" style="border-color:var(--ink);background:linear-gradient(90deg,var(--gris) 50%,transparent 50%)"></span>Comparar con la imagen de 2020<span class="n"></span></label>
-  </details><details class="grp" open><summary>Equipos</summary>
-  <label class="capa"><input type="checkbox" id="c_eq" checked><span class="lgq"><svg viewBox="0 0 24 24"><path d="M12 2 6 22h12L12 2zM8.700 13h6.600M10.200 8h3.600"/></svg></span>Equipos de perforación vistos con radar<span class="n" id="n_eq"></span></label>
-  <p class="nota_eq" id="nota_eq" style="display:none;margin:2px 0 8px 30px;font-size:11px;color:var(--muted)">Los que trabajan en locaciones sin pozo registrado todavía se cuentan, pero no se dibujan.</p>
-  </details><details class="grp" open><summary>Antorchas</summary>
-  <label class="capa"><input type="checkbox" id="c_ant" checked><span class="lg"><svg viewBox="0 0 24 24"><path class="f1" d="M12 1.5c.6 3.6 5.6 6.2 5.6 11.6a5.6 5.6 0 0 1-11.2 0c0-2.3 1-3.9 2.2-5 .1 1.9.8 3 1.9 3.3C10.300 8 9.8 4.700 12 1.5z"/><path class="f2" d="M12 11.500c.3 1.600 2.300 2.500 2.300 4.600a2.300 2.300 0 0 1-4.600 0c0-1.800 1.600-2.600 2.300-4.600z"/></svg></span>Antorchas vistas desde el satélite<span class="n" id="n_ant"></span></label>
-  <label class="capa"><input type="checkbox" id="c_tmp" checked><span class="lg tmpl"><svg viewBox="0 0 24 24"><path class="f1" d="M12 1.5c.6 3.6 5.6 6.2 5.6 11.6a5.6 5.6 0 0 1-11.2 0c0-2.3 1-3.9 2.2-5 .1 1.9.8 3 1.9 3.3C10.300 8 9.8 4.700 12 1.5z"/><path class="f2" d="M12 11.500c.3 1.600 2.300 2.500 2.300 4.600a2.300 2.300 0 0 1-4.600 0c0-1.800 1.600-2.600 2.300-4.600z"/></svg></span>Quemas temporales (ensayos de pozo)<span class="n" id="n_tmp"></span></label>
-  <label class="capa"><input type="checkbox" id="c_decl"><span class="lgd"></span>Puntos de venteo declarados<span class="n" id="n_decl"></span></label>
-  </details><details class="grp" open><summary>Padrón oficial</summary>
-  <label class="capa"><input type="checkbox" id="c_calor"><span class="calorbar"></span>Calor: producción (azul) vs exploración (violeta)</label>
-  <div class="nota" id="calor_nota" style="margin:0 0 6px 28px;display:none"></div>
-  <label class="capa"><input type="checkbox" id="c_pozos" checked><span class="lgi" style="stroke:var(--pozo)"><svg viewBox="0 0 24 24"><path d="M12 2 6 22h12L12 2zM8.700 13h6.600M10.200 8h3.600M7.400 17.500l9.200-4.500M16.600 17.500 7.400 13"/></svg></span>Pozos con fecha de perforación<span class="n" id="n_pozos"></span></label>
-  <label class="capa"><input type="checkbox" id="c_todos"><span class="dot" style="background:#9c7f8c"></span>Mostrar también los pozos posteriores al mes<span class="n"></span></label>
-  </details><details class="grp"><summary>Infraestructura</summary>
-  <label class="capa"><input type="checkbox" id="c_gas" checked><span class="ln" style="border-color:var(--infra)"></span>Gasoductos troncales (ENARGAS)<span class="n" id="n_gas"></span></label>
-  <label class="capa"><input type="checkbox" id="c_comp" checked><span class="lgi" style="stroke:var(--infra)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.500"/><path d="M12 12V4.500a4 4 0 0 1 3.500 5.500zM12 12l6.500 3.750a4 4 0 0 1-6.500-.750zM12 12l-6.500 3.750a4 4 0 0 1 3-6z"/></svg></span>Plantas compresoras<span class="n" id="n_comp"></span></label>
-  <label class="capa"><input type="checkbox" id="c_arena"><span class="ln" style="border-color:var(--acento2)"></span>La ruta de la arena (arena-lab)<span class="n"></span></label>
-  </details><details class="grp"><summary>Fuentes y método</summary>
-  <p class="nota">Locaciones: detector a ciegas sobre Sentinel-2, una escena limpia por mes (locaciones-lab). Pozos: Capítulo IV, Secretaría de Energía; el padrón carga los pozos nuevos con unos seis meses de demora. Gasoductos y compresoras: ENARGAS. Antorchas: bandas infrarrojas de Sentinel-2 (20 m), una escena por mes, vistas en tres meses o más fuera del invierno y revisadas una por una; puntos de venteo declarados: Secretaría de Energía. Fondo fuera de las ventanas: Esri World Imagery.<br></p>
-  </details>
+  <p class="pie"><b>De dónde sale.</b> Imágenes Copernicus Sentinel-1 y Sentinel-2, Secretaría de Energía, ENARGAS, INDEC y Secretaría de Minería. Cómo se hizo: <a href="https://github.com/dpinero14/locaciones-lab#readme" target="_blank" rel="noopener">locaciones-lab</a> y <a href="https://github.com/dpinero14/gas-lab#readme" target="_blank" rel="noopener">gas-lab</a>. Contacto: <a href="https://www.linkedin.com/in/dpinero/" target="_blank" rel="noopener">Diego Piñero</a>.</p>
 </div>
-<div id="map"></div>
-</div>
-<div class="vista" id="v_demanda"><div class="in">
-  <div class="vh"><div><div class="vt">Demanda</div><p class="vs">Lo que la actividad le pide a la cadena: fracturas, arena, agua y camiones. Elegí un año, o tocá una barra.</p></div>
-    <div class="vc"><select id="ambito"></select><div class="anios" id="anios"></div></div></div>
-  <div class="sec" id="titulo_anio" style="margin-top:6px"></div>
-  <div id="kpis"></div>
-  <p class="ctx" id="dem_ctx"></p>
-  <div class="sec">Año por año</div>
-  <div class="ley"><span><i style="background:#c4bba6"></i>Años anteriores</span><span><i style="background:#17212b"></i>El año elegido</span><span><i style="background:#0b6b7a"></i>2027 como piso</span><span><i style="background:#7b2cbf"></i>2027 si sigue el ritmo</span></div>
-  <div class="g3" id="dem_grafs" style="margin-top:0"></div>
-  <details class="mas"><summary>Cómo se calcula</summary><p class="sup" id="supuestos" style="margin-top:0"></p></details>
-  <div class="cta"><b>¿Querés este análisis para tu área?</b><span>Locaciones nuevas, pozos que vienen, demanda de arena y antorchas, a medida de una zona o una operación.</span><a href="https://www.linkedin.com/in/dpinero/" target="_blank" rel="noopener" data-ev="contacto">Escribime por LinkedIn</a></div>
-</div></div>
-<div class="vista" id="v_finanzas"><div class="in">
-  <div class="vh"><div><div class="vt">Finanzas</div><p class="vs">Cuánto producen y facturan los pozos que vienen, y cuánto rinde un pozo. Cambiá un supuesto y se recalcula todo.</p></div></div>
-  <div class="precios"><div class="tt2">Tus supuestos</div>
-    <label>Brent<input type="number" id="p_bbl" value="90" step="1" min="0"><i>US$/bbl</i></label>
-    <label>Gas<input type="number" id="p_gas" value="3.5" step="0.1" min="0"><i>US$/MMBtu</i></label>
-    <label>Costo del pozo<input type="number" id="p_capex" value="13.5" step="0.5" min="0"><i>MUS$</i></label>
-    <label>Costo operativo<input type="number" id="p_opex" value="5" step="0.5" min="0"><i>US$/boe</i></label>
-    <label>Tasa de descuento<input type="number" id="p_tasa" value="10" step="1" min="0"><i>% anual</i></label>
-    <label>Retenciones al crudo<input type="number" id="p_ret" value="8" step="1" min="0" max="100"><i>%</i></label>
-    <label data-tip="Lo que cuesta llevar cada barril del pozo a donde se vende: oleoducto, almacenaje y puerto. Se descuenta del precio antes de las regalías.<br>Viene en 0: los números son a boca de pozo.<br>Referencia: Vista informó 3,6 US$ por barril equivalente de gastos de comercialización, que incluyen el transporte, en el tercer trimestre de 2026.">Transporte y evacuación<input type="number" id="p_trans" value="0" step="0.5" min="0"><i>US$/bbl</i></label>
-  </div>
-  <div class="escs" id="escs"></div>
-  <div class="sec">Los pozos que vienen en 2027<small>Los de las locaciones que el satélite ya vio sin pozo. Tocá una cifra para verla año por año.</small></div>
-  <div class="ley"><span><i style="background:#0b6b7a"></i>Piso: lo ya construido</span><span><i style="background:#7b2cbf"></i>Si sigue el ritmo del último año</span></div>
-  <div id="fin_kpis"></div>
-  <p class="ctx" id="fin_ctx"></p>
-  <div class="g2">
-    <div class="carta"><h3>Producción de petróleo de las ventanas, miles de bbl/d</h3><div class="ley" id="fin_prod_ley"></div><svg id="fin_prod"></svg><div class="lect" id="fin_prod_l"></div></div>
-    <div class="carta"><h3>Barriles por día nuevos en 2027, por operadora</h3><div id="fin_ops"></div></div>
-  </div>
-  <div class="sec">Si cambia el precio del petróleo<small>Por el estrecho de Ormuz pasa cerca de un quinto del petróleo del mundo: cada crisis mueve el Brent. Tocá un escenario para aplicarlo a todo el tablero.</small></div>
-  <div class="carta"><div class="tablaG" id="esc_tabla"></div><p class="sup" id="esc_nota" style="margin:10px 0 0"></p></div>
-  <div class="sec" id="eco_sec">La economía de un pozo<small>El pozo tipo, con tus supuestos. Elegí todas las ventanas o una zona.</small></div>
-  <select id="eco_zona" title="De qué zona es el pozo tipo"></select>
-  <div class="g3" style="margin-top:0">
-    <div class="carta"><div class="kpis" id="eco_kpis"></div><p class="sup" id="eco_txt" style="margin-top:4px"></p></div>
-    <div class="carta"><h3>Flujo de caja acumulado del pozo, MUS$</h3><svg id="eco_grafico"></svg><div class="lect" id="eco_grafico_l"></div></div>
-    <div class="carta"><h3 id="eco_brent_t">VAN del pozo (MUS$) según el Brent (US$/bbl)</h3><svg id="eco_brent"></svg><div class="lect" id="eco_brent_l"></div></div>
-  </div>
-  <div class="sec">El precio de equilibrio, zona por zona<small>El precio que deja en cero el VAN del pozo tipo de cada zona. Tocá una zona para ver su pozo arriba.</small></div>
-  <div class="ley"><span><i style="background:#0b6b7a"></i>Se paga con tu precio</span><span><i style="background:#b9b09a"></i>No se paga con tu precio</span></div>
-  <div id="eq_sec">
-  <div class="g2 g22" style="margin-top:0">
-    <div class="carta"><h3>Zonas de petróleo: Brent de equilibrio, US$/bbl</h3><div id="eq_pet"></div></div>
-    <div class="carta"><h3>Zonas de gas: precio del gas de equilibrio, US$/MMBtu</h3><div id="eq_gas"></div></div>
-  </div>
-  <p class="ctx" id="eq_txt"></p>
-  <div class="carta" style="margin-top:12px"><div class="tablaG" id="eq_tabla"></div><p class="sup" id="eq_nota" style="margin:10px 0 0"></p></div>
-  </div>
-  <div id="emp_sec" style="display:none">
-  <div class="sec">Las empresas que cotizan<small>Cómo vienen sus acciones y qué muestran de cada una el satélite y el registro oficial. Son hechos medidos y una opinión general; no es una recomendación de compra ni de venta.</small></div>
-  <div class="gt" style="margin-top:0">Cómo vienen las acciones y el Brent</div>
-  <div class="cots" id="cot_fila"></div>
-  <div class="carta ia" id="ia_carta" style="margin-bottom:12px"></div>
-  <div class="g3" id="emp_cartas" style="margin-top:0"></div>
-  <p class="sup" id="emp_nota" style="margin:10px 0 0"></p>
-  </div>
-  <div class="sec">Operadora por operadora</div>
-  <div class="carta"><div class="tablaG" id="fin_tabla_d"></div><p class="sup" style="margin:10px 0 0">Cada locación se atribuye a la operadora del pozo más cercano a menos de 2 km. <b>Piso</b>: las locaciones vistas sin pozo. <b>Ritmo</b>: más las que aparecerían si sigue el ritmo del último año.</p></div>
-  <details class="mas"><summary>Cómo se calcula</summary><p class="sup" id="fin_sup" style="margin-top:0"></p></details>
-  <div class="cta"><b>¿Querés este análisis para tu área?</b><span>Locaciones nuevas, pozos que vienen, demanda de arena y antorchas, a medida de una zona o una operación.</span><a href="https://www.linkedin.com/in/dpinero/" target="_blank" rel="noopener" data-ev="contacto">Escribime por LinkedIn</a></div>
-</div></div>
-<div class="vista" id="v_zonas"><div class="in">
-  <div class="vh"><div><div class="vt">Zonas</div><p class="vs">Las <span id="n_zonas"></span> ventanas que mira el satélite. Tocá una para abrir su ficha.</p></div></div>
-  <div id="zonas"></div>
-  <div class="cta"><b>¿Querés este análisis para tu área?</b><span>Locaciones nuevas, pozos que vienen, demanda de arena y antorchas, a medida de una zona o una operación.</span><a href="https://www.linkedin.com/in/dpinero/" target="_blank" rel="noopener" data-ev="contacto">Escribime por LinkedIn</a></div>
-</div></div>
-<button class="tog" id="tog_izq" title="ocultar o mostrar el panel de capas">‹</button>
-<div id="tip"></div>
-<div id="graf"><div class="caja"><h3></h3><svg></svg><div class="tablaG" style="display:none"></div><div class="pie"><p class="sup"></p><button class="ghost cerrar">Cerrar</button></div></div></div>
-<div id="ficha"><div class="caja"></div></div>
-<div id="aviso"></div>
-<div id="guia"><div class="caja"><div class="tx"></div><div class="ab"><div class="pts"></div><button id="guia_salir">Saltar</button></div></div></div>
-<div id="tiempo">
-  <button id="play">▶</button>
-  <span id="mes">2026-10</span>
-  <input type="range" id="slider" min="0" max="81" value="81" step="1">
-  <button class="ghost" id="hoy">Hoy</button>
-  <button class="ghost" id="b_comp" title="Copiar el enlace a esta vista">Compartir</button>
-  <button class="ghost" id="b_guia" title="Un recorrido de un minuto por el tablero">Recorrido</button>
-</div>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
-let DEM=null,ambito="__ventanas__",anioSel="2027";
-const nf=n=>Math.round(n).toLocaleString("es-AR");
-function datosAmbito(){return ambito==="__cuenca__"?DEM.cuenca:DEM.zonas[ambito];}
-let VISTA="mapa";const VISTAS=["mapa","demanda","finanzas","zonas"];
-const n1=x=>(Math.round(x*10)/10+0).toLocaleString("es-AR",{maximumFractionDigits:1});
-function ver(v){if(!VISTAS.includes(v))v="mapa";VISTA=v;document.querySelectorAll(".vista").forEach(e=>e.classList.toggle("on",e.id==="v_"+v));
-  document.querySelectorAll("#barra .vistas button").forEach(b=>b.classList.toggle("on",b.dataset.v===v));VISTAS.forEach(x=>document.body.classList.toggle("v-"+x,x===v));
-  if(v==="demanda")tablero();if(v==="finanzas")finanzas();if(v==="zonas")sparks();
-  if(typeof ev==="function")ev("vista",{vista:v});if(typeof guardarURL==="function")guardarURL();}
-document.querySelectorAll("#barra .vistas button").forEach(b=>b.onclick=()=>ver(b.dataset.v));
-const paso3=x=>{const p=Math.pow(10,Math.floor(Math.log10(Math.max(x,1e-9))));const f=x/p;return (f<=1?1:f<=2?2:f<=5?5:10)*p;};
-const fmtEje=v=>Math.abs(v)>=10000?nf(v/1000)+" mil":n1(v);
-const ETQ={pozos:"Pozos fracturados",etapas:"Etapas de fractura",arena_kt:"Arena, miles de t",agua_hm3:"Agua, hm³",camiones_arena:"Camiones de arena (28 t)",equipos_fractura:"Equipos de fractura ocupados",locaciones_vistas:"Locaciones nuevas vistas por el satélite"};
-// barras por año para una tarjeta: solo llevan número el año elegido y la proyección; el resto, al pasar el mouse
-function barrasC(svg,cats,vals,fmt){
-  const W=460,H=216,L=50,R=26,B=24,T=20;svg.setAttribute("viewBox",`0 0 ${W} ${H}`);const max=Math.max(...vals.map(x=>x?x.v:0),1e-9);const paso=paso3(max/3),top=Math.ceil(max/paso-1e-9)*paso;
-  const n=cats.length,w=(W-L-R)/n,bw=Math.min(24,w-8);let h="";
-  for(let v=0;v<=top+paso*1e-6;v+=paso){const y=T+(H-T-B)*(1-v/top);h+=`<line x1="${L}" x2="${W-R}" y1="${y}" y2="${y}" stroke="${v===0?"#a39a85":"#ddd5c2"}"/><text x="${L-6}" y="${y+3.500}" text-anchor="end">${fmtEje(v)}</text>`;}
-  vals.forEach((x,i)=>{if(!x)return;const hh=x.v/top*(H-T-B),cx=L+i*w+w/2,x0=cx-bw/2,yb=H-B;
-    h+=(hh>4?`<path d="M${x0},${yb}v${-(hh-4)}q0,-4 4,-4h${bw-8}q4,0 4,4v${hh-4}z"`:`<rect x="${x0}" y="${yb-Math.max(hh,1)}" width="${bw}" height="${Math.max(hh,1)}"`)+` fill="${x.color}" data-a="${x.a}" data-tip="${x.tip}"/>`;
-    if(x.et)h+=`<text class="v" x="${x.anc==="end"?cx+bw/2:x.anc==="start"?cx-bw/2:cx}" y="${yb-hh-5}" text-anchor="${x.anc||"middle"}">${fmt(x.v)}</text>`;});
-  cats.forEach((c,i)=>h+=`<text x="${L+i*w+w/2}" y="${H-7}" text-anchor="middle">${c}</text>`);svg.innerHTML=h;}
-function tablero(){
-  if(!DEM)return;const d=datosAmbito();const K=document.getElementById("kpis"),CX=document.getElementById("dem_ctx");let titulo="";
-  document.querySelectorAll("#anios button").forEach(b=>b.classList.toggle("on",b.dataset.a===anioSel));
-  const filas=[["pozos","Pozos fracturados"],["etapas","Etapas de fractura"],["arena_kt","Arena, miles de t"],["agua_hm3","Agua, hm³"],["camiones_arena","Camiones de arena (28 t)"]];
-  const f1=(k,v)=>k==="agua_hm3"||k==="equipos_fractura"?n1(v):nf(v);const H=(n,l,sub)=>`<div class="hero fijo"><b>${n}</b><span>${l}</span>${sub?`<i>${sub}</i>`:""}</div>`;
-  if(anioSel==="2027"){
-    if(!d.proy2027){K.innerHTML='<p class="sup">La proyección usa las locaciones vistas por el satélite: elegí las ventanas o una zona.</p>';CX.textContent="";}
-    else{const p=d.proy2027;titulo=`2027, proyección: <span class="piso">piso</span> y <span class="ritmo">si sigue el ritmo</span>`;
-      K.innerHTML=`<div class="heroes">`+filas.concat([["equipos_fractura","Equipos de fractura ocupados"]]).map(([k,r])=>H(f1(k,p.piso[k]),k==="pozos"?"Pozos que vienen, como piso":r,`Hasta ${f1(k,p.ritmo[k])} si sigue el ritmo`)).join("")+`</div>`;
-      CX.innerHTML=`El piso sale de las <b>${p.locaciones_sin_pozo}</b> locaciones vistas sin pozo todavía. En los últimos 12 meses aparecieron <b>${p.locaciones_ultimos_12_meses}</b> nuevas: ese es el ritmo. Otras ${p.locaciones_sin_pozo_viejas} llevan más de ${DEM.supuestos.validez_meses} meses sin pozo y no se cuentan.`;}
-  }else{const a=d.anios[anioSel];titulo=anioSel+(anioSel==="2026"?" (hasta lo cargado)":"");
-    K.innerHTML=`<div class="heroes">`+filas.map(([k,r])=>H(f1(k,a[k]),r)).join("")+(a.locaciones_vistas!==undefined?H(a.locaciones_vistas,"Locaciones nuevas vistas por el satélite"):"")+`</div>`;CX.textContent="";}
-  document.getElementById("titulo_anio").innerHTML=titulo;
-  // un gráfico por cifra
-  const years=Object.keys(d.anios),ks=["pozos","etapas","arena_kt","agua_hm3","camiones_arena","locaciones_vistas"].filter(k=>years.some(y=>d.anios[y][k]!=null));
-  const G=document.getElementById("dem_grafs");G.innerHTML=ks.map(k=>`<div class="carta"><h3>${ETQ[k]}</h3><svg id="dg_${k}"></svg></div>`).join("");
-  ks.forEach(k=>{const cats=years.map(y=>y.slice(2)),vals=years.map(y=>{const v=d.anios[y][k];return v==null?null:{v,a:y,color:y===anioSel?"#17212b":"#c4bba6",et:y===anioSel,tip:`${y}${y==="2026"?" (hasta lo cargado)":""}: <b>${f1(k,v)}</b>`};});
-    if(d.proy2027&&k!=="locaciones_vistas"){const q=d.proy2027;cats.push("Piso","Ritmo");vals.push({v:q.piso[k],a:"2027",color:"#0b6b7a",et:anioSel==="2027",anc:"end",tip:`2027 como piso: <b>${f1(k,q.piso[k])}</b>`},{v:q.ritmo[k],a:"2027",color:"#7b2cbf",et:anioSel==="2027",anc:"start",tip:`2027 si sigue el ritmo: <b>${f1(k,q.ritmo[k])}</b>`});}
-    barrasC(document.getElementById("dg_"+k),cats,vals,v=>f1(k,v));});
-  G.onclick=e=>{const t=e.target.closest("[data-a]");if(t)elegirAnio(t.dataset.a);};
-  const su=DEM.supuestos;const pp=d.por_pozo;
-  document.getElementById("supuestos").innerHTML=`Pozos, etapas, arena y agua: Adjunto IV de fracturas por pozo, Secretaría de Energía (Vaca Muerta, por año de inicio de fractura; 2026 hasta lo cargado). Proyección 2027: ${su.pozos_por_locacion} pozos por locación (mediana desde 2021) × ${nf(pp.arena_t)} t de arena, ${nf(pp.agua_m3)} m³ de agua y ${pp.etapas} etapas por pozo (mediana 2025-26 en el ámbito, ${pp.n} pozos); de la locación visible a la fractura, ${su.meses_locacion_a_fractura} meses; ${su.t_camion} t por camión; ${su.etapas_equipo_mes} etapas por equipo y mes. <b>Piso</b>: solo las locaciones vistas sin pozo en los últimos ${su.validez_meses} meses; las más viejas sin pozo se descartan (padrón incompleto o falso positivo). <b>Ritmo</b>: más las que aparecerían si sigue el ritmo del último año. Recursos humanos: pendiente, sin fuente abierta.`;
-}
-function sparks(){if(!DEM)return;const ys=["2020","2021","2022","2023","2024","2025","2026"];document.querySelectorAll("svg.sp").forEach(sv=>{const dz=DEM.zonas[sv.dataset.z];if(!dz)return;
-  const v=ys.map(y=>(dz.anios[y]&&dz.anios[y].locaciones_vistas)||0),mx=Math.max(...v,1),w=240/ys.length;
-  sv.innerHTML=ys.map((y,i)=>{const h=Math.max(v[i]/mx*24,1),cx=i*w+w/2;return `<rect x="${cx-7}" y="${38-h}" width="14" height="${h}" rx="2" fill="#0b6b7a" data-tip="${y}: <b>${v[i]}</b> locaciones nuevas"/><text x="${cx}" y="${34-h}" text-anchor="middle">${v[i]||""}</text><text x="${cx}" y="50" text-anchor="middle">${y.slice(2)}</text>`;}).join("");});}
-const GRAF=document.getElementById("graf");
-function cerrarGraf(){GRAF.style.display="none";}
-function abrirGraf(titulo,nota){GRAF.querySelector("svg").style.display="";GRAF.querySelector(".tablaG").style.display="none";GRAF.style.display="flex";GRAF.querySelector("h3").textContent=titulo;GRAF.querySelector(".sup").innerHTML=nota;return GRAF.querySelector("svg");}
-function barras(svg,cats,vals,fmt){
-  const W=760,H=340,L=64,B=40,T=30;svg.setAttribute("viewBox",`0 0 ${W} ${H}`);const max=Math.max(...vals.map(x=>x?x.v:0),1e-9);const n=cats.length;const w=(W-L-10)/n;let h="";
-  for(let i=0;i<=4;i++){const y=T+(H-T-B)*(1-i/4);h+=`<line x1="${L}" x2="${W-10}" y1="${y}" y2="${y}" stroke="#d6cdb9"/><text x="${L-6}" y="${y+3}" text-anchor="end">${fmt(max*i/4)}</text>`;}
-  vals.forEach((x,i)=>{if(!x)return;const hh=x.v/max*(H-T-B);h+=`<rect x="${L+i*w+w*.15}" y="${H-B-hh}" width="${w*.7}" height="${hh}" fill="${x.color}" rx="2"/><text x="${L+i*w+w/2}" y="${H-B-hh-5}" text-anchor="middle" class="v">${fmt(x.v)}</text>`;});
-  cats.forEach((c,i)=>h+=`<text x="${L+i*w+w/2}" y="${H-B+16}" text-anchor="middle">${c}</text>`);
-  svg.innerHTML=h;}
-function lineas(svg,labels,series,fmt,hoy){
-  const W=760,H=340,L=64,B=40,T=34;svg.setAttribute("viewBox",`0 0 ${W} ${H}`);const max=Math.max(...series.flatMap(s=>s.vals.filter(v=>v!=null)),1e-9);const n=labels.length;const X=i=>L+(W-L-10)*i/(n-1);const Y=v=>T+(H-T-B)*(1-v/max);let h="";
-  for(let i=0;i<=4;i++){const y=T+(H-T-B)*(1-i/4);h+=`<line x1="${L}" x2="${W-10}" y1="${y}" y2="${y}" stroke="#d6cdb9"/><text x="${L-6}" y="${y+3}" text-anchor="end">${fmt(max*i/4)}</text>`;}
-  labels.forEach((m,i)=>{if(m.endsWith("-01"))h+=`<line x1="${X(i)}" x2="${X(i)}" y1="${T}" y2="${H-B}" stroke="#e6dfcf"/><text x="${X(i)}" y="${H-B+16}" text-anchor="middle">${m.slice(0,4)}</text>`;});
-  const hi=labels.indexOf(hoy);if(hi>=0)h+=`<line x1="${X(hi)}" x2="${X(hi)}" y1="${T}" y2="${H-B}" stroke="#17212b" stroke-dasharray="3 3"/><text x="${X(hi)+4}" y="${T+10}">hoy</text>`;
-  series.forEach(s=>{const pts=s.vals.map((v,i)=>v==null?null:`${X(i)},${Y(v)}`).filter(Boolean).join(" ");h+=`<polyline fill="none" stroke="${s.color}" stroke-width="${s.ancho||2}" ${s.dash?'stroke-dasharray="6 4"':""} points="${pts}"/>`;});
-  let lx=L+8;series.forEach(s=>{h+=`<line x1="${lx}" x2="${lx+18}" y1="${T-14}" y2="${T-14}" stroke="${s.color}" stroke-width="3" ${s.dash?'stroke-dasharray="6 4"':""}/><text x="${lx+22}" y="${T-10}">${s.nombre}</text>`;lx+=s.nombre.length*6.3+44;});
-  svg.innerHTML=h;}
-function grafFin(k){if(!FIN)return;const pb=+document.getElementById("p_bbl").value,pg=+document.getElementById("p_gas").value,capex=+document.getElementById("p_capex").value;
-  const H=FIN.historia_anual,years=Object.keys(H);const tot=(esc,c)=>FIN.meses.map((_,i)=>Object.values(FIN.operadoras).reduce((a,v)=>a+v[esc][c][i],0));
-  const i27=FIN.meses.map((m,i)=>m.startsWith("2027")?i:-1).filter(i=>i>=0);const prom=arr=>i27.reduce((a,i)=>a+arr[i],0)/i27.length;
-  const P=tot("piso","pet_m3d"),R=tot("ritmo","pet_m3d"),Pg=tot("piso","gas_m3d"),Rg=tot("ritmo","gas_m3d");
-  const fact=(pet,gas)=>(pet*M3_BBL*365*(pb*(1-retenc())-transp())+gas*365*MMBTU_M3*pg)/1e6;const gris=y=>y==="2026"?"#7fa6ad":"#0b6b7a";const np=e=>FIN.nuevos_por_anio[e]["2027"]||0;
-  if(k==="pozos"){barras(abrirGraf("Pozos que entran en producción por año · ventanas","Histórico: pozos con primera producción en el año (Capítulo IV); 2026 hasta lo cargado. 2027: los que arrancan ese año según el <b>piso</b> (locaciones vistas sin pozo) y el <b>ritmo</b> (más las locaciones nuevas del último año)."),
-    years.map(y=>y.slice(2)).concat(["27 piso","27 ritmo"]),years.map(y=>({v:H[y].pozos_nuevos,color:gris(y)})).concat([{v:np("piso"),color:"#0b6b7a"},{v:np("ritmo"),color:"#7b2cbf"}]),nf);return;}
-  if(k==="bbl"){const hm=FIN.historia_mensual,nh=hm.length;const labels=hm.map(x=>x.m).concat(FIN.meses);const hist=hm.map(x=>x.pet*M3_BBL/1000).concat(FIN.meses.map(()=>null));
-    const u=hm[nh-1].pet*M3_BBL/1000;const mk=arr=>hm.map((_,i)=>i===nh-1?u:null).concat(arr.map((v,i)=>(FIN.base_pet_m3d[i]+v)*M3_BBL/1000));
-    lineas(abrirGraf("Producción de petróleo de las ventanas, miles de bbl/d",`Histórico: Capítulo IV, suma de las ventanas. Proyección: los pozos de hoy declinan según la curva tipo por edad (<b>base</b>, declino terminal ${(FIN.declino_terminal_mensual.pet*100).toFixed(1).replace(".",",")} % mensual), más los pozos que vienen según el piso y el ritmo. El KPI de arriba cuenta solo la producción nueva.`),
-      labels,[{nombre:"Histórico",color:"#0b6b7a",ancho:2.5,vals:hist},{nombre:"Base, pozos de hoy",color:"#8a8f94",vals:mk(FIN.meses.map(()=>0)),dash:1},{nombre:"Base + piso",color:"#0b6b7a",vals:mk(P),dash:1},{nombre:"Base + ritmo",color:"#7b2cbf",vals:mk(R),dash:1}],v=>nf(v),FIN.ultimo_mes_produccion);return;}
-  const cats=years.map(y=>y.slice(2)).concat(["27 piso","27 ritmo"]);
-  if(k==="cap"){barras(abrirGraf(`Capex por año a ${capex} MUS$ por pozo, MUS$`,"Pozos que entran en producción en el año × capex por pozo. No incluye instalaciones, exploración ni midstream. 2027 según piso y ritmo."),
-    cats,years.map(y=>({v:H[y].pozos_nuevos*capex,color:gris(y)})).concat([{v:np("piso")*capex,color:"#0b6b7a"},{v:np("ritmo")*capex,color:"#7b2cbf"}]),nf);return;}
-  const f=k==="reg"?REGALIA:1;const b27p=prom(FIN.base_pet_m3d)+prom(P),b27r=prom(FIN.base_pet_m3d)+prom(R),g27p=prom(FIN.base_gas_m3d)+prom(Pg),g27r=prom(FIN.base_gas_m3d)+prom(Rg);
-  barras(abrirGraf((k==="reg"?"Regalías 12 % por año, MUS$":"Facturación por año de las ventanas, MUS$")+` · Brent ${pb}, gas ${pg}`,"Producción media del año × el precio elegido, constante para todos los años (no es el precio histórico). 2027: la base de los pozos de hoy más los que vienen; el KPI de arriba cuenta solo los pozos que vienen."),
-    cats,years.map(y=>({v:fact(H[y].pet_m3d,H[y].gas_m3d)*f,color:gris(y)})).concat([{v:fact(b27p,g27p)*f,color:"#0b6b7a"},{v:fact(b27r,g27r)*f,color:"#7b2cbf"}]),nf);}
-function plegar(lado){const b=document.body,cl="sin-"+lado;b.classList.toggle(cl);const t=document.getElementById("tog_"+lado);const off=b.classList.contains(cl);t.textContent=lado==="izq"?(off?"›":"‹"):(off?"‹":"›");setTimeout(()=>map.invalidateSize(),330);}
-document.getElementById("tog_izq").onclick=()=>plegar("izq");
-document.getElementById("fin_kpis").addEventListener("click",e=>{const f=e.target.closest(".hero[data-k]");if(f)grafFin(f.dataset.k);});
-GRAF.querySelector(".cerrar").onclick=cerrarGraf;GRAF.addEventListener("click",e=>{if(e.target===GRAF)cerrarGraf();});
-let FIN=null;
-const M3_BBL=6.29,MMBTU_M3=0.0353,REGALIA=0.12,MMBTU_BOE=5.8,DIAS_MES=30.4,ANIOS_POZO=20;
-const val=id=>{const v=parseFloat(document.getElementById(id).value);return isFinite(v)&&v>=0?v:0;};
-const retenc=()=>Math.min(val("p_ret"),100)/100;const transp=()=>val("p_trans");
-const MESC=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];const mesC=m=>MESC[+m.slice(5)-1]+" "+m.slice(0,4);
-// tooltip común: cualquier elemento con data-tip
-{const TIP=document.getElementById("tip");document.addEventListener("mousemove",e=>{const t=e.target.closest?e.target.closest("[data-tip]"):null;if(!t){TIP.style.display="none";return;}
-  TIP.innerHTML=t.dataset.tip;TIP.style.display="block";const w=TIP.offsetWidth,h=TIP.offsetHeight;TIP.style.left=Math.max(8,Math.min(innerWidth-w-8,e.clientX-w-14))+"px";TIP.style.top=Math.min(innerHeight-h-8,e.clientY+14)+"px";});}
-// gráfico de líneas con lectura al pasar el mouse. series: {color, vals (con null), dash, ancho, nombre}
-// o: {W,H,L, fmt, xt:[[i,texto]], marcas:[{i,v,texto,color}], vline:{i,texto}, lect:i=>html, base:html}
-function linea(id,n,series,o){
-  const svg=document.getElementById(id),W=o.W||440,H=o.H||236,L=o.L||40,R=o.R||16,T=14,B=22;svg.setAttribute("viewBox",`0 0 ${W} ${H}`);const all=series.flatMap(s=>s.vals).filter(v=>v!=null);
-  const paso=paso3((Math.max(...all,0)-Math.min(...all,0))/4);const y0=Math.floor(Math.min(...all,0)/paso+1e-9)*paso,y1=Math.max(Math.ceil(Math.max(...all,0)/paso-1e-9)*paso,y0+paso);
-  const X=i=>L+(W-L-R)*i/(n-1),Y=v=>T+(H-T-B)*(1-(v-y0)/(y1-y0));let h="";
-  for(let v=y0;v<=y1+paso*1e-6;v+=paso)h+=`<line x1="${L}" x2="${W-R}" y1="${Y(v)}" y2="${Y(v)}" stroke="${Math.abs(v)<paso*1e-6?"#a39a85":"#ddd5c2"}"/><text x="${L-6}" y="${Y(v)+3.500}" text-anchor="end">${o.fmt(v)}</text>`;
-  (o.xt||[]).forEach(([i,t])=>{const fin=X(i)>W-R-16;h+=`<text x="${fin?W-2:X(i)}" y="${H-6}" text-anchor="${fin?"end":"middle"}">${t}</text>`;});
-  if(o.vline)h+=`<line x1="${X(o.vline.i)}" x2="${X(o.vline.i)}" y1="${T}" y2="${H-B}" stroke="#17212b" stroke-dasharray="3 3"/><text class="v" x="${X(o.vline.i)+(X(o.vline.i)>W-R-80?-5:5)}" y="${T+9}" text-anchor="${X(o.vline.i)>W-R-80?"end":"start"}">${o.vline.texto}</text>`;
-  series.forEach(s=>h+=`<polyline fill="none" stroke="${s.color}" stroke-width="${s.ancho||2}" stroke-linejoin="round" stroke-linecap="round" ${s.dash?'stroke-dasharray="6 5"':""} points="${s.vals.map((v,i)=>v==null?null:X(i).toFixed(1)+","+Y(v).toFixed(1)).filter(Boolean).join(" ")}"/>`);
-  (o.marcas||[]).forEach(m=>h+=`<circle cx="${X(m.i)}" cy="${Y(m.v)}" r="4.500" fill="${m.color||series[0].color}" stroke="#f9f6ee" stroke-width="2"/><text class="v" x="${X(m.i)+(m.izq?-8:8)}" y="${Y(m.v)+(m.izq?-8:14)}" text-anchor="${m.izq?"end":"start"}">${m.texto}</text>`);
-  h+=`<g class="cur" style="display:none"><line y1="${T}" y2="${H-B}" stroke="#17212b"/>${series.map(s=>`<circle r="4" fill="${s.color}" stroke="#f9f6ee" stroke-width="2"/>`).join("")}</g>`;
-  svg.innerHTML=h;const lect=document.getElementById(id+"_l");lect.innerHTML=o.base;
-  svg.onmousemove=e=>{const r=svg.getBoundingClientRect();const x=(e.clientX-r.left)/r.width*W;const i=Math.max(0,Math.min(n-1,Math.round((x-L)/(W-L-R)*(n-1))));const c=svg.querySelector(".cur");c.style.display="";
-    const ln=c.querySelector("line");ln.setAttribute("x1",X(i));ln.setAttribute("x2",X(i));c.querySelectorAll("circle").forEach((d,j)=>{const v=series[j].vals[i];d.style.display=v==null?"none":"";if(v!=null){d.setAttribute("cx",X(i));d.setAttribute("cy",Y(v));}});lect.innerHTML=o.lect(i);};
-  svg.onmouseleave=()=>{svg.querySelector(".cur").style.display="none";lect.innerHTML=o.base;};}
-// la curva tipo trae 36 meses: se extiende con un declino que se va suavizando (igual que prep/finanzas.py)
-function curvaLarga(c,n){const d=Math.min(Math.max(1-Math.pow(c[35]/Math.max(c[24],1e-6),1/11),.01),.05);const o=c.slice();let q=c[35];for(let k=36;k<n;k++){q*=1-Math.max(d*35/k,.008);o.push(q);}return o;}
-function pozoTipo(pb,pg,capex,opex,tasa,cp,cg){
-  const n=ANIOS_POZO*12,P=curvaLarga(cp||FIN.curva_pet_m3d,n),G=curvaLarga(cg||FIN.curva_gas_m3d,n);
-  const bbl=P.map(v=>v*M3_BBL*DIAS_MES),mm=G.map(v=>v*MMBTU_M3*DIAS_MES),boe=bbl.map((b,i)=>b+mm[i]/MMBTU_BOE);
-  const rt=retenc(),tr=transp(),flujo=(p,q)=>bbl.map((b,i)=>((b*(p*(1-rt)-tr)+mm[i]*q)*(1-REGALIA)-boe[i]*opex)/1e6);
-  const van=(fl,t)=>{const r=Math.pow(1+t,1/12)-1;let a=-capex;for(let i=0;i<n;i++)a+=fl[i]/Math.pow(1+r,i+1);return a;};
-  const fl=flujo(pb,pg);const acum=[-capex];fl.forEach(f=>acum.push(acum[acum.length-1]+f));
-  let tir=null;if(acum[n]>0){let lo=0,hi=50;for(let i=0;i<70;i++){const m=(lo+hi)/2;van(fl,m)>0?lo=m:hi=m;}tir=lo;}
-  // precio que deja el VAN en cero: 0 si ya se paga sin ese producto, infinito si no alcanza ni con el tope
-  const raiz=(f,tope)=>{if(f(0)>0)return 0;if(f(tope)<0)return Infinity;let lo=0,hi=tope;for(let i=0;i<60;i++){const m=(lo+hi)/2;f(m)>0?hi=m:lo=m;}return hi;};
-  const tb=boe.reduce((a,v)=>a+v,0);let sm=0,mitad=n;for(let i=0;i<n;i++){sm+=boe[i];if(sm>=tb/2){mitad=i+1;break;}}
-  return {van:van(fl,tasa),tir,rep:acum.findIndex(v=>v>=0),eq:raiz(p=>van(flujo(p,pg),tasa),500),eqGas:raiz(q=>van(flujo(pb,q),tasa),100),acum,eurPet:bbl.reduce((a,v)=>a+v,0),eurGas:G.reduce((a,v)=>a+v*DIAS_MES,0),mitad,
-    vanA:p=>van(flujo(p,pg),tasa),vanG:q=>van(flujo(pb,q),tasa)};}
-function finTot(esc,pb,pg,capex){
-  const i27=FIN.meses.map((m,i)=>m.startsWith("2027")?i:-1).filter(i=>i>=0);const filas=[],T={hoy:0,sinpozo:0,viejas:0,pozos:0,bbl:0,fact:0,reg:0,cap:0};
-  for(const [op,v] of Object.entries(FIN.operadoras)){const e=v[esc];const bbl=i27.reduce((a,i)=>a+e.pet_m3d[i],0)/i27.length*M3_BBL,gas=i27.reduce((a,i)=>a+e.gas_m3d[i],0)/i27.length;
-    const fact=(bbl*365*(pb*(1-retenc())-transp())+gas*365*MMBTU_M3*pg)/1e6;const f={op,hoy:v.pet_m3d_hoy*M3_BBL,sinpozo:v.locaciones_sin_pozo,viejas:v.locaciones_sin_pozo_viejas,pozos:e.pozos,bbl,fact,reg:fact*REGALIA,cap:e.pozos*capex};filas.push(f);for(const k in T)T[k]+=f[k];}
-  return {filas,T};}
-function finanzas(){
-  if(!FIN)return;const pb=val("p_bbl"),pg=val("p_gas"),capex=val("p_capex"),opex=val("p_opex"),tasa=val("p_tasa")/100;
-  const A=finTot("piso",pb,pg,capex),B=finTot("ritmo",pb,pg,capex),Tp=A.T,Tr=B.T;
-  const filas=A.filas.map((f,i)=>({op:f.op,p:f,r:B.filas[i]})).sort((a,b)=>b.p.bbl-a.p.bbl);
-  // --- los pozos que vienen
-  const H=(k,n,l,sub)=>`<div class="hero${k?"":" fijo"}"${k?` data-k="${k}" title="Ver año por año"`:""}><b>${n}</b><span>${l}</span><i>${sub}</i></div>`;const hasta=v=>`Hasta ${nf(v)} si sigue el ritmo`;
-  document.getElementById("fin_kpis").innerHTML=`<div class="heroes">${H("pozos",nf(Tp.pozos),"Pozos que vienen",hasta(Tr.pozos))}${H("",nf(Tp.bbl),"Barriles por día nuevos, promedio de 2027",hasta(Tr.bbl))}${H("fact",nf(Tp.fact),"Facturación de esos pozos en 2027, MUS$",hasta(Tr.fact))}${H("reg",nf(Tp.reg),"Regalías 12 % para la provincia, MUS$",hasta(Tr.reg))}${H("cap",nf(Tp.cap),"Inversión en esos pozos, MUS$",hasta(Tr.cap))}</div>`;
-  // --- producción: histórico, los pozos de hoy declinando y lo que suman los que vienen
-  const i27=FIN.meses.map((m,i)=>m.startsWith("2027")?i:-1).filter(i=>i>=0),prom=a=>i27.reduce((t,i)=>t+a[i],0)/i27.length;
-  const totM=esc=>FIN.meses.map((_,i)=>Object.values(FIN.operadoras).reduce((a,v)=>a+v[esc].pet_m3d[i],0));const P=totM("piso"),R=totM("ritmo");
-  const hm=FIN.historia_mensual,nh=hm.length,labels=hm.map(x=>x.m).concat(FIN.meses),u=hm[nh-1].pet*M3_BBL/1000;
-  const mk=arr=>hm.map((_,i)=>i===nh-1?u:null).concat(arr.map((v,i)=>(FIN.base_pet_m3d[i]+v)*M3_BBL/1000));
-  const SP=[{nombre:"Histórico",color:"#0b6b7a",ancho:2.500,vals:hm.map(x=>x.pet*M3_BBL/1000).concat(FIN.meses.map(()=>null))},{nombre:"Solo los pozos de hoy",color:"#8a8f94",dash:1,vals:mk(FIN.meses.map(()=>0))},{nombre:"Más los que vienen, piso",color:"#0b6b7a",dash:1,vals:mk(P)},{nombre:"Más los que vienen, ritmo",color:"#7b2cbf",dash:1,vals:mk(R)}];
-  document.getElementById("fin_prod_ley").innerHTML=SP.map(q=>`<span><i class="lk${q.dash?" d":""}" style="border-color:${q.color}"></i>${q.nombre}</span>`).join("");
-  const b27=prom(FIN.base_pet_m3d)*M3_BBL/1000,p27=b27+prom(P)*M3_BBL/1000;
-  linea("fin_prod",labels.length,SP,{W:780,H:300,L:42,fmt:nf,xt:labels.map((m,i)=>m.endsWith("-01")?[i,m.slice(0,4)]:null).filter(Boolean),vline:{i:nh-1,texto:"Hoy"},
-    base:`Hoy producen <b>${nf(u)} mil bbl/d</b>. Sin pozos nuevos, el promedio de 2027 baja a <b>${nf(b27)}</b>; con los que vienen como piso queda en <b>${nf(p27)}</b>`,
-    lect:i=>mesC(labels[i])+SP.filter(q=>q.vals[i]!=null).map(q=>` · ${q.nombre.toLowerCase()} <b>${nf(q.vals[i])}</b>`).join("")+" mil bbl/d"});
-  document.getElementById("fin_ctx").innerHTML=`Salen de <b>${Tp.sinpozo}</b> locaciones vistas sin pozo. Otras ${Tp.viejas} llevan más de ${FIN.supuestos.validez_meses} meses sin pozo y no se cuentan.`;
-  // --- por operadora
-  const mx=Math.max(...filas.map(f=>f.r.bbl),1);
-  document.getElementById("fin_ops").innerHTML=filas.filter(f=>f.r.bbl>0).map(f=>`<div class="op" data-tip="<b>${f.op}</b><br>${f.p.sinpozo} locaciones sin pozo, ${nf(f.p.pozos)} pozos que vienen<br>2027: ${nf(f.p.bbl)} bbl/d nuevos como piso, hasta ${nf(f.r.bbl)} si sigue el ritmo<br>Facturación de esos pozos: ${nf(f.p.fact)} MUS$<br>Hoy produce ${nf(f.p.hoy)} bbl/d en las ventanas"><span>${f.op}</span><div class="tr"><i style="width:${(f.p.bbl/mx*100).toFixed(1)}%"></i>${f.r.bbl-f.p.bbl>mx*.004?`<u style="width:${((f.r.bbl-f.p.bbl)/mx*100).toFixed(1)}%"></u>`:""}</div><b>${nf(f.p.bbl)}</b></div>`).join("");
-  document.getElementById("fin_tabla_d").innerHTML=`<table><tr><th rowspan="2">Operadora</th><th rowspan="2">Bbl/d hoy</th><th rowspan="2">Locaciones<br>sin pozo</th><th colspan="2" class="g">Pozos que vienen</th><th colspan="2" class="g">Bbl/d nuevos 2027</th><th colspan="2" class="g">Facturación 2027, MUS$</th></tr><tr><th>Piso</th><th>Ritmo</th><th>Piso</th><th>Ritmo</th><th>Piso</th><th>Ritmo</th></tr>`+
-    filas.map(f=>`<tr><td>${f.op}</td><td>${nf(f.p.hoy)}</td><td>${f.p.sinpozo}</td><td>${nf(f.p.pozos)}</td><td>${nf(f.r.pozos)}</td><td>${nf(f.p.bbl)}</td><td>${nf(f.r.bbl)}</td><td>${nf(f.p.fact)}</td><td>${nf(f.r.fact)}</td></tr>`).join("")+
-    `<tr class="tot"><td>Total</td><td>${nf(Tp.hoy)}</td><td>${Tp.sinpozo}</td><td>${nf(Tp.pozos)}</td><td>${nf(Tr.pozos)}</td><td>${nf(Tp.bbl)}</td><td>${nf(Tr.bbl)}</td><td>${nf(Tp.fact)}</td><td>${nf(Tr.fact)}</td></tr></table>`;
-  // --- la economía de un pozo tipo: el de todas las ventanas o el de una zona
-  const nomz=z=>typeof nomZ==="function"?nomZ(z):z.replaceAll("_"," ");
-  const GR=Object.entries(FIN.zonas||{}).flatMap(([z,v])=>["pet","gas"].filter(t=>v[t]&&v[t].entra).map(t=>({z,t,n:v[t].n,cp:v[t].curva_pet_m3d,cg:v[t].curva_gas_m3d})));
-  const sel=document.getElementById("eco_zona"),firma=GR.map(q=>nomz(q.z)).join("|");
-  if(sel.dataset.f!==firma){const v0=sel.value;sel.innerHTML=`<option value="">Todas las ventanas · ${nf(FIN.n_curva)} pozos</option>`+GR.map(q=>`<option value="${q.z}|${q.t}">${nomz(q.z)} · ${q.t==="gas"?"gas":"petróleo"} · ${q.n} pozos</option>`).join("");sel.value=v0;sel.dataset.f=firma;sel.onchange=finanzas;}
-  const gsel=GR.find(q=>q.z+"|"+q.t===sel.value),esGas=!!gsel&&gsel.t==="gas";
-  const E=pozoTipo(pb,pg,capex,opex,tasa,gsel&&gsel.cp,gsel&&gsel.cg);const K=(n,l)=>`<div class="kpi"><b>${n}</b><span>${l}</span></div>`;const M5=60;
-  const eqTxt=(v,tope)=>v===Infinity?"Más de "+tope:(tope===500?nf(v):n1(v));
-  document.getElementById("eco_kpis").innerHTML=K(n1(E.van),`VAN del pozo al ${n1(tasa*100)} %, MUS$`)+K(E.tir==null?"—":nf(E.tir*100)+" %","TIR anual")+K(E.rep<0?"No repaga":E.rep+" meses","Repago de la inversión")+(esGas?K(eqTxt(E.eqGas,100),"Gas de equilibrio, US$/MMBtu"):K(eqTxt(E.eq,500),"Brent de equilibrio, US$/bbl"));
-  const ac=E.acum.slice(0,M5+1);
-  linea("eco_grafico",M5+1,[{color:"#0b6b7a",vals:ac}],{fmt:n1,xt:[12,24,36,48,60].map(i=>[i,"Año "+i/12]),marcas:E.rep>0&&E.rep<=M5?[{i:E.rep,v:ac[E.rep],texto:"Repago: mes "+E.rep}]:[],
-    base:E.rep>0&&E.rep<=M5?`Recupera los ${n1(capex)} MUS$ en el mes <b>${E.rep}</b>; a los 5 años acumula <b>${n1(ac[M5])}</b> MUS$`:`A los 5 años acumula <b>${n1(ac[M5])}</b> MUS$: todavía no recupera la inversión`,
-    lect:i=>`Mes ${i} · flujo acumulado <b>${n1(ac[i])}</b> MUS$`});
-  {const B0=esGas?0:20,B1=esGas?8:120,BP=esGas?.2:2,bs=[];for(let b=B0;b<=B1+1e-9;b+=BP)bs.push(Math.round(b*10)/10);const f=esGas?E.vanG:E.vanA,vb=bs.map(f),mio=esGas?pg:pb,eq=esGas?E.eqGas:E.eq,dentro=b=>b>=B0&&b<=B1,paso=esGas?1:10;
-   document.getElementById("eco_brent_t").textContent=esGas?"VAN del pozo (MUS$) según el precio del gas (US$/MMBtu)":"VAN del pozo (MUS$) según el Brent (US$/bbl)";
-   linea("eco_brent",bs.length,[{color:"#0b6b7a",vals:vb}],{fmt:n1,xt:(esGas?[0,2,4,6,8]:[20,40,60,80,100,120]).map(b=>[(b-B0)/BP,b]),marcas:dentro(eq)&&eq>0?[{i:(eq-B0)/BP,v:0,texto:"Equilibrio: "+(esGas?n1(eq):nf(eq)),izq:1}]:[],vline:dentro(mio)?{i:(mio-B0)/BP,texto:(esGas?"Tu gas: ":"Tu Brent: ")+n1(mio)}:null,
-     base:`Cada ${paso} US$ más ${esGas?"por MMBtu de gas":"de Brent"} suma${paso>1?"n":""} <b>${n1(f(mio+paso)-E.van)}</b> MUS$ al VAN del pozo`,lect:i=>`${esGas?"Gas":"Brent"} ${n1(bs[i])} US$/${esGas?"MMBtu":"bbl"} · VAN <b>${n1(vb[i])}</b> MUS$`});}
-  document.getElementById("eco_txt").innerHTML=`En ${ANIOS_POZO} años el pozo tipo de ${gsel?nomz(gsel.z):"las ventanas"} produce ${nf(E.eurPet/1000)} mil barriles de petróleo y ${nf(E.eurGas/1e6)} millones de m³ de gas; la mitad sale en los primeros ${E.mitad} meses.`;
-  // --- el precio de equilibrio zona por zona
-  const FZ=GR.map(q=>({...q,E:pozoTipo(pb,pg,capex,opex,tasa,q.cp,q.cg)})),fin0=v=>isFinite(v)?v:0;
-  const dib=(id,t,precio,campo,fmt,etq,uni,copro)=>{const fs=FZ.filter(q=>q.t===t).sort((a,b)=>a.E[campo]-b.E[campo]),el=document.getElementById(id);
-    if(!fs.length){el.innerHTML='<p class="sup">Ninguna zona tiene pozos suficientes de este tipo.</p>';return fs;}
-    const mx=Math.max(...fs.map(q=>fin0(q.E[campo])),precio,1e-9)*1.12,pf=precio/mx;
-    el.innerHTML=`<div class="eqs" style="--pf:${pf.toFixed(4)}"><div class="eqm${pf>.62?" der":""}"><span>${etq}</span></div>`+fs.map(q=>{const v=q.E[campo];
-      return `<div class="eq${v<=precio?"":" no"}" data-z="${q.z}|${q.t}" data-tip="<b>${nomz(q.z)}</b><br>Equilibrio: ${v===0?"0: "+copro:isFinite(v)?fmt(v)+" "+uni:"no se paga a ningún precio razonable"}<br>VAN del pozo con tus precios: ${n1(q.E.van)} MUS$${q.E.tir!=null?" · TIR "+nf(q.E.tir*100)+" %":""}<br>En 20 años: ${nf(q.E.eurPet/1000)} mil bbl y ${nf(q.E.eurGas/1e6)} millones de m³ de gas<br>Curva tipo de ${q.n} pozos"><span>${nomz(q.z)}</span><div class="tr"><i style="width:${(fin0(v)/mx*100).toFixed(1)}%"></i></div><b>${isFinite(v)?fmt(v):"—"}</b></div>`;}).join("")+`</div>`;return fs;};
-  const zp=dib("eq_pet","pet",pb,"eq",nf,`Tu Brent: ${n1(pb)}`,"US$/bbl",`con el gas a ${n1(pg)} US$ lo paga el gas`),zg=dib("eq_gas","gas",pg,"eqGas",n1,`Tu gas: ${n1(pg)}`,"US$/MMBtu",`con el Brent a ${n1(pb)} US$ lo pagan los líquidos`);
-  const okp=zp.filter(q=>q.E.eq<=pb).length,okg=zg.filter(q=>q.E.eqGas<=pg).length;
-  document.getElementById("eq_txt").innerHTML=(zp.length?`Con el Brent a ${n1(pb)} US$ se pagan <b>${okp} de ${zp.length}</b> zonas de petróleo: de ${nf(zp[0].E.eq)} US$/bbl en ${nomz(zp[0].z)} a ${isFinite(zp[zp.length-1].E.eq)?nf(zp[zp.length-1].E.eq):"más de 500"} en ${nomz(zp[zp.length-1].z)}. `:"")+(zg.length?`Con el gas a ${n1(pg)} US$/MMBtu se pagan <b>${okg} de ${zg.length}</b> zonas de gas.`:"");
-  document.getElementById("eq_tabla").innerHTML=`<table><tr><th>Zona</th><th>Pozos de la curva</th><th>Petróleo en 20 años, mil bbl</th><th>Gas en 20 años, millones de m³</th><th>Precio de equilibrio</th><th>VAN, MUS$</th><th>TIR</th><th>Repago</th></tr>`+
-    zp.concat(zg).map(q=>{const v=q.t==="gas"?q.E.eqGas:q.E.eq;return `<tr data-z="${q.z}|${q.t}"><td>${nomz(q.z)} · ${q.t==="gas"?"gas":"petróleo"}</td><td>${q.n}</td><td>${nf(q.E.eurPet/1000)}</td><td>${nf(q.E.eurGas/1e6)}</td><td>${isFinite(v)?(q.t==="gas"?n1(v)+" US$/MMBtu":nf(v)+" US$/bbl"):"—"}</td><td>${n1(q.E.van)}</td><td>${q.E.tir==null?"—":nf(q.E.tir*100)+" %"}</td><td>${q.E.rep<0?"No repaga":q.E.rep+" meses"}</td></tr>`;}).join("")+`</table>`;
-  const cr=FIN.zonas_criterio||{},fuera=Object.entries(FIN.zonas||{}).filter(([z,v])=>!["pet","gas"].some(t=>v[t]&&v[t].entra)).map(([z])=>nomz(z));
-  document.getElementById("eq_nota").innerHTML=`Cada zona tiene su curva tipo: la mediana de sus pozos con primera producción entre 2023 y 2025, petrolíferos o gasíferos según el padrón. <b>El pozo cuesta lo mismo y se opera al mismo costo en todas</b>, así que la diferencia sale solo de lo que produce cada zona; en la realidad un pozo no cuesta igual en todas. En las zonas de petróleo el gas se vende al precio que elegiste, y en las de gas los líquidos, al Brent que elegiste. Antes de impuesto a las ganancias, con las retenciones que elegiste${transp()?` y ${n1(transp())} US$/bbl de transporte y evacuación`:`, a boca de pozo: el transporte y la evacuación vienen en 0 y se cargan en los supuestos`}.${fuera.length?` Sin pozos suficientes para una curva propia (menos de ${cr.min_pozos} pozos, o menos de ${cr.min_pozos_mes_24} con dos años de historia): ${fuera.join(", ")}.`:""}`;
-  document.getElementById("eq_sec").onclick=e=>{const t=e.target.closest("[data-z]");if(!t)return;sel.value=t.dataset.z;finanzas();document.getElementById("eco_sec").scrollIntoView({behavior:"smooth",block:"start"});};
-  // --- las empresas que cotizan: hechos medidos por operadora
-  {const S=document.getElementById("emp_sec"),EM=FIN.empresas;S.style.display=EM?"":"none";
-   if(EM){const boe=(p,q)=>p*M3_BBL+q*MMBTU_M3/MMBTU_BOE,rt=retenc(),eqZ={};FZ.forEach(q=>eqZ[q.z]=q);const pct=v=>(v>=0?"+":"−")+nf(Math.abs(v)*100)+" %";
-    const LI=FIN.lectura_ia||null,fl=v=>`<b class="${v>=0?"up":"dn"}">${v>=0?"▲":"▼"} ${n1(Math.abs(v)*100)} %</b>`;
-    const spark=q=>{const mn=Math.min(...q),mx=Math.max(...q),W=200,H=44;return `<svg viewBox="0 0 ${W} ${H}"><polyline fill="none" stroke="#0b6b7a" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" points="${q.map((v,i)=>(i/(q.length-1)*W).toFixed(1)+","+(H-4-(v-mn)/((mx-mn)||1)*(H-8)).toFixed(1)).join(" ")}"/></svg>`;};
-    document.getElementById("cot_fila").innerHTML=COT&&COT.items?COT.items.map(x=>`<div class="carta cot"><div class="cn"><b>${x.nombre}</b><span>${x.tipo==="accion"?"NYSE: "+x.simbolo:"futuro"}</span></div><div class="cp">${precioC(x)} <small>${x.unidad} · ${fechaC(x.fecha).slice(0,5)}</small></div>
-      <div class="cv"><span>Día ${fl(x.var_dia)}</span><span>Mes ${fl(x.var_mes)}</span><span>Año ${fl(x.var_anio)}</span></div>${spark(x.serie)}<div class="cr">Un año: de ${n1(x.minimo_anio)} a ${n1(x.maximo_anio)} ${x.unidad}</div></div>`).join("")
-      :'<p class="sup" style="margin:0">Las cotizaciones no están disponibles en este momento.</p>';
-    const IC=document.getElementById("ia_carta");IC.style.display=LI?"":"none";
-    if(LI)IC.innerHTML=`<h3>La lectura de la IA</h3><p>${LI.general}</p>${LI.otras?`<p>${LI.otras}</p>`:""}<p class="sup">Escrita con inteligencia artificial el ${fechaC(LI.fecha)}, a partir de los datos de esta página; no se actualiza sola con cada cotización. Es una opinión general: no es asesoramiento ni una recomendación de compra o de venta. ${COT&&COT.fuente?"Cotizaciones: "+COT.fuente+".":""}</p>`;
-    const lia=k=>{const q=LI&&LI.empresas&&LI.empresas[k];return q?`<div class="iae"><div class="t">Lectura de la IA · ${fechaC(LI.fecha).slice(0,5)}</div><h4>A favor</h4><ul>${q.favor.map(v=>`<li>${v}</li>`).join("")}</ul><h4>En contra</h4><ul>${q.contra.map(v=>`<li>${v}</li>`).join("")}</ul><h4>Qué mirar</h4><p>${q.mirar}</p></div>`:"";};
-    document.getElementById("emp_cartas").innerHTML=Object.entries(EM).map(([k,e])=>{const o=FIN.operadoras[k],hoy=boe(o.pet_m3d_hoy,o.gas_m3d_hoy),meses=e.pozos_12m?o.piso.pozos/e.pozos_12m*12:null;
-      const zs=Object.entries(e.sin_pozo_por_zona).slice(0,3).map(([z,n])=>{const q=eqZ[z];return `<div class="fila"><span>${nomz(z)}</span><span>${n} ${n===1?"locación":"locaciones"}${q?` · equilibrio ${q.t==="gas"?n1(q.E.eqGas)+" US$/MMBtu":nf(q.E.eq)+" US$/bbl"}`:""}</span></div>`;}).join("");
-      return `<div class="carta emp"><div class="en"><b>${e.nombre}</b><span>${e.ticker}</span></div>
-        <div class="eh"><b>${meses==null?"—":n1(meses)+" meses"}</b><span>de pozos ya tiene construidos</span><i>${o.locaciones_sin_pozo} locaciones sin pozo vistas por el satélite, unos ${nf(o.piso.pozos)} pozos, contra su ritmo de ${e.pozos_12m} pozos por año</i></div>
-        <div class="kpis">${K(nf(hoy/1000)+" mil",`boe por día opera hoy · ${pct(e.cambio_12m)} en 12 meses`)}${K(e.pozos_12m,`Pozos nuevos en 12 meses · ${e.pozos_12m_ant} el año anterior`)}${K(pct(e.declino_real_12m),"Lo que cayeron en un año sus pozos de hace un año")}${K("± "+nf(o.pet_m3d_hoy*M3_BBL*365*10*(1-rt)/1e6),"MUS$ por año por cada 10 US$ de Brent")}</div>
-        ${lia(k)}<h3>Producción de los pozos que hoy opera, mil boe/d</h3><svg id="emp_g_${k}"></svg><div class="lect" id="emp_g_${k}_l"></div>
-        <h3 style="margin-top:12px">Dónde están sus locaciones sin pozo</h3>${zs||'<p class="sup" style="margin:0">Ninguna a la vista.</p>'}
-        <h3 style="margin-top:12px">Lo que informó: ${e.balance.periodo}</h3>${e.balance.datos.map(d=>`<div class="fila"><span>${d[0]}</span><span>${d[1]}</span></div>`).join("")}
-        <p class="sup" style="margin-top:8px">${e.nota} Fuente del balance: <a href="${e.balance.url}" target="_blank" rel="noopener">${e.balance.fuente}</a>.</p></div>`;}).join("");
-    Object.entries(EM).forEach(([k,e])=>{const h=e.historia,v=h.map(x=>boe(x.pet,x.gas)/1000);linea("emp_g_"+k,h.length,[{color:"#0b6b7a",vals:v}],{H:200,fmt:nf,xt:h.map((x,i)=>x.m.endsWith("-01")&&(+x.m.slice(0,4))%2===0?[i,x.m.slice(0,4)]:null).filter(Boolean),
-      base:`Hoy <b>${nf(v[v.length-1])} mil boe/d</b>, contando el 100 % de lo que opera en las zonas`,lect:i=>`${mesC(h[i].m)} · <b>${n1(v[i])}</b> mil boe/d`});});
-    document.getElementById("emp_nota").innerHTML=`Cuenta el 100 % de lo que cada empresa opera dentro de las zonas del tablero: no reparte por participación ni mira lo que tiene afuera. Los meses ya construidos dependen de cuánto tarda el registro oficial en cargar los pozos, que no es igual para todas las empresas. No mira deuda, riesgo país, tipo de cambio ni el precio de la acción. No tienen acciones en bolsa: PAE, Tecpetrol, Pluspetrol y Phoenix. Shell y TotalEnergies cotizan, pero Vaca Muerta pesa poco en sus números. TGS transporta gas y no opera pozos: el tablero todavía no la mide.`;}}
-  // --- escenarios de precio: referencias con fecha y fuente (prep/escenarios.py), no pronósticos propios
-  {const EC=FIN.escenarios||{},bh=brentHoy(),cb=cotDe("brent"),ES=(EC.lista||[]).map(e=>e.id==="hoy"&&bh?{...e,brent:bh,fuente:cb?`Último dato del Brent: ${precioC(cb)} US$ el ${fechaC(cb.fecha)}.`:e.fuente}:e),rt=retenc(),tr=transp(),eqz=FZ.filter(q=>q.t==="pet").map(q=>q.E.eq),bbl=document.getElementById("p_bbl");
-   document.getElementById("escs").innerHTML=ES.length?`<span>Escenarios de precio</span>`+ES.map(e=>`<button data-b="${e.brent}" class="${e.brent===pb?"on":""}" data-tip="${e.fuente}">${e.nombre} · ${e.brent}</button>`).join(""):"";
-   document.getElementById("esc_tabla").innerHTML=`<table><tr><th>Escenario</th><th>Brent, US$/bbl</th><th>Queda tras retenciones${tr?" y transporte":""}</th><th>VAN del pozo, MUS$</th><th>Repago del pozo</th><th>Facturación 2027 de los pozos que vienen, MUS$</th><th>Regalías, MUS$</th><th>Zonas de petróleo que se pagan</th></tr>`+
-     ES.map(e=>{const X=pozoTipo(e.brent,pg,capex,opex,tasa),T=finTot("piso",e.brent,pg,capex).T;return `<tr data-b="${e.brent}" class="${e.brent===pb?"act":""}" data-tip="${e.fuente}"><td>${e.nombre}</td><td>${e.brent}</td><td>${n1(e.brent*(1-rt)-tr)}</td><td>${n1(X.van)}</td><td>${X.rep<0?"No repaga":X.rep+" meses"}</td><td>${nf(T.fact)}</td><td>${nf(T.reg)}</td><td>${eqz.filter(v=>v<=e.brent).length} de ${eqz.length}</td></tr>`;}).join("")+`</table>`;
-   const fe=cb?fechaC(cb.fecha):EC.fecha?fechaC(EC.fecha):"";
-   document.getElementById("esc_nota").innerHTML=`Son referencias para probar, con su fuente al pasar el mouse; no son pronósticos nuestros. Precio de hoy al ${fe}. El crudo de Vaca Muerta paga ${EC.retenciones_pct||8} % de retenciones sobre el precio de exportación, y el tablero supone que todo el crudo se vende a ese precio neto${tr?`, menos ${n1(tr)} US$/bbl de transporte y evacuación`:`; el transporte y la evacuación se cargan en los supuestos y vienen en 0`}. El gas queda en el precio que elegiste: el conflicto también mueve el gas natural licuado, pero el gas de Vaca Muerta se vende sobre todo en el mercado interno.`;
-   const aplicar=e=>{const t=e.target.closest("[data-b]");if(t){brentTocado=true;bbl.value=t.dataset.b;finanzas();}};document.getElementById("escs").onclick=aplicar;document.getElementById("esc_tabla").onclick=aplicar;}
-  const c=FIN.curva_pet_m3d;
-  document.getElementById("fin_sup").innerHTML=`<b>Los pozos que vienen.</b> Cada locación vista se atribuye a la operadora del pozo más cercano a menos de 2 km. Pozos que vienen: ${FIN.supuestos.pozos_por_locacion} por locación. Cada pozo produce según la curva tipo de las ventanas (${FIN.n_curva} pozos con primera producción 2023-2025): ${nf(c[0]*M3_BBL)} bbl/d el primer mes, pico de ${nf(Math.max(...c)*M3_BBL)} en el mes ${c.indexOf(Math.max(...c))+1}, ${nf(c[12]*M3_BBL)} al año. Arranca ${FIN.supuestos.meses_a_produccion} meses después de verse la locación. Facturación a boca de pozo con el precio elegido; regalías ${REGALIA*100} %. Solo cuentan las locaciones vistas sin pozo en los últimos ${FIN.supuestos.validez_meses} meses (las más viejas: padrón incompleto o falso positivo). Las atrasadas, que ya deberían producir, se reparten en los 12 meses desde ${FIN.meses[0]}; por el atraso del padrón algunas pueden estar ya fracturadas. Producción actual: Capítulo IV, ${FIN.ultimo_mes_produccion}.<br><br><b>La economía de un pozo.</b> El pozo tipo es la mediana mensual de petróleo y de gas de esos ${FIN.n_curva} pozos, extendida a ${ANIOS_POZO} años con un declino que se suaviza hasta 0,8 % mensual. Flujo de cada mes: (petróleo × precio neto + gas × su precio) × (1 − regalías ${REGALIA*100} %) − costo operativo por barril equivalente. La inversión entra entera en el mes 0. El precio neto del petróleo es el Brent menos las retenciones y menos el transporte y la evacuación que pongas arriba. El transporte viene en 0, a boca de pozo; como referencia, Vista informó 3,6 US$ por barril equivalente de gastos de comercialización, que incluyen el transporte, en el tercer trimestre de 2026. Es antes del impuesto a las ganancias y no descuenta ingresos brutos ni la diferencia de calidad contra el Brent: el número real es más ajustado. Como referencia, Aleph Energy (2025) estimó un equilibrio de 45 US$/bbl con TIR de 15 % para un pozo de 14 MUS$ con costo operativo de 5 US$/bbl.`;
-}
-["p_bbl","p_gas","p_capex","p_opex","p_tasa","p_ret","p_trans"].forEach(id=>document.getElementById(id).addEventListener("input",finanzas));
-let COT=null,brentTocado=false;
-const cotDe=id=>COT&&COT.items?COT.items.find(x=>x.id===id):null;
-const fechaC=f=>f.slice(8,10)+"/"+f.slice(5,7)+"/"+f.slice(0,4);
-const pctS=v=>v==null?"—":(v>=0?"+":"−")+n1(Math.abs(v)*100)+" %";
-const precioC=x=>x.ultimo.toLocaleString("es-AR",{minimumFractionDigits:2,maximumFractionDigits:2});
-// el Brent de hoy: el último dato de la cinta; si no llegó, el del escenario "hoy" que quedó escrito
-const brentHoy=()=>{const b=cotDe("brent");if(b)return Math.round(b.ultimo);const h=FIN&&FIN.escenarios&&(FIN.escenarios.lista||[]).find(e=>e.id==="hoy");return h?h.brent:null;};
-function ponerBrentHoy(){if(brentTocado)return;const b=brentHoy();if(b)document.getElementById("p_bbl").value=b;}
-document.getElementById("p_bbl").addEventListener("input",()=>{brentTocado=true;});
-function cinta(){const C=document.getElementById("cinta");if(!COT||!COT.items||!COT.items.length)return;const f=COT.items.map(x=>x.fecha).sort().pop();
-  const una=COT.items.map(x=>`<span class="it" data-tip="<b>${x.nombre}</b>: ${precioC(x)} ${x.unidad} el ${fechaC(x.fecha)}<br>En el día ${pctS(x.var_dia)} · en un mes ${pctS(x.var_mes)} · en un año ${pctS(x.var_anio)}<br>Tocá para ver el detalle"><b>${x.nombre}</b>${precioC(x)}<i class="${x.var_dia>=0?"up":"dn"}">${x.var_dia>=0?"▲":"▼"} ${n1(Math.abs(x.var_dia)*100)} %</i><small>mes ${pctS(x.var_mes)}</small></span>`).join("");
-  C.innerHTML=`<span class="fijo" title="${COT.fuente||""}">Último dato · ${fechaC(f).slice(0,5)}</span><div class="pista">${una.repeat(6)}</div>`;
-  C.onclick=e=>{if(!e.target.closest(".it"))return;ver("finanzas");setTimeout(()=>{const s=document.getElementById("emp_sec");if(s)s.scrollIntoView({behavior:"smooth",block:"start"});},80);};}
-{const local="data/cotizaciones.json",repo="https://raw.githubusercontent.com/dpinero14/locaciones-lab/main/docs/tablero/data/cotizaciones.json";
- const traer=u=>fetch(u,{cache:"no-store"}).then(r=>{if(!r.ok)throw new Error(r.status);return r.json();});
- // en la página pública se lee del repo, que una tarea diaria mantiene al día; si no responde, la copia de la página
- (location.hostname.endsWith("github.io")?traer(repo).catch(()=>traer(local)):traer(local)).then(j=>{COT=j;cinta();ponerBrentHoy();finanzas();})
-   .catch(()=>{document.getElementById("cinta").innerHTML='<span class="fijo">Cotizaciones no disponibles</span>';});}
-fetch("data/finanzas.json").then(r=>r.json()).then(j=>{FIN=j;ponerBrentHoy();finanzas();});
-function elegirAnio(a){anioSel=a;tablero();if(typeof meses!=="undefined"&&meses.length){const obj=a==="2027"?meses[meses.length-1]:(a+"-12"<=meses[meses.length-1]?a+"-12":meses[meses.length-1]);idx=Math.max(0,meses.indexOf(obj));document.getElementById("slider").value=idx;dibujar();}}
-fetch("data/demanda.json").then(r=>r.json()).then(j=>{DEM=j;const sel=document.getElementById("ambito");
-  sel.innerHTML=`<option value="__ventanas__">${j.zonas.__ventanas__.nombre}</option>`+Object.keys(j.zonas).filter(z=>z!=="__ventanas__").map(z=>`<option value="${z}">${j.zonas[z].nombre}</option>`).join("")+`<option value="__cuenca__">${j.cuenca.nombre}</option>`;
-  sel.onchange=()=>{ambito=sel.value;tablero();};
-  const A=document.getElementById("anios");A.innerHTML=Object.keys(j.cuenca.anios).map(a=>`<button data-a="${a}">${a}</button>`).join("")+`<button data-a="2027" class="p">2027 →</button>`;
-  A.querySelectorAll("button").forEach(b=>b.onclick=()=>elegirAnio(b.dataset.a));
-  tablero();sparks();});
-</script>
-<script>
-const MENTA="#19d3ff",ROSA="#ff3d9a",CIAN="#f9f6ee",GRIS="#8a8f94",AMARILLO="#7b2cbf";
-const map=L.map("map",{zoomControl:true,preferCanvas:true}).setView([-38.33,-68.72],12);
-L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{maxZoom:18,attribution:"Esri World Imagery · Copernicus Sentinel-2 · Secretaría de Energía · ENARGAS"}).addTo(map);
-const IC_TORRE='<svg viewBox="0 0 24 24"><path d="M12 2 6 22h12L12 2zM8.700 13h6.600M10.200 8h3.600M7.400 17.500l9.200-4.500M16.600 17.500 7.400 13"/></svg>',IC_PAD='<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M12 8v8M8 12h8"/></svg>',IC_COMP='<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.500"/><path d="M12 12V4.500a4 4 0 0 1 3.500 5.500zM12 12l6.500 3.750a4 4 0 0 1-6.500-.750zM12 12l-6.500 3.750a4 4 0 0 1 3-6z"/></svg>';const ico=(cl,html,t)=>L.divIcon({className:"ic",html:`<div class="ico ${cl}" style="width:${t}px;height:${t}px">${html}</div>`,iconSize:[t,t],iconAnchor:[t/2,t/2]});
-function ev(n,p){if(typeof gtag==="function")gtag("event",n,p||{});}
-document.addEventListener("click",e=>{const a=e.target.closest("a.wa,[data-ev]");if(a)ev(a.classList.contains("wa")?"canal_whatsapp":a.dataset.ev,{desde:a.closest("#portada")?"portada":a.closest("#ficha")?"ficha":"panel"});});
-let ULT_LOC="",ULT_POZ="";
-let OP="",DECL=null,CALOR=null,COMP=false,FRAC=.5,listo=false;
-const opN=e=>{e=(e||"").toUpperCase();for(const [k,v] of [["YPF","YPF"],["VISTA","Vista"],["PLUSPETROL","Pluspetrol"],["SHELL","Shell"],["PAMPA","Pampa"],["PHOENIX","Phoenix"],["PAN AMERICAN","PAE"],["TECPETROL","Tecpetrol"],["TOTAL","Total"],["GEOPARK","GeoPark"],["CHEVRON","Chevron"],["EXXON","ExxonMobil"],["CAPEX","Capex"],["KILWER","Kilwer"],["OILSTONE","Oilstone"]])if(e.includes(k))return v;return e?e.split(" ").slice(0,2).map(w=>w[0]+w.slice(1).toLowerCase()).join(" "):"";};
-const CAPAS=["c_img","c_loc","c_otras","c_ant","c_decl","c_calor","c_pozos","c_todos","c_gas","c_comp","c_arena","c_comp2","c_tmp","c_eq"];
-function estadoURL(){const c=map.getCenter();return "#"+[c.lat.toFixed(4),c.lng.toFixed(4),map.getZoom(),meses[idx],CAPAS.map(id=>document.getElementById(id).checked?1:0).join(""),encodeURIComponent(OP),VISTA==="mapa"?"":VISTA].join(",");}
-function guardarURL(){if(listo)history.replaceState(null,"",location.pathname+location.search+estadoURL());}
-function aviso(t){const a=document.getElementById("aviso");a.textContent=t;a.classList.add("on");setTimeout(()=>a.classList.remove("on"),2200);}
-function novedades(mes){const i=meses.indexOf(mes),ant=i>0?meses[i-1]:null;let nl=0,np=0,on=0,off=0;
-  for(const f of LOC.features){const p=f.properties;if(p.tipo==="locacion"&&p.mes_txt===mes&&!(PUBLICO&&p.estado==="sin_pozo")&&!(OP&&p._op!==OP))nl++;}
-  for(const f of POZ.features){const p=f.properties;if(p.perforacion&&p.perforacion.slice(0,7)===mes&&!(OP&&p._op!==OP))np++;}
-  if(ANT&&ant)for(const f of ANT.features){const p=f.properties;if(p.temporal)continue;if(OP&&p._op&&p._op!==OP)continue;const a=p.meses.includes(mes),b=p.meses.includes(ant);if(a&&!b)on++;if(!a&&b)off++;}
-  const MES=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
-  const tl=mes>ULT_LOC?`<span class="pend" title="El detector confirma una locación con cuatro meses de imágenes posteriores">Locaciones: en confirmación</span>`:`<span class="mas">+${nl}</span> locaciones nuevas`;
-  const tp=mes>ULT_POZ?`<span class="pend" title="El padrón oficial carga los pozos nuevos con unos seis meses de demora">Pozos: el padrón aún no los cargó</span>`:`<span class="ros">+${np}</span> pozos iniciados`;
-  document.getElementById("nov").innerHTML=`<span class="t">Qué cambió ese mes${OP?" · "+OP:""}</span>${tl} · ${tp}<br><span class="lla">${on}</span> antorchas se encendieron · <b>${off}</b> se apagaron`;}
-function barritas(cats,vals,color){const max=Math.max(...vals,1),w=300/cats.length;return `<svg viewBox="0 0 300 120">`+cats.map((c,i)=>{const h=vals[i]/max*84;return `<rect x="${i*w+3}" y="${98-h}" width="${w-6}" height="${h}" fill="${color}" rx="1"/><text x="${i*w+w/2}" y="${94-h}" text-anchor="middle">${vals[i]||""}</text><text x="${i*w+w/2}" y="113" text-anchor="middle">${c.slice(2)}</text>`;}).join("")+"</svg>";}
-function ficha(z){ev("ficha_zona",{zona:z});const zc=CFG.zonas[z],b=zc.bbox,F=document.getElementById("ficha"),years=["2020","2021","2022","2023","2024","2025","2026"];
-  const pz=POZ.features.filter(f=>{const c=f.geometry.coordinates;return c[0]>=b[0]&&c[0]<=b[2]&&c[1]>=b[1]&&c[1]<=b[3];});
-  const cnt={};pz.forEach(f=>{const e=f.properties._op;cnt[e]=(cnt[e]||0)+1;});const ops=Object.entries(cnt).sort((x,y)=>y[1]-x[1]).slice(0,4).map(x=>`${x[0]} (${nf(x[1])})`).join(" · ");
-  const dz=DEM&&DEM.zonas[z];const lv=years.map(y=>dz&&dz.anios[y]&&dz.anios[y].locaciones_vistas!==undefined?dz.anios[y].locaciones_vistas:LOC.features.filter(f=>f.properties.zona===z&&f.properties.tipo==="locacion"&&f.properties.mes_txt.slice(0,4)===y).length);
-  const pv=years.map(y=>pz.filter(f=>(f.properties.perforacion||"").slice(0,4)===y).length);
-  const az=ANT?ANT.features.filter(f=>f.properties.zona===z&&!f.properties.temporal):[];const ult=meses[meses.length-1];const av=years.map(y=>az.filter(f=>f.properties.meses.some(m=>m.slice(0,4)===y)).length);
-  const cz=CALOR&&CALOR.zonas[z];const pr=dz&&dz.proy2027;
-  F.querySelector(".caja").innerHTML=`<h3>${zc.nombre}</h3><div class="ops">${ops}</div>
-    <div class="fk"><div><b>${nf(lv.reduce((a,v)=>a+v,0))}</b><span>Locaciones nuevas desde 2020</span></div><div class="r"><b>${nf(pz.length)}</b><span>Pozos en el padrón</span></div>${cz?`<div><b>${nf(cz.boed)}</b><span>boe por día, ${nf(cz.productores)} pozos productores</span></div>`:""}<div class="f"><b>${az.filter(f=>f.properties.meses.includes(ult)).length} de ${az.length}</b><span>Antorchas encendidas en ${ult}</span></div>${pr?`<div class="v"><b>${nf(pr.piso.pozos)}</b><span>Pozos que vienen en 2027, como piso</span></div>`:""}</div>
-    <div class="gs"><div><h4>Locaciones nuevas vistas por el satélite, por año</h4>${barritas(years,lv,"#0b6b7a")}</div><div><h4>Pozos por año de inicio de perforación</h4>${barritas(years,pv,"#d02e7f")}</div><div><h4>Antorchas vistas encendidas, por año</h4>${barritas(years,av,"#17212b")}</div>${dz?`<div><h4>Arena de fractura, miles de toneladas</h4>${barritas(years,years.map(y=>dz.anios[y]?Math.round(dz.anios[y].arena_kt):0),"#7b2cbf")}</div>`:""}</div>
-    <div class="pie"><span class="sup" style="margin:0">El padrón carga los pozos nuevos con unos seis meses de demora: los últimos años están incompletos. <a class="como" style="margin:0" href="https://www.linkedin.com/in/dpinero/" target="_blank" rel="noopener" data-ev="contacto">¿Querés este análisis para tu área?</a></span><span style="display:flex;gap:8px;flex:none"><button id="ficha_mapa">Ver en el mapa</button><button class="ghost" id="ficha_x">Cerrar</button></span></div>`;
-  F.style.display="flex";document.getElementById("ficha_x").onclick=()=>F.style.display="none";document.getElementById("ficha_mapa").onclick=()=>{F.style.display="none";ver("mapa");};}
-document.getElementById("ficha").addEventListener("click",e=>{if(e.target.id==="ficha")e.target.style.display="none";});
-let EQ=null,CFG,LOC,POZ,ANT,meses=[],idx=0,overlayLayers={},playing=null;
-const PUBLICO=true;
-map.createPane("antes");map.getPane("antes").style.zIndex=340;map.createPane("imgs");map.getPane("imgs").style.zIndex=350;
-const g={antes:L.layerGroup(),img:L.layerGroup().addTo(map),loc:L.layerGroup().addTo(map),otras:L.layerGroup(),pozos:L.layerGroup().addTo(map),gas:L.layerGroup().addTo(map),comp:L.layerGroup().addTo(map),ant:L.layerGroup().addTo(map),tmp:L.layerGroup().addTo(map),eq:L.layerGroup().addTo(map),decl:L.layerGroup(),arena:L.layerGroup(),zonas:L.layerGroup().addTo(map)};
-const fmt=d=>d?d:"—";
-const nomZ=z=>((CFG&&CFG.zonas[z]||{}).nombre||z.replaceAll("_"," ")).replace(/\s*\(.*\)\s*$/,"");
-function estadoTxt(p){
-  if(p.estado==="llego_despues")return `<span class="r">Llegó un pozo</span> a los ${p.espera_meses} meses (perforación ${fmt(p.drill_cercano)})`;
-  if(p.estado==="ya_perforado")return "Ya había un pozo perforado al lado";
-  return `<b>Sin pozo registrado</b> a menos de 150 m (el más cercano a ${Math.round(p.pozo_a_m)} m)`;
-}
-function dibujar(){
-  const mes=meses[idx];document.getElementById("mes").textContent=mes;{const MM=["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];document.getElementById("pt_mes").textContent=MM[+mes.slice(5)-1]+" de "+mes.slice(0,4);}
-  const anio=mes.slice(0,4);
-  g.loc.clearLayers();g.otras.clearLayers();g.pozos.clearLayers();
-  let vistas=0,sinpozo=0,otras=0;
-  for(const f of LOC.features){const p=f.properties;if(p.mes_txt>mes)continue;if(PUBLICO&&p.estado==="sin_pozo")continue;if(OP&&p._op!==OP)continue;
-    const [lon,lat]=f.geometry.coordinates;const lado=Math.max(60,Math.sqrt(p.area_ha*1e4))/2;
-    const b=L.latLngBounds([lat-lado/111000,lon-lado/(111000*Math.cos(lat*Math.PI/180))],[lat+lado/111000,lon+lado/(111000*Math.cos(lat*Math.PI/180))]);
-    const nuevo=(parseInt(mes.slice(0,4))*12+parseInt(mes.slice(5)))-(parseInt(p.mes_txt.slice(0,4))*12+parseInt(p.mes_txt.slice(5)))<3;
-    const pop=`<b>${p.tipo==="locacion"?"Locación nueva":"Obra detectada"}</b> · ${nomZ(p.zona)}<br>Vista por el satélite en <b>${p.mes_txt}</b> · ${p.area_ha} ha<br>${estadoTxt(p)}${p.verificacion_visual_oct2026&&!PUBLICO?`<br>en octubre 2026: <b>${p.verificacion_visual_oct2026}</b>`:""}`;
-    const lejos=map.getZoom()<14;
-    if(p.tipo==="locacion"){vistas++;if(p.estado==="sin_pozo")sinpozo++;
-      (lejos?L.marker([lat,lon],{icon:ico("pad"+(p.estado==="sin_pozo"?" llena":"")+(nuevo?" nueva":""),IC_PAD,nuevo?18:14)})
-            :L.rectangle(b,{color:MENTA,weight:nuevo?3:1.5,fill:p.estado==="sin_pozo",fillColor:MENTA,fillOpacity:.25})).bindPopup(pop).addTo(g.loc);}
-    else{otras++;(lejos?L.circleMarker([lat,lon],{radius:3,color:GRIS,weight:1,fillOpacity:0}):L.rectangle(b,{color:GRIS,weight:1,fill:false,dashArray:"3 3"})).bindPopup(pop).addTo(g.otras);}
-  }
-  g.ant.clearLayers();g.tmp.clearLayers();let nant=0,nenc=0,ntmp=0;const FL='<svg viewBox="0 0 24 24"><path class="f1" d="M12 1.5c.6 3.6 5.6 6.2 5.6 11.6a5.6 5.6 0 0 1-11.2 0c0-2.3 1-3.9 2.2-5 .1 1.9.8 3 1.9 3.3C10.300 8 9.8 4.700 12 1.5z"/><path class="f2" d="M12 11.500c.3 1.600 2.300 2.500 2.300 4.600a2.300 2.300 0 0 1-4.600 0c0-1.800 1.600-2.600 2.300-4.600z"/></svg>';
-  if(ANT)for(const f of ANT.features){const p=f.properties;if(p.primero>mes)continue;if(OP&&p._op&&p._op!==OP)continue;const tmp=!!p.temporal;if(tmp)ntmp++;else nant++;const [lon,lat]=f.geometry.coordinates;const enc=p.meses.includes(mes);if(enc&&!tmp)nenc++;
-    const tira=meses.map(m=>`<i class="${p.meses.includes(m)?"s":""}${m===mes?" h":""}"></i>`).join("");
-    const pop=`<div class="pa"><h4><span class="lg">${FL}</span>${tmp?"Quema temporal":"Antorcha"} <span class="est${enc?"":" no"}">${enc?"Encendida este mes":"Sin llama este mes"}</span></h4>${nomZ(p.zona)}<div class="tira">${tira}</div><div class="ej"><span>${meses[0].slice(0,4)}</span><span>${meses[meses.length-1].slice(0,4)}</span></div><span class="gr">${p.n}</span> de ${meses.length} imágenes mensuales con llama<br>Primera vez ${p.primero} · última ${p.ultimo}${p.pas_vistas?(p.pas_enc?`<br>En 2025 y 2026, con llama en <b>${Math.round(p.pas_enc/p.pas_vistas*100)} %</b> de las ${p.pas_vistas} pasadas sin nubes`:`<br>En 2025 y 2026, sin llama en ninguna de las ${p.pas_vistas} pasadas sin nubes`):""}${tmp?"<br>Llama corta: probable ensayo de pozo. La reconoció el clasificador.":""}${PUBLICO?"":`<br>Pozo más cercano: ${p.empresa}`}${p.declarado?`<br>Punto de venteo declarado a ${p.declarado_m} m`:(PUBLICO?"":"<br><b>Sin punto de venteo declarado</b> a menos de 500 m")}</div>`;
-    L.marker([lat,lon],{icon:L.divIcon({className:"ic",html:`<div class="llama ${enc?"on":"off"}${tmp?" tmp":""}"><i></i>${FL}</div>`,iconSize:[44,44],iconAnchor:[22,22]}),zIndexOffset:enc?900:300}).bindPopup(pop,{minWidth:250}).bindTooltip((tmp?"Quema temporal":"Antorcha")+(enc?" encendida":" sin llama este mes"),{className:"tt",direction:"top",offset:[0,-14]}).addTo(tmp?g.tmp:g.ant);}
-  document.getElementById("n_ant").textContent=ANT?nenc+" de "+nant:"";
-  g.eq.clearLayers();let neq=0;const ultMes=mes===meses[meses.length-1],RD=CFG.radar||{};
-  const fd=t=>t.slice(8,10)+"/"+t.slice(5,7)+"/"+t.slice(0,4);
-  if(EQ)for(const f of EQ.features){const p=f.properties;if(OP&&p.empresa&&opN(p.empresa)!==OP)continue;
-    const vivo=p.activa&&ultMes;if(!p.meses.includes(mes)&&!vivo)continue;neq++;const [lon,lat]=f.geometry.coordinates;
-    const que=p.fase==="terminación"?"Equipo de terminación":p.fase==="perforación"?"Equipo de perforación":"Equipo visto por el radar";
-    const pop=`<div class="pa"><h4><span class="lgq"><svg viewBox="0 0 24 24"><path d="M12 2 6 22h12L12 2zM8.700 13h6.600M10.200 8h3.600"/></svg></span>${que} <span class="est${vivo?"":" no"}">${vivo?"Sigue trabajando":"Ya se fue"}</span></h4>${nomZ(p.zona)}<br>Visto por el radar del <b>${fd(p.llegada)}</b> al <b>${fd(p.salida)}</b> · ${p.dias} días, ${p.pasadas} pasadas${p.activa?`<br>Seguía en la última pasada del satélite (${fd(RD.ultima_pasada)})`:""}${p.sigla?`<br>Pozo más reciente de la locación: <b>${p.sigla}</b>${p.empresa?" · "+p.empresa:""}`:""}${p.fase?`<br>El padrón lo confirma: ${p.fase} en esas fechas`:""}${p.sin_pozo&&!PUBLICO?`<br><b>Sin pozo en el padrón todavía</b>${p.obra_mes?` · locación vista por Sentinel-2 en ${p.obra_mes}`:""}`:""}<br><span style="color:var(--muted)">Sentinel-1, radar: ve de día, de noche y con nubes</span></div>`;
-    L.marker([lat,lon],{icon:L.divIcon({className:"ic",html:`<div class="equipo${vivo?" vivo":""}${p.sin_pozo?" sp":""}"><i></i><svg viewBox="0 0 24 24"><path d="M12 2 6 22h12L12 2zM8.700 13h6.600M10.200 8h3.600"/></svg></div>`,iconSize:[40,40],iconAnchor:[20,20]}),zIndexOffset:1000})
-      .bindPopup(pop,{minWidth:250}).bindTooltip(que+(vivo?", sigue trabajando":""),{className:"tt",direction:"top",offset:[0,-12]}).addTo(g.eq);}
-  document.getElementById("k_eq").textContent=EQ?(OP||!RD.por_mes?neq:(RD.por_mes[mes]||0)):"·";document.getElementById("k_eq_t").textContent=RD.todas_desde&&mes<RD.todas_desde?`Equipos trabajando ese mes (radar, solo ${RD.n_ventanas_antes} ventanas hasta ${RD.todas_desde})`:"Equipos trabajando ese mes (radar)";const tot=RD.por_mes?(RD.por_mes[mes]||0):neq;document.getElementById("n_eq").textContent=EQ?(PUBLICO&&!OP&&tot>neq?neq+" de "+tot:neq)+(ultMes&&RD.ultima_pasada?" · hoy "+(RD.activas||0):""):"";document.getElementById("n_tmp").textContent=ntmp||"";document.getElementById("k_ant").textContent=nenc;
-  const todos=document.getElementById("c_todos").checked;let np=0;const vista=map.getBounds().pad(0.15);
-  for(const f of POZ.features){const p=f.properties;if(!p.perforacion)continue;if(OP&&p._op!==OP)continue;const antes=p.perforacion.slice(0,7)<=mes;if(!antes&&!todos)continue;np++;
-    const [lon,lat]=f.geometry.coordinates;
-    const lejos=map.getZoom()<13;if(!lejos&&!vista.contains([lat,lon]))continue;
-    (lejos?L.circleMarker([lat,lon],{radius:antes?2:1.5,color:antes?ROSA:"#9c7f8c",fillColor:antes?ROSA:"#9c7f8c",fillOpacity:.55,weight:0}):L.marker([lat,lon],{icon:ico("torre"+(antes?"":" fut"),IC_TORRE,map.getZoom()>=15?22:16)}))
-      .bindPopup(`<b class="r">${p.sigla}</b> · ${p.empresa}<br>${p.area} · ${p.yacimiento}<br>${p.recurso} · ${p.tipo_pozo}<br>inicio de perforación <b>${fmt(p.perforacion)}</b>`).addTo(g.pozos);}
-  document.getElementById("k_vistas").textContent=vistas;document.getElementById("k_sinpozo").textContent=sinpozo;
-  document.getElementById("n_loc").textContent=vistas;document.getElementById("n_otras").textContent=otras;document.getElementById("n_pozos").textContent=np;
-  // imagen del año: la escena más cercana al año elegido en cada ventana
-  g.img.clearLayers();let nimg=0;
-  for(const z in CFG.overlays){const ov=CFG.overlays[z];if(!ov.length)continue;
-    let mejor=ov[0];for(const o of ov){if(Math.abs(parseInt(o.mes.slice(0,4))-parseInt(anio))<=Math.abs(parseInt(mejor.mes.slice(0,4))-parseInt(anio)))mejor=o;}
-    L.imageOverlay(mejor.img,mejor.bounds,{opacity:1,interactive:false,pane:"imgs"}).addTo(g.img);nimg++;}
-  novedades(mes);if(COMP){document.querySelector("#cortina .et.b").textContent=anio;}guardarURL();
-  document.getElementById("n_img").textContent=nimg;
-}
-function toggle(id,layer){document.getElementById(id).addEventListener("change",e=>{e.target.checked?layer.addTo(map):map.removeLayer(layer);});}
-Promise.all(["data/config.json","data/locaciones.geojson","data/pozos.geojson","data/gasoductos.geojson","data/compresoras.geojson","data/ruta_arena.geojson","data/calor.json","data/antorchas.geojson","data/venteos_declarados.geojson","data/equipos.geojson"].map(u=>fetch(u).then(r=>r.ok?r.json():null))).then(([cfg,loc,poz,gas,comp,arena,calor,ant,decl,eq])=>{ANT=ant;EQ=eq;
-  CFG=cfg;LOC=loc;POZ=poz;DECL=decl;CALOR=calor;meses=cfg.meses;idx=meses.length-1;
-  // operadora de cada pozo, de cada locación (la del pozo más cercano a menos de 2 km) y de cada antorcha si el dato viene
-  const cn={};for(const f of poz.features){const o=opN(f.properties.empresa);f.properties._op=o;if(f.properties.recurso==="NO CONVENCIONAL")cn[o]=(cn[o]||0)+1;}
-  ULT_LOC=loc.features.reduce((m,f)=>f.properties.tipo==="locacion"&&f.properties.mes_txt>m?f.properties.mes_txt:m,"");
-  {const pm={};for(const f of poz.features){const q=(f.properties.perforacion||"").slice(0,7);if(q>="2024")pm[q]=(pm[q]||0)+1;}const ms=Object.keys(pm).sort();const ref=ms.slice(-18,-6).map(k=>pm[k]).sort((a,b)=>a-b);const med=ref[Math.floor(ref.length/2)]||1;ULT_POZ=ms.filter(k=>pm[k]>=med*.6).pop()||"";}
-  const PX=poz.features.map(f=>f.geometry.coordinates);
-  for(const f of loc.features){const [x,y]=f.geometry.coordinates;let m=1e9,k=-1;for(let i=0;i<PX.length;i++){const dx=(PX[i][0]-x)*87.5,dy=(PX[i][1]-y)*111;const d=dx*dx+dy*dy;if(d<m){m=d;k=i;}}f.properties._op=m<4?poz.features[k].properties._op:"";}
-  if(ant)for(const f of ant.features)if(f.properties.empresa)f.properties._op=opN(f.properties.empresa);
-  const so=document.getElementById("f_op");Object.entries(cn).filter(x=>x[1]>=10&&x[0]).sort((a,b)=>b[1]-a[1]).forEach(([o,n])=>{const e=document.createElement("option");e.value=o;e.textContent=`${o} · ${nf(n)} pozos no convencionales`;so.appendChild(e);});
-  so.onchange=()=>{OP=so.value;ev("filtro_operadora",{operadora:OP||"todas"});dibujar();if(OP){const ps=poz.features.filter(f=>f.properties._op===OP&&f.properties.perforacion&&f.properties.perforacion>="2015");if(ps.length)map.fitBounds(L.latLngBounds(ps.map(f=>[f.geometry.coordinates[1],f.geometry.coordinates[0]])).pad(.05));}};
-  const AR={};for(const f of poz.features){for(const k of [f.properties.area,f.properties.yacimiento]){if(k)(AR[k]=AR[k]||[]).push(f.geometry.coordinates);}}
-  document.getElementById("dl_areas").innerHTML=Object.keys(AR).sort().map(k=>`<option value="${k}">`).join("");
-  document.getElementById("f_buscar").addEventListener("change",e=>{const c=AR[e.target.value];if(c){map.fitBounds(L.latLngBounds(c.map(q=>[q[1],q[0]])).pad(.15),{maxZoom:14});if(innerWidth<820&&!document.body.classList.contains("sin-izq"))plegar("izq");}else if(e.target.value)aviso("No encuentro esa área: elegila de la lista");});
-  const s=document.getElementById("slider");s.max=meses.length-1;s.value=idx;
-  L.geoJSON(gas,{style:f=>({color:CIAN,weight:f.properties.subtipo==="Troncal"?2.5:1.2,opacity:.85}),onEachFeature:(f,l)=>l.bindPopup(`<b>${f.properties.gasoducto}</b><br>${f.properties.tramo||""}<br>${f.properties.licenciataria} · ${f.properties.subtipo||""}`)}).addTo(g.gas);
-  document.getElementById("n_gas").textContent=gas.features.length;
-  for(const f of comp.features){const [lon,lat]=f.geometry.coordinates;L.marker([lat,lon],{icon:ico("comp",IC_COMP,24)}).bindPopup(`<b>${f.properties.nombre}</b><br>${f.properties.gasoducto}<br>${f.properties.licenciataria}`).addTo(g.comp);}
-  document.getElementById("n_comp").textContent=comp.features.length;
-  if(decl){for(const f of decl.features){const [lon,lat]=f.geometry.coordinates;const p=f.properties;L.marker([lat,lon],{icon:L.divIcon({className:"ic",html:'<div class="decl"></div>',iconSize:[8,8],iconAnchor:[4,4]})}).bindPopup(`<b>Punto de venteo declarado</b><br>${p.tipo}${p.instalacion?" · "+p.instalacion:""}<br>${p.empresa||"Sin empresa informante"}<br>Alta ${p.alta}`).addTo(g.decl);}document.getElementById("n_decl").textContent=decl.features.length;}
-  if(arena)L.geoJSON(arena,{style:{color:AMARILLO,weight:3,dashArray:"6 4"}}).bindPopup("La ruta de la arena: Ibicuy a Añelo, 1.461 km (arena-lab)").addTo(g.arena);
-  const zdiv=document.getElementById("zonas");const RAD={};
-  const corto=n=>({"YPF S.A.":"YPF","VISTA ENERGY ARGENTINA SAU":"Vista","PLUSPETROL S.A.":"Pluspetrol","SHELL ARGENTINA S.A.":"Shell","PAMPA ENERGIA S.A.":"Pampa","PHOENIX GLOBAL RESOURCES S.A.":"Phoenix","PAN AMERICAN ENERGY SL":"PAE","TECPETROL S.A.":"Tecpetrol","TOTAL AUSTRAL S.A.":"Total","GEOPARK ARGENTINA S.A.":"GeoPark","CHEVRON ARGENTINA S.R.L.":"Chevron","EXXONMOBIL EXPLORATION ARGENTINA S.R.L.":"ExxonMobil","CAPEX S.A.":"Capex"}[n]||(n||"").split(" ")[0]);
-  for(const z in cfg.zonas){const b=cfg.zonas[z].bbox;const la=(b[1]+b[3])/2,lo=(b[0]+b[2])/2;const dx=(b[2]-b[0])*111320*Math.cos(la*Math.PI/180),dy=(b[3]-b[1])*111320;const r=Math.hypot(dx,dy)/2;
-    const ring=L.circle([la,lo],{radius:r,color:"#19d3ff",weight:1.2,fill:false,opacity:.7,dashArray:"2 6"}).addTo(g.zonas);
-    const dla=r/111320,dlo=r/(111320*Math.cos(la*Math.PI/180));const bounds=[[la-dla,lo-dlo],[la+dla,lo+dlo]];
-    const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");svg.setAttribute("viewBox","0 0 100 100");
-    svg.innerHTML=`<defs><linearGradient id="gz_${z}" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#19d3ff" stop-opacity="0"/><stop offset="1" stop-color="#19d3ff" stop-opacity=".55"/></linearGradient></defs><path class="barrido" d="M50 50 L50 2 A48 48 0 0 1 70.3 6.5 Z" fill="url(#gz_${z})"/><circle cx="50" cy="50" r="1.2" fill="#19d3ff"/>`;
-    L.svgOverlay(svg,bounds,{interactive:false}).addTo(g.zonas);
-    const nl=cfg.zonas[z].n_locaciones,sp=cfg.zonas[z].n_sin_pozo;
-    const pz=poz.features.filter(f=>{const c=f.geometry.coordinates;return c[0]>=b[0]&&c[0]<=b[2]&&c[1]>=b[1]&&c[1]<=b[3]});
-    const cnt={};pz.forEach(f=>{const e=corto(f.properties.empresa);cnt[e]=(cnt[e]||0)+1;});const ops=Object.entries(cnt).sort((x,y)=>y[1]-x[1]).slice(0,2).map(x=>x[0]).join(", ");
-    const cz=calor&&calor.zonas[z];
-    const a=document.createElement("div");a.className="vent";a.innerHTML=`<b>${cfg.zonas[z].nombre}</b><span class="n">${nl}</span><div class="det">${nl} locaciones vistas${sp?`, ${sp} sin pozo`:""} · ${nf(pz.length)} pozos${cz?` · ${nf(cz.boed)} boe/d`:""}<br>${ops}</div>`;
-    a.onclick=()=>{ficha(z);map.fitBounds(bounds);document.querySelectorAll(".vent").forEach(v=>v.classList.toggle("on",v===a));for(const k in RAD)RAD[k].setStyle(k===z?{weight:3,opacity:1,dashArray:null}:{weight:1.2,opacity:.7,dashArray:"2 6"});};
-    a.insertAdjacentHTML("beforeend",`<svg class="sp" data-z="${z}" viewBox="0 0 240 52"></svg><div class="spl">Locaciones nuevas por año, 2020 a 2026</div>`);RAD[z]=ring;zdiv.appendChild(a);}
-  sparks();
-  document.getElementById("n_zonas").textContent=Object.keys(cfg.zonas).length;
-  toggle("c_ant",g.ant);toggle("c_eq",g.eq);toggle("c_tmp",g.tmp);toggle("c_decl",g.decl);
-  // cortina: a la izquierda la primera imagen de cada ventana, a la derecha la del año elegido
-  const CT=document.createElement("div");CT.id="cortina";CT.innerHTML='<div class="raya"></div><div class="et a">2020</div><div class="et b"></div><div class="ag">⇆</div>';map.getContainer().appendChild(CT);
-  for(const z in cfg.overlays){const o=cfg.overlays[z][0];if(o)L.imageOverlay(o.img,o.bounds,{interactive:false,pane:"antes"}).addTo(g.antes);}
-  const cortar=()=>{const pi=map.getPane("imgs");if(!COMP){pi.style.clip="auto";return;}const nw=map.containerPointToLayerPoint([0,0]),se=map.containerPointToLayerPoint(map.getSize());const x=nw.x+(se.x-nw.x)*FRAC;pi.style.clip=`rect(${nw.y-2000}px,${se.x+2000}px,${se.y+2000}px,${x}px)`;CT.style.left=(FRAC*100)+"%";};
-  map.on("move zoom resize moveend zoomend",cortar);
-  document.getElementById("c_comp2").addEventListener("change",e=>{COMP=e.target.checked;if(COMP)ev("comparar_2020");CT.style.display=COMP?"block":"none";COMP?g.antes.addTo(map):map.removeLayer(g.antes);document.querySelector("#cortina .et.b").textContent=meses[idx].slice(0,4);cortar();guardarURL();});
-  const AG=CT.querySelector(".ag");L.DomEvent.disableClickPropagation(AG);let arr=false;
-  AG.addEventListener("pointerdown",e=>{arr=true;AG.setPointerCapture(e.pointerId);map.dragging.disable();e.preventDefault();});
-  AG.addEventListener("pointermove",e=>{if(!arr)return;const r=map.getContainer().getBoundingClientRect();FRAC=Math.min(.97,Math.max(.03,(e.clientX-r.left)/r.width));cortar();});
-  const soltar=()=>{if(arr){arr=false;map.dragging.enable();}};AG.addEventListener("pointerup",soltar);AG.addEventListener("pointercancel",soltar);
-  CAPAS.forEach(id=>document.getElementById(id).addEventListener("change",guardarURL));map.on("moveend",guardarURL);
-  document.getElementById("b_comp").onclick=()=>{ev("compartir_vista");const u=location.origin+location.pathname+location.search+estadoURL();(navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(()=>aviso("Enlace a esta vista copiado")).catch(()=>{prompt("Copiá el enlace:",u);});};
-  g.calor=L.layerGroup();toggle("c_calor",g.calor);document.getElementById("c_calor").addEventListener("change",e=>{document.getElementById("calor_nota").style.display=e.target.checked?"":"none";});if(calor){L.imageOverlay(calor.img,calor.bounds,{opacity:.7,interactive:false}).addTo(g.calor);document.getElementById("calor_nota").innerHTML=`${nf(calor.n.productores)} pozos producen ${nf(calor.n.boed)} boe/d (${calor.mes}); ${calor.n.exploracion} pozos de exploración, en estudio o nuevos sin producir. Padrón y Capítulo IV.`;}toggle("c_img",g.img);toggle("c_loc",g.loc);toggle("c_otras",g.otras);toggle("c_pozos",g.pozos);toggle("c_gas",g.gas);toggle("c_comp",g.comp);toggle("c_arena",g.arena);
-  document.getElementById("c_todos").addEventListener("change",dibujar);
-  map.on("zoomend",dibujar);map.on("moveend",()=>{if(map.getZoom()>=13)dibujar();});
-  s.addEventListener("input",e=>{idx=parseInt(e.target.value);dibujar();});
-  document.getElementById("hoy").onclick=()=>{idx=meses.length-1;s.value=idx;dibujar();};
-  document.getElementById("play").onclick=function(){if(playing){clearInterval(playing);playing=null;this.textContent="▶";return;}
-    if(idx>=meses.length-1)idx=0;this.textContent="❚❚";playing=setInterval(()=>{idx++;if(idx>=meses.length){clearInterval(playing);playing=null;document.getElementById("play").textContent="▶";idx=meses.length-1;}s.value=idx;dibujar();},450);};
-  const G=document.getElementById("guia");let guiaOn=false;const esp=ms=>new Promise(r=>setTimeout(r,ms));
-  const irMes=i=>{idx=i;s.value=i;dibujar();};
-  const correr=async(a,b,ms)=>{for(let i=a;i<=b&&guiaOn;i++){irMes(i);await esp(ms);}};
-  const capa=(id,on)=>{const c=document.getElementById(id);if(c.checked!==on)c.click();};
-  const ult=meses.length-1;
-  const PASOS=[
-    {t:"Enero de 2020. Así se veía Vaca Muerta desde el satélite.",v:[[-38.36,-68.72],10],f:async()=>{capa("c_ant",false);capa("c_tmp",false);capa("c_pozos",false);irMes(0);await esp(3200);}},
-    {t:"Cada cuadrado celeste es una locación nueva: el satélite la marca el mes en que aparece.",v:[[-38.215,-68.635],13],f:async()=>{await esp(1800);await correr(0,ult,95);await esp(1200);}},
-    {t:"Las torres rosas son los pozos del registro oficial. Llegan después: el satélite los anticipa unos dos meses.",v:null,f:async()=>{capa("c_pozos",true);irMes(18);await esp(1500);await correr(18,ult,95);await esp(1200);}},
-    {t:"Las llamas son antorchas, vistas con las bandas infrarrojas. Se prenden y se apagan mes a mes.",v:[[-38.33,-68.62],12],f:async()=>{capa("c_ant",true);capa("c_tmp",true);await esp(1800);await correr(Math.max(0,ult-30),ult,170);await esp(1500);}},
-    {t:"Con las locaciones ya construidas, el tablero proyecta los pozos, la arena y los camiones que va a pedir 2027.",v:[[-38.36,-68.72],10],f:async()=>{ver("demanda");elegirAnio("2027");await esp(5200);}},
-  ];
-  const finGuia=()=>{guiaOn=false;G.style.display="none";if(VISTA!=="mapa")ver("mapa");document.body.classList.remove("guiando");capa("c_ant",true);capa("c_tmp",true);capa("c_pozos",true);};
-  const guia=async()=>{if(guiaOn)return;ev("recorrido");if(playing){clearInterval(playing);playing=null;document.getElementById("play").textContent="▶";}
-    guiaOn=true;document.body.classList.add("guiando");G.style.display="flex";G.querySelector(".pts").innerHTML=PASOS.map(()=>"<i></i>").join("");
-    for(let k=0;k<PASOS.length&&guiaOn;k++){const ps=PASOS[k];G.querySelector(".tx").textContent=ps.t;G.querySelectorAll(".pts i").forEach((e,j)=>e.classList.toggle("on",j<=k));
-      if(ps.v)map.flyTo(ps.v[0],ps.v[1],{duration:1.6});await ps.f();}
-    if(guiaOn){irMes(ult);finGuia();}};
-  document.getElementById("guia_salir").onclick=()=>{finGuia();irMes(ult);};document.getElementById("b_guia").onclick=guia;
-  const cuenta=(id,n)=>{const el=document.getElementById(id);const t0=performance.now();const paso=t=>{const f=Math.min(1,(t-t0)/1100);el.textContent=nf(n*(1-Math.pow(1-f,3)));if(f<1)requestAnimationFrame(paso);};requestAnimationFrame(paso);};
-  const nPre=Object.values(cfg.zonas).reduce((a,z)=>a+(z.n_locaciones||0),0);cuenta("pc_loc",nPre||loc.features.filter(f=>f.properties.tipo==="locacion").length);cuenta("pc_poz",poz.features.length);cuenta("pc_ant",ant?ant.features.filter(f=>!f.properties.temporal).length:0);
-  const P=document.getElementById("portada");const cerrarPortada=()=>P.classList.add("fuera");document.getElementById("pb_ver").onclick=()=>{ev("explorar");cerrarPortada();};const bt=document.getElementById("pb_tour");bt.style.display="";bt.onclick=()=>{cerrarPortada();setTimeout(guia,500);};
-  if(new URLSearchParams(location.search).has("recorrido"))setTimeout(guia,1500);
-  if(new URLSearchParams(location.search).has("sinportada"))P.style.display="none";
-  {const qv=new URLSearchParams(location.search).get("vista");if(qv)ver(qv);}
-  if(innerWidth<820){document.body.classList.add("sin-izq");document.getElementById("tog_izq").textContent="›";setTimeout(()=>map.invalidateSize(),400);}
-  // vista compartida: #lat,lon,zoom,mes,capas,operadora
-  const hv=location.hash.slice(1).split(",");if(hv.length>=5&&!isNaN(+hv[0])){P.style.display="none";map.setView([+hv[0],+hv[1]],+hv[2]);const im=meses.indexOf(hv[3]);if(im>=0){idx=im;s.value=im;}
-    CAPAS.forEach((id,i)=>{const c=document.getElementById(id);if(hv[4][i]!==undefined&&c.checked!==(hv[4][i]==="1"))c.click();});
-    if(hv[5]){OP=decodeURIComponent(hv[5]);so.value=OP;}if(hv[6])ver(hv[6]);}
-  listo=true;
-  if(PUBLICO){document.getElementById("nota_eq").style.display="block";document.getElementById("tag").textContent="avance";document.querySelector(".kpi.r").style.display="none";document.querySelector("#panel .kpis").classList.add("pub");}
-  dibujar();
+const $=id=>document.getElementById(id);
+const nf=(v,d=0)=>Number(v).toLocaleString("es-AR",{minimumFractionDigits:d,maximumFractionDigits:d});
+const MES=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+const mesTxt=m=>`${MES[+m.slice(5,7)-1]} de ${m.slice(0,4)}`,sg=v=>(v>0?"+":"−")+nf(Math.abs(v));
+fetch("resumen.json").then(r=>r.json()).then(R=>{
+  const p=R.petroleo,g=R.gas,m=R.mineria;
+  $("p_n").textContent=nf(p.mil_bbl_d);$("p_q").textContent=`En las zonas de Vaca Muerta que mide el tablero, ${mesTxt(p.mes)}.`;
+  $("p_s").textContent=`${sg((p.mil_bbl_d/p.hace12-1)*100)} % en doce meses. Con las locaciones ya construidas, unos ${nf(p.pozos_2027)} pozos nuevos empezarían a producir en 2027.`;
+  $("g_n").textContent=nf(g.importado);$("g_q").textContent=`Del gas del invierno de ${g.invierno} vino de afuera. En ${g.pico_anio} era el ${nf(g.pico)} %.`;
+  $("g_s").textContent=`El día más frío, sin barcos, faltarían ${nf(g.faltante_dia,1)} millones de m³: el cuello está en los caños que van a Buenos Aires.`;
+  $("m_n").textContent=nf(m.km2);$("m_q").textContent=`Con salmuera en los salares de la Puna, ${mesTxt(m.mes)}.`;
+  $("m_s").textContent=`${sg((m.km2/m.hace12-1)*100)} % en doce meses, en ${m.proyectos} proyectos. Las piletas van unos dos años adelante de la producción.`;
 });
 </script>
 </body>

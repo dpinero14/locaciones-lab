@@ -7,7 +7,7 @@ Solo usa la biblioteca estándar, para que corra igual en la PC y en la tarea di
 Fuente: el servicio de gráficos de Yahoo Finance, que no es una API oficial y puede dejar de responder. Si falla una
 cotización, se conserva la que ya estaba en el archivo de salida.
 
-Uso: python scripts/cotizaciones.py [SALIDA.json ...]      (por defecto docs/tablero/data/cotizaciones.json)
+Uso: python scripts/cotizaciones.py [SALIDA.json ...]      (por defecto docs/tablero/petroleo/data/cotizaciones.json)
 """
 import datetime as dt
 import json
@@ -17,7 +17,7 @@ import urllib.request
 from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parents[1]
-SALIDAS = [Path(a) for a in sys.argv[1:]] or [RAIZ / "docs" / "tablero" / "data" / "cotizaciones.json"]
+SALIDAS = [Path(a) for a in sys.argv[1:]] or [RAIZ / "docs" / "tablero" / "petroleo" / "data" / "cotizaciones.json"]
 ITEMS = [
     {"id": "brent", "simbolo": "BZ=F", "nombre": "Brent", "unidad": "US$/bbl", "tipo": "petroleo"},
     {"id": "YPF", "simbolo": "YPF", "nombre": "YPF", "unidad": "US$", "tipo": "accion"},

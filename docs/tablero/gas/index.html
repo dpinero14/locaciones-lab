@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>¿Alcanza el gas?</title>
+<meta name="description" content="El gas de la Argentina en invierno: cuánto vino de afuera, por dónde pasa y qué caños están llenos el día más frío.">
+<meta name="theme-color" content="#0c1116">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<style>
+:root{--bg:#ece6d8;--panel:#f9f6ee;--ink:#17212b;--muted:#5d6974;--rule:#d6cdb9;--acento:#0b6b7a;--acento2:#7b2cbf;--rosa:#d02e7f;--agua:#19d3ff;--bar:50px}
+*{box-sizing:border-box}html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:"Segoe UI",system-ui,sans-serif;font-size:14px;display:flex;flex-direction:column}
+button{font-family:inherit;cursor:pointer}a{color:var(--acento)}
+#barra{flex:none;height:var(--bar);display:flex;align-items:center;gap:14px;padding:0 14px;background:var(--ink);color:#f9f6ee;min-width:0;z-index:1700}
+#barra h1{font-size:16px;margin:0;white-space:nowrap;font-weight:600}
+#barra .vistas{display:flex;gap:2px;margin-left:10px}
+#barra .vistas button{background:transparent;color:#c9d1d7;border:0;border-radius:6px;padding:7px 15px;font-weight:500;font-size:14px}
+#barra .vistas button:hover{color:#fff;background:rgba(255,255,255,.08)}#barra .vistas button.on{background:#f9f6ee;color:#17212b;font-weight:600}
+#barra .bl{display:flex;align-items:center;gap:16px;margin-left:auto;white-space:nowrap}#barra .bl a:not(.wa){color:#c9d1d7;font-size:13px;text-decoration:none}#barra .bl a:not(.wa):hover{color:#fff}
+.wa{display:inline-flex;align-items:center;gap:8px;background:#25d366;color:#07261a;font-weight:600;font-size:12px;padding:6px 11px;border-radius:6px;text-decoration:none}.wa:hover{background:#4ae08a}.wa img{width:15px;height:15px}
+main{flex:1;min-height:0;position:relative}
+.vista{display:none;height:100%;overflow-y:auto}
+body.v-invierno #v_invierno,body.v-red #v_red,body.v-produccion #v_produccion{display:block}
+.ancho{max-width:1180px;margin:0 auto;padding:22px 20px 40px}
+.card{background:var(--panel);border:1px solid var(--rule);border-radius:8px;padding:16px 18px;margin-bottom:16px}
+.card>h3{margin:0 0 2px;font-size:15px}.card>.sup{margin:0 0 10px;color:var(--muted);font-size:12px}
+.nota{font-size:12px;line-height:1.55;color:var(--muted)}.nota b{color:var(--ink)}
+.portada{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:18px;align-items:stretch;margin-bottom:16px}
+.cifra{background:var(--ink);color:#f9f6ee;border-radius:10px;padding:22px 24px;display:flex;flex-direction:column;justify-content:center}
+.cifra .eb{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--agua);font-weight:600}
+.cifra .n{display:flex;align-items:baseline;gap:10px;margin:6px 0 2px}.cifra .n b{font-size:clamp(64px,9vw,104px);line-height:.95;font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums}.cifra .n span{font-size:28px;font-weight:600;color:#c9d1d7}
+.cifra h2{font-size:clamp(18px,2.2vw,23px);margin:0 0 6px;font-weight:600;line-height:1.25}.cifra p{margin:0;color:#b8c3ca;font-size:14px;line-height:1.5}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.kpi{background:var(--panel);border:1px solid var(--rule);border-left:5px solid var(--acento);border-radius:6px;padding:12px 14px;display:flex;flex-direction:column;justify-content:center}
+.kpi b{font-size:28px;line-height:1.1;color:var(--acento);font-variant-numeric:tabular-nums}.kpi span{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.35}
+.kpi.v{border-left-color:var(--acento2)}.kpi.v b{color:var(--acento2)}
+.k4{grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:16px}
+.g2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start}
+.graf{position:relative}.graf svg{display:block;width:100%;height:auto;overflow:visible}
+.graf text{font-size:11px;fill:var(--muted);font-family:"Cascadia Mono",Consolas,monospace}.graf text.et{font-family:"Segoe UI",system-ui,sans-serif;font-size:12px;font-weight:600;fill:var(--ink)}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:#f9f6ee;border-radius:6px;padding:8px 10px;font-size:12px;line-height:1.45;box-shadow:0 4px 16px rgba(0,0,0,.3);z-index:5;white-space:nowrap;display:none}
+.tip b{font-size:14px}.tip .f{display:flex;justify-content:space-between;gap:14px;color:#c9d1d7}.tip .f span:last-child{color:#fff;font-variant-numeric:tabular-nums}.tip .t{color:#8f9ba3;font-size:11px;text-transform:uppercase;letter-spacing:.08em}
+.ley{display:flex;gap:6px 18px;flex-wrap:wrap;font-size:12px;color:var(--ink);margin:0 0 8px}.ley i{display:inline-block;width:18px;height:3px;border-radius:2px;vertical-align:middle;margin-right:6px}
+table.t{width:100%;border-collapse:collapse}
+table.t th{font-size:11px;font-weight:600;color:var(--muted);text-align:right;padding:6px 10px;border-bottom:1px solid var(--rule);line-height:1.3;vertical-align:bottom}
+table.t td{padding:9px 10px;border-bottom:1px solid var(--rule);text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+table.t th:first-child,table.t td:first-child{text-align:left;white-space:normal}table.t tr:last-child td{border-bottom:0}
+table.t td small{display:block;color:var(--muted);font-size:11px}table.t tr.base td{color:var(--muted)}table.t td b{font-weight:600}
+.tramos{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:4px 28px}
+.tr{display:grid;grid-template-columns:minmax(0,1fr) 92px 62px;gap:10px;align-items:center;padding:6px 0;border-bottom:1px solid var(--rule);font-size:13px}
+.tr span small{display:block;color:var(--muted);font-size:11px}.tr i{display:block;height:9px;background:var(--rule);border-radius:5px;overflow:hidden}.tr i u{display:block;height:100%;background:var(--acento);border-radius:5px}
+.tr b{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}.tr.lleno i u{background:var(--rosa)}.tr.lleno b{color:var(--rosa)}
+.reg{display:grid;gap:7px;max-width:560px}.reg .r{display:grid;grid-template-columns:150px minmax(0,1fr) 46px;gap:10px;align-items:center;font-size:13px}
+.reg .r i{display:block;height:10px;border-radius:0 5px 5px 0;background:var(--rosa)}.reg .r b{text-align:right;font-variant-numeric:tabular-nums}
+.pie{font-size:12px;color:var(--muted);line-height:1.55;margin:4px 2px 0}
+
+#barra .sect{display:flex;align-items:center;gap:2px;flex:none}
+#barra .sect a{display:inline-flex;align-items:center;color:#c9d1d7;text-decoration:none;font-size:11.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;padding:5px 11px;border-radius:14px;white-space:nowrap}
+#barra .sect a:hover{color:#fff;background:rgba(255,255,255,.1)}
+#barra .sect a.on{background:#0b6b7a;color:#fff}
+#barra .sect a.ini{padding:5px 7px}#barra .sect a.ini svg{width:16px;height:16px;display:block}
+#barra .sect+h1{padding-left:14px;border-left:1px solid rgba(255,255,255,.2)}
+@media(max-width:1240px) and (min-width:821px){#barra .sect+h1 .tag{display:none}}
+@media(max-width:1090px) and (min-width:821px){#barra .sect+h1{display:none}}
+
+@media(max-width:1000px){.portada,.g2{grid-template-columns:1fr}.k4{grid-template-columns:1fr 1fr}.tramos{grid-template-columns:1fr}}
+@media(max-width:820px){
+  :root{--bar:92px}
+  #barra{flex-wrap:wrap;align-content:center;gap:6px 8px;padding:6px 10px}#barra h1{font-size:15px;flex:1;overflow:hidden;text-overflow:ellipsis}
+  #barra .vistas{order:5;flex:1 1 100%;margin:0}#barra .vistas button{flex:1;padding:7px 4px}.wa span{display:none}.wa{padding:7px}#barra .bl a:not(.wa){display:none}
+  .ancho{padding:14px 16px 32px}.kpi b{font-size:22px}
+  table.t .ocu{display:none}.reg .r{grid-template-columns:118px minmax(0,1fr) 40px}
+}
+
+@media(max-width:820px){
+  :root{--bar:130px}
+  #barra .sect{order:-1;flex:1 1 100%}
+  #barra .sect a{flex:1;justify-content:center;padding:6px 4px}#barra .sect a.ini{flex:none;padding:6px 9px}
+  #barra .sect+h1{padding-left:0;border-left:0}
+}
+
+</style>
+</head>
+<body class="v-invierno">
+<header id="barra">
+  <nav class="sect" aria-label="Sectores"><a class="ini" href="../" title="Portada" aria-label="Portada"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 7.6 8 2.4l6 5.2V14H9.9v-3.9H6.1V14H2z" fill="currentColor"/></svg></a><a href="../petroleo/">Petróleo</a><a href="../gas/" class="on">Gas</a><a href="../mineria/">Minería</a></nav>
+  <h1>¿Alcanza el gas?</h1>
+  <nav class="vistas"><button data-v="invierno" class="on">Invierno</button><button data-v="red">Red</button><button data-v="produccion">Producción</button></nav>
+  <nav class="bl"><a href="https://github.com/dpinero14/gas-lab#readme" target="_blank" rel="noopener">Cómo se hizo</a><a class="wa" href="https://whatsapp.com/channel/0029VbDhfzIB4hdKBOmHzr0u" target="_blank" rel="noopener" title="Sumate al canal de WhatsApp"><img src="../img/whatsapp.png" alt=""><span>Canal de WhatsApp</span></a></nav>
+</header>
+<main>
+
+<section class="vista" id="v_invierno"><div class="ancho">
+  <div class="portada">
+    <div class="cifra">
+      <div class="eb" id="iv_eb">Invierno</div>
+      <div class="n"><b id="iv_num">·</b><span>%</span></div>
+      <h2>Del gas del invierno vino de afuera</h2>
+      <p id="iv_sub"></p>
+    </div>
+    <div class="kpis" id="iv_kpis"></div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <h3>Cuánto del gas de cada invierno vino de afuera</h3>
+      <p class="sup">En porcentaje, de mayo a septiembre: barcos de GNL más lo que entró por el norte.</p>
+      <div class="graf" id="iv_imp"></div>
+    </div>
+    <div class="card">
+      <h3>El GNL que llegó en barco cada invierno</h3>
+      <p class="sup">En millones de m³, de mayo a septiembre.</p>
+      <div class="graf" id="iv_gnl"></div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>El invierno que viene, según el clima</h3>
+    <p class="sup" id="iv_27sup"></p>
+    <div style="overflow-x:auto"><table class="t"><thead><tr><th>Si el invierno de 2027 es…</th><th>Días en que no alcanza<br>el gas propio</th><th>Lo que falta en esos días,<br>en millones de m³</th><th>GNL esperado si se opera<br>como en 2024-2026</th></tr></thead><tbody id="iv_27"></tbody></table></div>
+    <p class="nota" style="margin:10px 0 0"><b>Cómo leerlo.</b> Lo que falta en esos días es el mínimo físico que habría que cubrir. El GNL esperado es lo que más se parece a lo que va a pasar: los barcos se contratan antes del invierno y el GNL entra al lado de Buenos Aires, donde reemplaza gas propio que no llega por los caños.</p>
+  </div>
+  <p class="pie" id="pie1"></p>
+</div></section>
+
+<section class="vista" id="v_red"><div class="ancho">
+  <div class="portada">
+    <div class="cifra">
+      <div class="eb">El día más frío de 2026, sin barcos</div>
+      <div class="n"><b id="rd_num">·</b><span>MMm³</span></div>
+      <h2>Por día es lo que faltaría sin el GNL</h2>
+      <p>El 3 de julio de 2026 fue el día de más demanda. El modelo reparte el gas por la red troncal con la capacidad de cada tramo y mide dónde no llega.</p>
+    </div>
+    <div class="card" style="margin:0">
+      <h3>Dónde falta</h3>
+      <p class="sup">Millones de m³ por día que no llegan a cada zona, sin barcos.</p>
+      <div class="reg" id="rd_reg"></div>
+      <p class="nota" style="margin:12px 0 0">El GNL no cubre falta de gas: cubre falta de caño hacia el Gran Buenos Aires, que es donde entra.</p>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Cuánto se usa cada tramo de la red</h3>
+    <p class="sup" id="rd_sup"></p>
+    <div class="tramos" id="rd_tr"></div>
+  </div>
+  <div class="card">
+    <h3>Las obras contra los barcos</h3>
+    <p class="sup">Qué deja sin cubrir cada obra el día más frío, cuánto GNL haría falta igual en todo el invierno y en cuántos inviernos se paga con el GNL que evita.</p>
+    <div style="overflow-x:auto"><table class="t"><thead><tr><th>Obra</th><th class="ocu">Costo,<br>en millones de US$</th><th>Falta el día<br>más frío</th><th>GNL mínimo<br>del invierno</th><th>Inviernos<br>para pagarse</th></tr></thead><tbody id="rd_ob"></tbody></table></div>
+    <p class="nota" style="margin:10px 0 0"><b>Lo que dice la tabla.</b> Ninguna obra sola cierra el día más frío sin barcos. Hace falta una hacia Buenos Aires y otra hacia el centro del país. El GNL se valuó a 0,65 millones de dólares por millón de m³ puesto en Escobar.</p>
+  </div>
+  <p class="pie" id="pie2"></p>
+</div></section>
+
+<section class="vista" id="v_produccion"><div class="ancho">
+  <div class="kpis k4" id="pr_kpis"></div>
+  <div class="card">
+    <h3>Producción de gas por cuenca, mes a mes</h3>
+    <p class="sup" id="pr_sup"></p>
+    <div class="ley"><span><i style="background:#0b6b7a"></i>Cuenca Neuquina</span><span><i style="background:#7b2cbf"></i>El resto del país</span></div>
+    <div class="graf" id="pr_graf"></div>
+    <p class="nota" style="margin:10px 0 0"><b>Qué muestra.</b> Todo el crecimiento salió de la cuenca Neuquina; las demás cayeron. En el invierno de 2026 Neuquén produjo 121 millones de m³ por día y los gasoductos que salen de la cuenca suman 99 de capacidad: la cuenca produce lo que el caño deja sacar.</p>
+  </div>
+  <p class="pie" id="pie3"></p>
+</div></section>
+
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const nf=(v,d=0)=>v==null?"·":Number(v).toLocaleString("es-AR",{minimumFractionDigits:d,maximumFractionDigits:d});
+const MES=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+const mesTxt=m=>`${MES[+m.slice(5,7)-1]} de ${m.slice(0,4)}`,cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+const VISTAS=["invierno","red","produccion"];
+let G=null,vista="invierno";
+function paso(max){for(const s of[.1,.2,.25,.5,1,2,2.5,5,10,20,25,50,100,200,250,500,1000])if(max/s<=5)return s;return 2000}
+function tipEn(el,svg,W,Ht,xc,yc,html){const tip=el.querySelector(".tip"),r=svg.getBoundingClientRect();tip.innerHTML=html;tip.style.display="block";
+  const tw=tip.offsetWidth,cx=xc/W*r.width;tip.style.left=Math.max(0,Math.min(r.width-tw,cx+(cx+tw+16>r.width?-tw-12:12)))+"px";tip.style.top=Math.max(0,yc/Ht*r.height-tip.offsetHeight-10)+"px"}
+
+function barrasV(el,o){
+  // o: cats, vals (null = sin dato), color, alto, dec, detalle(i) → HTML, etiquetas (muestra el valor arriba de cada barra)
+  const W=Math.max(280,el.clientWidth),Ht=o.alto||230,m={l:38,r:8,t:20,b:24},n=o.cats.length;
+  const vmax=Math.max(...o.vals.filter(v=>v!=null))*1.05,ps=paso(vmax),tope=Math.ceil(vmax/ps-1e-9)*ps;
+  const an=(W-m.l-m.r)/n,y=v=>m.t+(1-v/tope)*(Ht-m.t-m.b),bw=Math.min(an-2,Math.max(6,an*.72));
+  let s=`<svg viewBox="0 0 ${W} ${Ht}" role="img" aria-label="${esc(o.titulo||"")}">`;
+  for(let v=0;v<=tope+1e-9;v+=ps)s+=`<line x1="${m.l}" x2="${W-m.r}" y1="${y(v)}" y2="${y(v)}" stroke="${v?"#d6cdb9":"#8a8f94"}" stroke-width="1"/><text x="${m.l-6}" y="${y(v)+4}" text-anchor="end">${nf(v)}</text>`;
+  const cada=an<34?2:1;
+  o.cats.forEach((c,i)=>{const xc=m.l+an*(i+.5),v=o.vals[i];
+    if((n-1-i)%cada===0)s+=`<text x="${xc}" y="${Ht-6}" text-anchor="middle">${c}</text>`;
+    if(v==null){s+=`<text x="${xc}" y="${y(0)-6}" text-anchor="middle">·</text>`;return}
+    const ya=y(v),r=Math.min(4,bw/2,(y(0)-ya)/2);
+    s+=`<path class="b" data-i="${i}" d="M${xc-bw/2},${y(0)}V${ya+r}q0,${-r} ${r},${-r}h${bw-2*r}q${r},0 ${r},${r}V${y(0)}Z" fill="${o.color||"#0b6b7a"}"/>`;
+    if(o.etiquetas&&(i===n-1||v===Math.max(...o.vals.filter(q=>q!=null))))s+=`<text class="et" x="${xc}" y="${ya-6}" text-anchor="middle">${nf(v,o.dec||0)}</text>`});
+  el.innerHTML=s+`</svg><div class="tip"></div>`;
+  const svg=el.querySelector("svg"),tip=el.querySelector(".tip");
+  el.querySelectorAll("path.b").forEach(b=>{const i=+b.dataset.i,xc=m.l+an*(i+.5);
+    const ver=()=>{b.setAttribute("opacity",".75");tipEn(el,svg,W,Ht,xc,y(o.vals[i]),o.detalle(i))};
+    b.addEventListener("pointermove",ver);b.addEventListener("pointerdown",ver);b.addEventListener("pointerleave",()=>{tip.style.display="none";b.removeAttribute("opacity")})});
+}
+
+function lineas(el,o){
+  // o: eje (meses), series [{nombre,color,vals}], alto, detalle(i) → HTML
+  const W=Math.max(300,el.clientWidth),Ht=o.alto||320,m={l:38,r:16,t:14,b:24},n=o.eje.length;
+  const vmax=Math.max(...o.series.flatMap(s=>s.vals))*1.05,ps=paso(vmax),tope=Math.ceil(vmax/ps-1e-9)*ps;
+  const x=i=>m.l+i/(n-1)*(W-m.l-m.r),y=v=>m.t+(1-v/tope)*(Ht-m.t-m.b);
+  let s=`<svg viewBox="0 0 ${W} ${Ht}" role="img" aria-label="${esc(o.titulo||"")}">`;
+  for(let v=0;v<=tope+1e-9;v+=ps)s+=`<line x1="${m.l}" x2="${W-m.r}" y1="${y(v)}" y2="${y(v)}" stroke="${v?"#d6cdb9":"#8a8f94"}" stroke-width="1"/><text x="${m.l-6}" y="${y(v)+4}" text-anchor="end">${nf(v)}</text>`;
+  const cada=W<520?4:2;
+  for(let i=0;i<n;i++)if(o.eje[i].endsWith("-01")){const a=+o.eje[i].slice(0,4);s+=`<line x1="${x(i)}" x2="${x(i)}" y1="${Ht-m.b}" y2="${Ht-m.b+4}" stroke="#8a8f94"/>`;if(a%cada===0&&x(i)<W-m.r-24)s+=`<text x="${x(i)+3}" y="${Ht-6}">${a}</text>`}
+  o.series.forEach(q=>{s+=`<path d="M${q.vals.map((v,i)=>`${x(i).toFixed(1)},${y(v).toFixed(1)}`).join("L")}" fill="none" stroke="${q.color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="${x(n-1)}" cy="${y(q.vals[n-1])}" r="4" fill="${q.color}" stroke="#f9f6ee" stroke-width="2"/>`});
+  s+=`<g class="cur" style="display:none"><line y1="${m.t}" y2="${Ht-m.b}" stroke="#17212b" stroke-width="1"/>${o.series.map(q=>`<circle r="4.5" fill="#f9f6ee" stroke="${q.color}" stroke-width="2"/>`).join("")}</g><rect x="${m.l}" y="${m.t}" width="${W-m.l-m.r}" height="${Ht-m.t-m.b}" fill="transparent" style="cursor:crosshair"/></svg><div class="tip"></div>`;
+  el.innerHTML=s;
+  const svg=el.querySelector("svg"),cur=el.querySelector(".cur"),tip=el.querySelector(".tip"),zona=el.querySelector("rect"),pts=cur.querySelectorAll("circle");
+  const mover=e=>{const r=svg.getBoundingClientRect(),px=(e.clientX-r.left)/r.width*W,i=Math.max(0,Math.min(n-1,Math.round((px-m.l)/(W-m.l-m.r)*(n-1))));
+    cur.style.display="";cur.querySelector("line").setAttribute("x1",x(i));cur.querySelector("line").setAttribute("x2",x(i));
+    o.series.forEach((q,k)=>{pts[k].setAttribute("cx",x(i));pts[k].setAttribute("cy",y(q.vals[i]))});
+    tipEn(el,svg,W,Ht,x(i),y(Math.max(...o.series.map(q=>q.vals[i]))),o.detalle(i))};
+  zona.addEventListener("pointermove",mover);zona.addEventListener("pointerdown",mover);zona.addEventListener("pointerleave",()=>{cur.style.display="none";tip.style.display="none"});
+}
+
+function dibInvierno(){
+  const u=G.ultimo_invierno,p=G.pico_importado,I=G.inviernos;
+  $("iv_eb").textContent="Invierno de "+u.anio;$("iv_num").textContent=nf(u.importado,0);
+  $("iv_sub").textContent=`En ${p.anio} fue el ${nf(p.importado,0)} %. El resto salió de las cuencas del país, sobre todo de Neuquén.`;
+  const n27=G.invierno_2027[1];
+  $("iv_kpis").innerHTML=[
+    [nf(u.propio_max,0),`Millones de m³ por día: el techo de gas propio del invierno de ${u.anio}`,""],
+    [nf(u.gnl,0),`Millones de m³ de GNL en barco, unos ${nf(u.buques,0)} buques`,"v"],
+    [nf(u.norte,0),"Millones de m³ por el norte: ya no es Bolivia, entra desde Chile por el Norandino",""],
+    [nf(n27.dias,0),"Días del invierno de 2027 en que no alcanzaría el gas propio, con clima normal","v"]].map(k=>`<div class="kpi ${k[2]}"><b>${k[0]}</b><span>${k[1]}</span></div>`).join("");
+  const C=I.filter(x=>x.importado!=null);
+  barrasV($("iv_imp"),{cats:C.map(x=>x.anio),vals:C.map(x=>x.importado),etiquetas:true,titulo:"Parte importada del gas de cada invierno",
+    detalle:i=>`<div class="t">Invierno de ${C[i].anio}</div><b>${nf(C[i].importado,1)} % importado</b><div class="f"><span>GNL en barco</span><span>${nf(C[i].gnl)}</span></div><div class="f"><span>Por el norte</span><span>${nf(C[i].norte)}</span></div><div class="f"><span>Techo de gas propio</span><span>${nf(C[i].propio_max,0)} MMm³/d</span></div>`});
+  barrasV($("iv_gnl"),{cats:I.map(x=>x.anio),vals:I.map(x=>x.gnl),color:"#7b2cbf",etiquetas:true,titulo:"GNL por barco en cada invierno",
+    detalle:i=>`<div class="t">Invierno de ${I[i].anio}</div><b>${nf(I[i].gnl)} millones de m³</b><div class="f"><span>Buques, aproximado</span><span>${nf(I[i].buques,0)}</span></div>`});
+  $("iv_27sup").textContent=`Con la producción y la red de 2026, y el tiempo que hizo en cada uno de los ${G.climas} inviernos desde 1997.`;
+  $("iv_27").innerHTML=G.invierno_2027.map(x=>`<tr><td><b>${x.clima}</b></td><td>${nf(x.dias)}</td><td>${nf(x.faltante)}</td><td>${nf(x.gnl)}</td></tr>`).join("");
+}
+function dibRed(){
+  const d=G.dia_frio;$("rd_num").textContent=nf(d.faltante,1);
+  const mx=Math.max(...d.por_region.map(r=>r[1]));
+  $("rd_reg").innerHTML=d.por_region.map(r=>`<div class="r"><span>${esc(r[0])}</span><div><i style="width:${Math.max(2,r[1]/mx*100)}%"></i></div><b>${nf(r[1],1)}</b></div>`).join("");
+  const A=G.arcos,ll=A.filter(a=>a.uso>=.99).length;
+  $("rd_sup").textContent=`Ese día, sin barcos: ${ll} de los ${A.length} tramos con gas van llenos. Flujo y capacidad en millones de m³ por día.`;
+  $("rd_tr").innerHTML=A.map(a=>{const l=a.uso>=.99;return `<div class="tr${l?" lleno":""}"><span>${esc(a.de)} → ${esc(a.a)}<small>${esc(a.gasoducto)} · ${nf(a.flujo,1)} de ${nf(a.capacidad,1)}</small></span><i><u style="width:${Math.min(100,a.uso*100)}%"></u></i><b>${l?"Lleno":nf(a.uso*100)+" %"}</b></div>`}).join("");
+  $("rd_ob").innerHTML=G.obras.map(o=>`<tr class="${o.clave==="hoy"?"base":""}"><td><b>${esc(o.nombre)}</b>${o.cuando?`<small>${esc(o.cuando)}</small>`:""}</td><td class="ocu">${o.costo==null?"·":nf(o.costo)}</td><td>${nf(o.faltante_dia,1)}</td><td>${nf(o.gnl)}</td><td>${o.clave==="hoy"?"·":o.inviernos==null?"No ahorra GNL":nf(o.inviernos,1)}</td></tr>`).join("");
+}
+function dibProduccion(){
+  const P=G.produccion,n=P.eje.length-1,i12=n-12;
+  const cuota=P.neuquina[n]/P.total[n];
+  $("pr_kpis").innerHTML=[
+    [nf(P.total[n],0),`Millones de m³ por día en ${mesTxt(P.ultimo)}, todo el país`,""],
+    [nf(P.neuquina[n],0),"Millones de m³ por día de la cuenca Neuquina","v"],
+    [nf(cuota*100,0)+" %","Del gas del país sale de Neuquén",""],
+    [nf(P.no_convencional_pct,0)+" %","Es gas no convencional (shale y tight)","v"]].map(k=>`<div class="kpi ${k[2]}"><b>${k[0]}</b><span>${k[1]}</span></div>`).join("");
+  $("pr_sup").textContent=`En millones de m³ por día, desde ${mesTxt(P.eje[0])} hasta ${mesTxt(P.ultimo)}. Pasá el cursor para ver cada mes.`;
+  lineas($("pr_graf"),{eje:P.eje,titulo:"Producción de gas por cuenca",series:[{nombre:"Cuenca Neuquina",color:"#0b6b7a",vals:P.neuquina},{nombre:"El resto del país",color:"#7b2cbf",vals:P.resto}],
+    detalle:i=>`<div class="t">${cap(mesTxt(P.eje[i]))}</div><b>${nf(P.total[i],1)} MMm³ por día</b><div class="f"><span>Cuenca Neuquina</span><span>${nf(P.neuquina[i],1)}</span></div><div class="f"><span>El resto del país</span><span>${nf(P.resto[i],1)}</span></div>`});
+}
+function ver(v){
+  vista=VISTAS.includes(v)?v:"invierno";document.body.className="v-"+vista;
+  document.querySelectorAll("#barra .vistas button").forEach(b=>b.classList.toggle("on",b.dataset.v===vista));
+  if(!G)return;({invierno:dibInvierno,red:dibRed,produccion:dibProduccion})[vista]();
+  history.replaceState(null,"",vista==="invierno"?location.pathname:"#"+vista);
+}
+document.querySelectorAll("#barra .vistas button").forEach(b=>b.onclick=()=>ver(b.dataset.v));
+fetch("data/gas.json").then(r=>r.json()).then(g=>{G=g;
+  const pie=`<b>Fuentes.</b> ${esc(G.fuentes)}. Los cálculos son del repositorio público <a href="https://github.com/dpinero14/gas-lab#readme" target="_blank" rel="noopener">gas-lab</a>.`;
+  ["pie1","pie2","pie3"].forEach(id=>$(id).innerHTML=pie);ver(location.hash.slice(1))});
+let _rz;window.addEventListener("resize",()=>{clearTimeout(_rz);_rz=setTimeout(()=>ver(vista),150)});
+</script>
+</body>
+</html>

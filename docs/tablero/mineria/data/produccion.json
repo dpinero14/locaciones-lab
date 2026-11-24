@@ -1,0 +1,474 @@
+{
+ "pais": {
+  "unidad": "Miles de toneladas de carbonato de litio por trimestre, todo el país",
+  "fuente": "INDEC, índice de producción industrial minero, cuadro 7",
+  "url": "https://www.indec.gob.ar/ftp/cuadros/economia/serie_ipi_minero.xlsx",
+  "desde": "2023-06",
+  "hasta": "2026-09",
+  "meses": [
+   [
+    "2023-06",
+    3000.4
+   ],
+   [
+    "2023-07",
+    3387.2
+   ],
+   [
+    "2023-08",
+    4012.3
+   ],
+   [
+    "2023-09",
+    3922.5
+   ],
+   [
+    "2023-10",
+    4336.4
+   ],
+   [
+    "2023-11",
+    4623.3
+   ],
+   [
+    "2023-12",
+    4108.1
+   ],
+   [
+    "2024-01",
+    4043.8
+   ],
+   [
+    "2024-02",
+    3869.3
+   ],
+   [
+    "2024-03",
+    4805.6
+   ],
+   [
+    "2024-04",
+    3803.4
+   ],
+   [
+    "2024-05",
+    3982.6
+   ],
+   [
+    "2024-06",
+    6069.0
+   ],
+   [
+    "2024-07",
+    4991.1
+   ],
+   [
+    "2024-08",
+    5722.4
+   ],
+   [
+    "2024-09",
+    6396.3
+   ],
+   [
+    "2024-10",
+    6862.1
+   ],
+   [
+    "2024-11",
+    6759.2
+   ],
+   [
+    "2024-12",
+    7502.2
+   ],
+   [
+    "2025-01",
+    7793.1
+   ],
+   [
+    "2025-02",
+    7467.1
+   ],
+   [
+    "2025-03",
+    7371.1
+   ],
+   [
+    "2025-04",
+    7147.7
+   ],
+   [
+    "2025-05",
+    7965.4
+   ],
+   [
+    "2025-06",
+    7536.2
+   ],
+   [
+    "2025-07",
+    8137.4
+   ],
+   [
+    "2025-08",
+    7891.8
+   ],
+   [
+    "2025-09",
+    9202.3
+   ],
+   [
+    "2025-10",
+    10708.6
+   ],
+   [
+    "2025-11",
+    11244.3
+   ],
+   [
+    "2025-12",
+    12966.7
+   ],
+   [
+    "2026-01",
+    11875.8
+   ],
+   [
+    "2026-02",
+    9270.0
+   ],
+   [
+    "2026-03",
+    11508.3
+   ],
+   [
+    "2026-04",
+    11466.1
+   ],
+   [
+    "2026-05",
+    11561.7
+   ],
+   [
+    "2026-06",
+    11987.1
+   ],
+   [
+    "2026-07",
+    9431.7
+   ],
+   [
+    "2026-08",
+    8582.6
+   ],
+   [
+    "2026-09",
+    9798.0
+   ]
+  ],
+  "trimestres": [
+   [
+    "2023-3",
+    11.32
+   ],
+   [
+    "2023-4",
+    13.07
+   ],
+   [
+    "2024-1",
+    12.72
+   ],
+   [
+    "2024-2",
+    13.86
+   ],
+   [
+    "2024-3",
+    17.11
+   ],
+   [
+    "2024-4",
+    21.12
+   ],
+   [
+    "2025-1",
+    22.63
+   ],
+   [
+    "2025-2",
+    22.65
+   ],
+   [
+    "2025-3",
+    25.23
+   ],
+   [
+    "2025-4",
+    34.92
+   ],
+   [
+    "2026-1",
+    32.65
+   ],
+   [
+    "2026-2",
+    35.01
+   ],
+   [
+    "2026-3",
+    27.81
+   ]
+  ],
+  "sin_dato": {
+   "hasta": "2023-05",
+   "texto": "Secreto estadístico"
+  },
+  "ultimos_12_mil_t": 130.4,
+  "veces_produccion": 2.72,
+  "veces_piletas": 1.56,
+  "correlacion_variaciones_12m": -0.16,
+  "adelanto": {
+   "todas": [
+    {
+     "meses": 0,
+     "primero": 1.26,
+     "ultimo": 2.2,
+     "min": 1.26,
+     "max": 2.27,
+     "dispersion": 0.187,
+     "ventanas": 29
+    },
+    {
+     "meses": 6,
+     "primero": 1.41,
+     "ultimo": 2.44,
+     "min": 1.41,
+     "max": 2.53,
+     "dispersion": 0.184,
+     "ventanas": 29
+    },
+    {
+     "meses": 12,
+     "primero": 1.77,
+     "ultimo": 2.68,
+     "min": 1.76,
+     "max": 2.71,
+     "dispersion": 0.154,
+     "ventanas": 29
+    },
+    {
+     "meses": 18,
+     "primero": 2.33,
+     "ultimo": 2.88,
+     "min": 2.27,
+     "max": 2.95,
+     "dispersion": 0.096,
+     "ventanas": 29
+    },
+    {
+     "meses": 24,
+     "primero": 2.86,
+     "ultimo": 3.18,
+     "min": 2.86,
+     "max": 3.31,
+     "dispersion": 0.042,
+     "ventanas": 29
+    },
+    {
+     "meses": 30,
+     "primero": 3.35,
+     "ultimo": 3.55,
+     "min": 3.35,
+     "max": 3.98,
+     "dispersion": 0.04,
+     "ventanas": 29
+    },
+    {
+     "meses": 36,
+     "primero": 3.74,
+     "ultimo": 4.08,
+     "min": 3.74,
+     "max": 4.93,
+     "dispersion": 0.076,
+     "ventanas": 29
+    }
+   ],
+   "carbonato": [
+    {
+     "meses": 0,
+     "primero": 1.47,
+     "ultimo": 3.16,
+     "min": 1.47,
+     "max": 3.25,
+     "dispersion": 0.24,
+     "ventanas": 29
+    },
+    {
+     "meses": 6,
+     "primero": 1.52,
+     "ultimo": 3.51,
+     "min": 1.52,
+     "max": 3.67,
+     "dispersion": 0.276,
+     "ventanas": 29
+    },
+    {
+     "meses": 12,
+     "primero": 1.83,
+     "ultimo": 3.87,
+     "min": 1.83,
+     "max": 3.87,
+     "dispersion": 0.267,
+     "ventanas": 29
+    },
+    {
+     "meses": 18,
+     "primero": 2.37,
+     "ultimo": 3.96,
+     "min": 2.35,
+     "max": 3.96,
+     "dispersion": 0.2,
+     "ventanas": 29
+    },
+    {
+     "meses": 24,
+     "primero": 2.93,
+     "ultimo": 3.98,
+     "min": 2.93,
+     "max": 3.98,
+     "dispersion": 0.105,
+     "ventanas": 29
+    },
+    {
+     "meses": 30,
+     "primero": 3.45,
+     "ultimo": 4.02,
+     "min": 3.45,
+     "max": 4.06,
+     "dispersion": 0.039,
+     "ventanas": 29
+    },
+    {
+     "meses": 36,
+     "primero": 3.88,
+     "ultimo": 4.34,
+     "min": 3.88,
+     "max": 5.02,
+     "dispersion": 0.068,
+     "ventanas": 29
+    }
+   ]
+  },
+  "mejor_adelanto": {
+   "todas": 30,
+   "carbonato": 30
+  },
+  "adelantos_parejos": [
+   24,
+   30
+  ],
+  "lectura": "<b>Qué muestra.</b> En los últimos doce meses con dato (octubre de 2025 a septiembre de 2026) el país produjo 130 mil toneladas de carbonato de litio, 2,7 veces lo de los primeros doce; las piletas crecieron 1,6 veces. La producción creció más rápido que las piletas: contra las del mismo año, cada km² pasó de rendir 1,3 a 2,2 mil toneladas por año. La cuenta queda mucho más pareja contra las piletas de dos años a dos años y medio antes (entre 2,9 y 4,0 mil toneladas por año por km²): las toneladas de hoy se parecen a las piletas de entonces, no a las de ahora. Son 40 meses de dato: es una pista, no una regla.<br><b>Qué no entra.</b> El INDEC cuenta solo carbonato: queda afuera el cloruro de litio de Mariana, y entran plantas de extracción directa que casi no usan piletas. Antes de junio de 2023 el dato está reservado por secreto estadístico."
+ },
+ "cauchari": {
+  "unidad": "Miles de toneladas de carbonato de litio por trimestre, al 100 % del proyecto",
+  "fuente": "Lithium Argentina, informes trimestrales (formularios 6-K ante la SEC)",
+  "capacidad": 10.0,
+  "capacidad_texto": "Capacidad de diseño: 40.000 t por año",
+  "arranque": "2023-06",
+  "trimestres": [
+   [
+    "2024-1",
+    4.5
+   ],
+   [
+    "2024-2",
+    5.6
+   ],
+   [
+    "2024-3",
+    6.8
+   ],
+   [
+    "2024-4",
+    8.5
+   ],
+   [
+    "2025-1",
+    7.2
+   ],
+   [
+    "2025-2",
+    8.51
+   ],
+   [
+    "2025-3",
+    8.3
+   ],
+   [
+    "2025-4",
+    9.7
+   ],
+   [
+    "2026-1",
+    9.66
+   ],
+   [
+    "2026-2",
+    9.28
+   ],
+   [
+    "2026-3",
+    9.55
+   ]
+  ],
+  "notas": "En 2023 produjo unas 6.000 t entre junio y diciembre; la empresa no informó el reparto por trimestre. El primer trimestre de 2026 sale de restar: acumulado de nueve meses menos los otros dos trimestres."
+ },
+ "olaroz": {
+  "unidad": "Miles de toneladas de carbonato de litio por trimestre, al 100 % del proyecto",
+  "fuente": "Allkem, informes trimestrales de actividad a la bolsa de Australia (18/1, 20/4 y 27/7 de 2023)",
+  "arranque": "2023-07",
+  "arranque_texto": "Planta nueva",
+  "trimestres": [
+   [
+    "2021-3",
+    2.802
+   ],
+   [
+    "2021-4",
+    3.644
+   ],
+   [
+    "2022-1",
+    2.972
+   ],
+   [
+    "2022-2",
+    3.445
+   ],
+   [
+    "2022-3",
+    3.289
+   ],
+   [
+    "2022-4",
+    4.253
+   ],
+   [
+    "2023-1",
+    4.102
+   ],
+   [
+    "2023-2",
+    5.059
+   ]
+  ],
+  "sin_dato": {
+   "desde": "2023-07",
+   "texto": "Sin dato"
+  },
+  "notas": "El tercer trimestre de 2021 sale de restar: las 12.863 t del ejercicio de julio de 2021 a junio de 2022 menos los otros tres trimestres. Desde la fusión con Livent, en enero de 2024, ni Arcadium ni Rio Tinto informan la producción de Olaroz por separado.",
+  "lectura": "<b>Qué muestra.</b> Las piletas de la ampliación se empiezan a ver en mayo de 2021, cuando la superficie pasa por primera vez el máximo de los años anteriores (5,9 km²), y llegan a 12,5 km² en enero de 2023. Allkem informó que todas estaban terminadas y en servicio al cierre de diciembre de 2022: el satélite marca lo mismo. La planta nueva dio su primer producto a mediados de julio de 2023, 26 meses después de las primeras piletas nuevas, y la empresa preveía entre 12 y 18 meses más para llegar a régimen. Mientras tanto la planta vieja pasó de 3.200 a 4.200 toneladas por trimestre, en promedio, entre un ejercicio y el siguiente. Qué pasó después con la producción de Olaroz no se puede seguir: dejó de informarse por proyecto."
+ }
+}

@@ -256,6 +256,12 @@ coordenadas no se publican.
 
 <https://dpinero14.github.io/locaciones-lab/tablero/>
 
+El tablero tiene tres puertas. **Petróleo** es Vaca Muerta desde el satélite, lo que sale de este repo. **Gas**
+muestra cómo se cubrió cada invierno, la red troncal el día más frío y la producción por cuenca, con los cálculos
+de [gas-lab](https://github.com/dpinero14/gas-lab). **Minería** mide mes a mes, con Sentinel-2, las piletas de litio
+de la Puna. Lo que sigue describe la puerta de Petróleo:
+<https://dpinero14.github.io/locaciones-lab/tablero/petroleo/>
+
 El detector corrido sobre quince ventanas de la cuenca (`scripts/detectar.py`), en un mapa: mes a mes,
 cada locación aparece cuando el satélite la ve y el pozo del padrón cuando llega. Suma los gasoductos
 troncales y las plantas compresoras de ENARGAS, la ruta de la arena de
